@@ -1,0 +1,22 @@
+<launch>
+    <!-- Launch classifiers -->
+    <group>
+        <node name="face_classifier" pkg="ahri_classifiers" type="face.py" />
+        <node name="motion_classifier" pkg="ahri_classifiers" type="motion.py" />
+        <node name="synthesizer" pkg="ahri_classifiers" type="synthesizer.py" />
+    </group>
+
+    <!-- Launch planning nodes -->
+    <group>
+        <node name="demonstrator" pkg="ahri_planner" type="demonstrator.py" />
+        <node name="feature_extraction" pkg="ahri_planner" type="feature_extraction.py" />
+        <node name="policy_augmentation" pkg="ahri_planner" type="policy_augmentation.py" />
+        <node name="query_nlp" pkg="ahri_planner" type="query_nlp.py" />
+    </group>
+
+    <!-- Launch sensor nodes -->
+    <group>
+        <node name="camera" pkg="ahri_sensors" type="camera.py" />
+        <node name="mocap" pkg="ahri_sensors" type="mocap.py" />
+    </group>
+</launch>
