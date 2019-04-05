@@ -11,7 +11,7 @@ class Demonstrator():
     def __init__(self):
         rospy.init_node('demonstrator')
 
-        # start sub/pub
+        # start pub/sub
         rospy.Subscriber("/planners/constraint_types", UInt8MultiArray, self.sample_demonstrations)
         self.demonstrations_pub = rospy.Publisher("/planners/demonstrations", UInt8MultiArray, queue_size=10)
         

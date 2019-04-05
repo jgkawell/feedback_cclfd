@@ -11,7 +11,7 @@ class QueryNLP():
     def __init__(self):
         rospy.init_node('query_nlp')
 
-        # start sub/pub
+        # start pub/sub
         rospy.Subscriber("/classifiers/synthesis", Bool, self.query)
         self.constraint_types_pub = rospy.Publisher("/planners/constraint_types", UInt8MultiArray, queue_size=10)
         
