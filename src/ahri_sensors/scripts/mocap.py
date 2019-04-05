@@ -8,6 +8,8 @@ from std_msgs.msg import String
 
 class MoCap():
 
+    # NOTE: http://wiki.ros.org/mocap_optitrack
+
     def __init__(self):
         rospy.init_node('mocap')
 

@@ -25,8 +25,9 @@ class Demonstrator():
 
         rospy.logwarn("DEMONSTRATOR: Sampling demonstrations...")
 
-        array = np.zeros(1)
-        self.demonstrations_pub.publish(1, array)
+        array = []
+        array_msg = UInt8MultiArray(data=array)
+        self.demonstrations_pub.publish(array_msg)
 
 
 if __name__ == '__main__':
