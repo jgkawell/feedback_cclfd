@@ -7,9 +7,9 @@ pub = rospy.Publisher('facialEmotion', String, queue_size=10)
 
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
-    hello_str = "Classified emotion + " + str(data.data) + str(rospy.get_time())
-    rospy.loginfo(hello_str)
-    pub.publish(hello_str)
+    classifiedEmotion = "Classified emotion + " + str(data.data) + str(rospy.get_time())
+    rospy.loginfo(classifiedEmotion)
+    pub.publish(classifiedEmotion)
 
 def face():
     rospy.init_node('faceClassifer', anonymous=True)

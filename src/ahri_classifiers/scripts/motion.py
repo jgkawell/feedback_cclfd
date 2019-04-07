@@ -8,9 +8,9 @@ pub = rospy.Publisher('moCap', String, queue_size=10)
 
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
-    hello_str = "Classified motion + " + str(data.data) + str(rospy.get_time())
-    rospy.loginfo(hello_str)
-    pub.publish(hello_str)
+    classifiedMotion = "Classified motion + " + str(data.data) + str(rospy.get_time())
+    rospy.loginfo(classifiedMotion)
+    pub.publish(classifiedMotion)
 
 def motion():
     rospy.init_node('motionClassifer', anonymous=True)
