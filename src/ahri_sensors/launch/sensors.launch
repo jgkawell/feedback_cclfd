@@ -1,0 +1,3 @@
+<launch>
+    <node name="face_sensor" pkg="ahri_sensors" type="faceSensor.py" />
+</launch>
