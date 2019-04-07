@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ahri_planner</name>
+  <name>ahri_master</name>
   <version>0.0.0</version>
-  <description>The ahri_planner package which contains the nodes for the demonstration controller, feature recognizer, and policy augmenter</description>
+  <description>The ahri_master package which contains any master scripts and launch files for the ahri project</description>
   <maintainer email="jack.kawell@colorado.edu">jgkawell</maintainer>
   <license>MIT</license>
 
