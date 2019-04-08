@@ -3,6 +3,7 @@
 import rospy
 import numpy as np
 
+from std_msgs.msg import String
 from std_msgs.msg import Bool
 from std_msgs.msg import UInt8MultiArray
 
@@ -13,8 +14,8 @@ class Demonstrator():
 
         # start pub/sub
         rospy.Subscriber("/planners/constraint_types", UInt8MultiArray, self.sample_demonstrations)
-        self.demonstrations_pub = rospy.Publisher("/planners/demonstrations", UInt8MultiArray, queue_size=10)
-        
+        self.planners_pub = rospy.Publisher("/planners/demonstrations", UInt8MultiArray, queue_size=10)
+        self.lfd_pub = rospy.Publisher("/planners/perform_demonstration", String, queue_size=10)
 
     def run(self):
         while(not rospy.is_shutdown()):
@@ -25,9 +26,11 @@ class Demonstrator():
 
         rospy.logwarn("DEMONSTRATOR: Sampling demonstrations...")
 
+        self.lfd_pub.publish("Do a demonstration!")
+
         array = []
         array_msg = UInt8MultiArray(data=array)
-        self.demonstrations_pub.publish(array_msg)
+        self.planners_pub.publish(array_msg)
 
 
 if __name__ == '__main__':

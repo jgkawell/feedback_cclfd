@@ -3,6 +3,7 @@
 import rospy
 import numpy as np
 
+from std_msgs.msg import String
 from std_msgs.msg import UInt8MultiArray
 
 class PolicyAugmentation():
@@ -12,6 +13,7 @@ class PolicyAugmentation():
 
         # start pub/sub
         rospy.Subscriber("/planners/constraints", UInt8MultiArray, self.extract_features)
+        self.model_pub = rospy.Publisher("/planners/update_model", String, queue_size=10)
 
     def run(self):
         while(not rospy.is_shutdown()):
@@ -21,6 +23,8 @@ class PolicyAugmentation():
     def extract_features(self, demonstrations):
 
         rospy.logwarn("POLICY AUGMENTATION: Augmenting policy...")
+        self.model_pub.publish("Update model!")
+
 
 if __name__ == '__main__':
     try:
