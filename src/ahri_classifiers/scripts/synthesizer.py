@@ -2,19 +2,39 @@
 # license removed for brevity
 import rospy
 from std_msgs.msg import String
+from std_msgs.msg import Bool
 
-def callbackemotion(data):
-    rospy.loginfo(rospy.get_caller_id() + "Emotion data heard %s", data.data)
+have_face = False
+have_motion = False
 
-def callbackmotion(data):
-    rospy.loginfo(rospy.get_caller_id() + "Motion data heard %s", data.data)
+def callback_face(data):
+    global have_face
+    rospy.logwarn("SYNTHESIZER: I heard %s", data.data)
+    have_face = True
+
+def callback_motion(data):
+    global have_motion
+    rospy.logwarn("SYNTHESIZER: I heard %s", data.data)
+    have_motion = True
 
 def synthesizer():
-    rospy.init_node('emotionSynthesizer', anonymous=True)
-    rospy.Subscriber("facialEmotion", String, callbackemotion)
-    rospy.Subscriber("moCap", String, callbackmotion)
-    rospy.spin()
+    global have_face
+    global have_motion
+
+    rospy.init_node('synthesizer', anonymous=True)
+    rospy.Subscriber("/classifiers/face", String, callback_face)
+    rospy.Subscriber("/classifiers/motion", String, callback_motion)
+    pub = rospy.Publisher('/classifiers/synthesis', Bool, queue_size=10)
+
     
+    while(not rospy.is_shutdown()):
+        if have_face and have_motion:
+            rospy.logwarn("SYNTHESIZER: Synthesizing classifications...")
+            have_face = False
+            have_motion = False
+
+            pub.publish(True)
+
 if __name__ == '__main__':
     try:
         synthesizer()
