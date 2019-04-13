@@ -1,5 +1,0 @@
-<launch>
-    <node name="face_classifier" pkg="ahri_classifiers" type="face.py" />
-    <node name="motion_classifier" pkg="ahri_classifiers" type="motion.py" />
-    <node name="synthesizer" pkg="ahri_classifiers" type="synthesizer.py" />
-</launch>

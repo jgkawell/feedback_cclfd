@@ -1,0 +1,5 @@
+<launch>
+    <node name="face_classifier" pkg="feedback_classifiers" type="face.py" />
+    <node name="motion_classifier" pkg="feedback_classifiers" type="motion.py" />
+    <node name="synthesizer" pkg="feedback_classifiers" type="synthesizer.py" />
+</launch>

@@ -26,7 +26,7 @@ class QueryNLP():
         if val:
             rospy.logwarn("QUERY NLP: Querying user...")
 
-            array = []
+            array = [1, 2, 3]
             array_msg = UInt8MultiArray(data=array)
             self.constraint_types_pub.publish(array_msg)
 
