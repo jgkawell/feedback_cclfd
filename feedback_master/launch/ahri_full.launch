@@ -1,0 +1,21 @@
+<launch>
+    <!-- Launch classifiers -->
+    <group>
+        <node name="face_classifier" pkg="feedback_classifiers" type="face.py" />
+        <node name="motion_classifier" pkg="feedback_classifiers" type="motion.py" />
+        <node name="synthesizer" pkg="feedback_classifiers" type="synthesizer.py" />
+    </group>
+
+    <!-- Launch planning nodes -->
+    <group>
+        <node name="query_nlp" pkg="feedback_planners" type="query_nlp.py" />
+        <node name="demonstrator" pkg="feedback_planners" type="demonstrator.py" />
+        <node name="request_feedback" pkg="feedback_planners" type="request_feedback.py" />
+    </group>
+
+    <!-- Launch sensor nodes -->
+    <group>
+        <node name="camera" pkg="feedback_sensors" type="camera.py" />
+        <node name="mocap" pkg="feedback_sensors" type="mocap.py" />
+    </group>
+</launch>
