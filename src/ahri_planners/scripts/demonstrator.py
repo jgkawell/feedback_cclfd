@@ -2,6 +2,7 @@
 # license removed for brevity
 import rospy
 import numpy as np
+import json
 
 from std_msgs.msg import String
 from std_msgs.msg import Bool
@@ -14,8 +15,21 @@ class Demonstrator():
 
         # start pub/sub
         rospy.Subscriber("/planners/constraint_types", UInt8MultiArray, self.sample_demonstrations)
-        self.planners_pub = rospy.Publisher("/planners/demonstrations", UInt8MultiArray, queue_size=10)
-        self.lfd_pub = rospy.Publisher("/planners/perform_demonstration", String, queue_size=10)
+        self.planners_pub = rospy.Publisher("/planners/demonstrations", String, queue_size=10)
+
+        # set up client for demonstration service
+        rospy.wait_for_service("perform_demonstration")
+        try:
+            self.perform_demonstration = rospy.ServiceProxy("perform_demonstration", PerformDemonstration)
+        except rospy.ServiceException, e:
+            print("Service call failed: %s", e)
+
+        # set up client for feedback service
+        rospy.wait_for_service("request_feedback")
+        try:
+            self.request_feedback = rospy.ServiceProxy("request_feedback", RequestFeedback)
+        except rospy.ServiceException, e:
+            print("Service call failed: %s", e)
 
     def run(self):
         while(not rospy.is_shutdown()):
@@ -26,11 +40,19 @@ class Demonstrator():
 
         rospy.logwarn("DEMONSTRATOR: Sampling demonstrations...")
 
-        self.lfd_pub.publish("Do a demonstration!")
+        results = dict()
+        for constraint in constraint_types.data:
+            # perform a single demonstration
+            temp_array = [constraint]
+            self.perform_demonstration(temp_array)
 
-        array = []
-        array_msg = UInt8MultiArray(data=array)
-        self.planners_pub.publish(array_msg)
+            # request feedback about demonstration from user
+            response = self.request_feedback()
+
+            results[temp_array] = response
+
+        encoded_data_string = json.dumps(results)
+        self.planners_pub.publish(encoded_data_string)
 
 
 if __name__ == '__main__':
