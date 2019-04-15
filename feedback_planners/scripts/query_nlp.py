@@ -1,10 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 # license removed for brevity
 import rospy
 import numpy as np
 
 from std_msgs.msg import Bool
-from std_msgs.msg import UInt8MultiArray
+from rospy.numpy_msg import numpy_msg
+from feedback_planners.msg import Constraints
 
 class QueryNLP():
 
@@ -13,7 +14,7 @@ class QueryNLP():
 
         # start pub/sub
         rospy.Subscriber("/classifiers/synthesis", Bool, self.query)
-        self.constraint_types_pub = rospy.Publisher("/planners/constraint_types", UInt8MultiArray, queue_size=10)
+        self.constraint_types_pub = rospy.Publisher("/planners/constraint_types", numpy_msg(Constraints), queue_size=10)
         
 
     def run(self):
@@ -26,9 +27,8 @@ class QueryNLP():
         if val:
             rospy.logwarn("QUERY NLP: Querying user...")
 
-            array = [1, 2, 3]
-            array_msg = UInt8MultiArray(data=array)
-            self.constraint_types_pub.publish(array_msg)
+            msg = np.array([1, 2, 3], dtype=np.uint8)
+            self.constraint_types_pub.publish(msg)
 
 
 if __name__ == '__main__':

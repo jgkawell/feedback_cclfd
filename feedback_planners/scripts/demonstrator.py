@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 # license removed for brevity
 import rospy
 import numpy as np
@@ -6,7 +6,11 @@ import json
 
 from std_msgs.msg import String
 from std_msgs.msg import Bool
-from std_msgs.msg import UInt8MultiArray
+from rospy.numpy_msg import numpy_msg
+
+from feedback_planners.srv import RequestFeedback
+from feedback_planners.srv import PerformDemonstration
+from feedback_planners.msg import Constraints
 
 class Demonstrator():
 
@@ -14,40 +18,44 @@ class Demonstrator():
         rospy.init_node('demonstrator')
 
         # start pub/sub
-        rospy.Subscriber("/planners/constraint_types", UInt8MultiArray, self.sample_demonstrations)
+        rospy.Subscriber("/planners/constraint_types", numpy_msg(Constraints), self.sample_demonstrations)
         self.planners_pub = rospy.Publisher("/planners/demonstrations", String, queue_size=10)
 
         # set up client for demonstration service
         rospy.wait_for_service("perform_demonstration")
         try:
             self.perform_demonstration = rospy.ServiceProxy("perform_demonstration", PerformDemonstration)
-        except rospy.ServiceException, e:
-            print("Service call failed: %s", e)
+            rospy.logwarn("Service setup succeeded (perform_demonstration)")
+        except rospy.ServiceException:
+            rospy.logwarn("Service setup failed (perform_demonstration)")
 
         # set up client for feedback service
         rospy.wait_for_service("request_feedback")
         try:
             self.request_feedback = rospy.ServiceProxy("request_feedback", RequestFeedback)
-        except rospy.ServiceException, e:
-            print("Service call failed: %s", e)
+            rospy.logwarn("Service setup succeeded (request_feedback)")
+        except rospy.ServiceException:
+            rospy.logwarn("Service setup failed (request_feedback)")
 
     def run(self):
-        while(not rospy.is_shutdown()):
-            # keep running to check for info on sub
-            x = 0
+        rospy.spin()
 
     def sample_demonstrations(self, constraint_types):
 
         rospy.logwarn("DEMONSTRATOR: Sampling demonstrations...")
+        rospy.logwarn(type(constraint_types))
+        rospy.logwarn(type(constraint_types.data))
+
 
         results = dict()
         for constraint in constraint_types.data:
+            rospy.logwarn(type(constraint))
             # perform a single demonstration
             temp_array = [constraint]
             self.perform_demonstration(temp_array)
 
             # request feedback about demonstration from user
-            response = self.request_feedback()
+            response = self.request_feedback(True)
 
             results[temp_array] = response
 
