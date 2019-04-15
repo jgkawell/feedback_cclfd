@@ -13,7 +13,16 @@ class RequestFeedback():
 
     def handle_request_feedback(self):
         rospy.logwarn("REQUEST FEEDBACK: Requesting feedback...")
-        return True
+
+        print("Good or bad demonstration? (T/F)")
+        response = raw_input().upper()
+        print("You responded: %s", response)
+
+        feedback = False
+        if response == "T":
+            feedback = True
+
+        return feedback
 
 if __name__ == '__main__':
     try:
