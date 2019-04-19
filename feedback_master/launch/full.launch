@@ -8,9 +8,11 @@
 
     <!-- Launch planning nodes -->
     <group>
+        <node name="fake_lfd_server" pkg="feedback_planners" type="fake_lfd_server.py" />
+
         <node name="query_nlp" pkg="feedback_planners" type="query_nlp.py" />
         <node name="demonstrator" pkg="feedback_planners" type="demonstrator.py" />
-        <node name="request_feedback" pkg="feedback_planners" type="request_feedback.py" />
+        <node name="request_feedback_server" pkg="feedback_planners" type="request_feedback_server.py" output="screen" launch-prefix="gnome-terminal --command" />
     </group>
 
     <!-- Launch sensor nodes -->
