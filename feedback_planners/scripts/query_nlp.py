@@ -27,7 +27,7 @@ class QueryNLP():
         if val:
             rospy.logwarn("QUERY NLP: Querying user...")
 
-            msg = np.array([1, 2, 3], dtype=np.uint8)
+            msg = 1
             self.constraint_types_pub.publish(msg)
 
 

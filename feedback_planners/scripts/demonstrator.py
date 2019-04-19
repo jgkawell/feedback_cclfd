@@ -10,7 +10,7 @@ from rospy.numpy_msg import numpy_msg
 
 from feedback_planners.srv import RequestFeedback
 from feedback_planners.srv import PerformDemonstration
-from feedback_planners.msg import Constraints
+from feedback_planners.msg import ConstraintTypes
 
 class Demonstrator():
 
@@ -18,8 +18,8 @@ class Demonstrator():
         rospy.init_node('demonstrator')
 
         # start pub/sub
-        rospy.Subscriber("/planners/constraint_types", numpy_msg(Constraints), self.sample_demonstrations)
-        self.planners_pub = rospy.Publisher("/planners/demonstrations", String, queue_size=10)
+        rospy.Subscriber("/planners/constraint_types", numpy_msg(ConstraintTypes), self.sample_demonstrations)
+        self.demos_pub = rospy.Publisher("/planners/demonstrations", String, queue_size=10)
 
         # set up client for demonstration service
         rospy.wait_for_service("perform_demonstration")
@@ -41,26 +41,31 @@ class Demonstrator():
         rospy.spin()
 
     def sample_demonstrations(self, constraint_types):
+        num_demos = 5
+
 
         rospy.logwarn("DEMONSTRATOR: Sampling demonstrations...")
-        rospy.logwarn(type(constraint_types))
-        rospy.logwarn(type(constraint_types.data))
+        
+        cur_type = constraint_types.data
 
 
         results = dict()
-        for constraint in constraint_types.data:
-            rospy.logwarn(type(constraint))
+        for i in range(0, num_demos):
             # perform a single demonstration
-            temp_array = [constraint]
+            temp_array = [cur_type]
             self.perform_demonstration(temp_array)
 
             # request feedback about demonstration from user
             response = self.request_feedback(True)
+            key = (cur_type, i)
 
-            results[temp_array] = response
+            if response:
+                results[str(key)] = 1
+            else:
+                results[str(key)] = 0
 
         encoded_data_string = json.dumps(results)
-        self.planners_pub.publish(encoded_data_string)
+        self.demos_pub.publish(encoded_data_string)
 
 
 if __name__ == '__main__':
