@@ -5,7 +5,7 @@ import numpy as np
 
 from std_msgs.msg import Bool
 from rospy.numpy_msg import numpy_msg
-from feedback_planners.msg import Constraints
+from feedback_planners.msg import ConstraintTypes
 
 class QueryNLP():
 
@@ -14,7 +14,7 @@ class QueryNLP():
 
         # start pub/sub
         rospy.Subscriber("/classifiers/synthesis", Bool, self.query)
-        self.constraint_types_pub = rospy.Publisher("/planners/constraint_types", numpy_msg(Constraints), queue_size=10)
+        self.constraint_types_pub = rospy.Publisher("/planners/constraint_types", numpy_msg(ConstraintTypes), queue_size=10)
         
 
     def run(self):
