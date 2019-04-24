@@ -9,7 +9,6 @@
     <!-- Launch planning nodes -->
     <group>
         <node name="fake_lfd_server" pkg="feedback_planners" type="fake_lfd_server.py" />
-
         <node name="query_nlp" pkg="feedback_planners" type="query_nlp.py" />
         <node name="demonstrator" pkg="feedback_planners" type="demonstrator.py" />
         <node name="request_feedback_server" pkg="feedback_planners" type="request_feedback_server.py" output="screen" launch-prefix="gnome-terminal --command" />
@@ -19,5 +18,10 @@
     <group>
         <node name="camera" pkg="feedback_sensors" type="camera.py" />
         <node name="mocap" pkg="feedback_sensors" type="mocap.py" />
+    </group>
+
+    <!-- Sawyer -->
+    <group>
+        <node name="model_demonstrations" pkg="lfd_experiments" type="model_demonstrations_server.py" />
     </group>
 </launch>
