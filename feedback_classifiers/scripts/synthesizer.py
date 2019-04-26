@@ -24,16 +24,17 @@ def synthesizer():
     rospy.init_node('synthesizer', anonymous=True)
     rospy.Subscriber("/classifiers/face", String, callback_face)
     rospy.Subscriber("/classifiers/motion", String, callback_motion)
-    pub = rospy.Publisher('/classifiers/synthesis', Bool, queue_size=10)
+    synthesis_pub = rospy.Publisher('/classifiers/synthesis', Bool, queue_size=10)
 
-    
+    triggered = False
     while(not rospy.is_shutdown()):
-        if have_face and have_motion:
+        if have_face and have_motion and not triggered:
             rospy.logwarn("SYNTHESIZER: Synthesizing classifications...")
             have_face = False
             have_motion = False
 
-            pub.publish(True)
+            synthesis_pub.publish(True)
+            triggered = True
 
 if __name__ == '__main__':
     try:

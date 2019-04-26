@@ -22,7 +22,7 @@
     <!-- Sawyer -->
     <group>
         <!-- LfD PARAMETERS -->
-        <param name="CONFIG" type="string" value="/home/jgkawell/experimental_data/cup_pour_repair"/>
+        <param name="CONFIG" type="string" value="/home/jgkawell/sawyer_ws/src/cairo-lfd/lfd_experiments/experimental_data/cup_pour_repair/config.json"/>
         <param name="DIRECTORY" type="string" value="/home/jgkawell/sawyer_ws/src/cairo-lfd/lfd_experiments/experimental_data/cup_pour_repair/repairs/broken/labeled"/>
         <param name="BANDWIDTH" type="double" value="0.025"/>
         <param name="THRESHOLD" type="int" value="-1200"/>
