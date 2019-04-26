@@ -8,7 +8,6 @@
 
     <!-- Launch planning nodes -->
     <group>
-        <node name="fake_lfd_server" pkg="feedback_planners" type="fake_lfd_server.py" />
         <node name="query_nlp" pkg="feedback_planners" type="query_nlp.py" />
         <node name="demonstrator" pkg="feedback_planners" type="demonstrator.py" />
         <node name="request_feedback_server" pkg="feedback_planners" type="request_feedback_server.py" output="screen" launch-prefix="gnome-terminal --command" />
@@ -22,6 +21,12 @@
 
     <!-- Sawyer -->
     <group>
-        <node name="model_demonstrations" pkg="lfd_experiments" type="model_demonstrations_server.py" />
+        <!-- LfD PARAMETERS -->
+        <param name="CONFIG" type="string" value="/home/jgkawell/experimental_data/cup_pour_repair"/>
+        <param name="DIRECTORY" type="string" value="/home/jgkawell/sawyer_ws/src/cairo-lfd/lfd_experiments/experimental_data/cup_pour_repair/repairs/broken/labeled"/>
+        <param name="BANDWIDTH" type="double" value="0.025"/>
+        <param name="THRESHOLD" type="int" value="-1200"/>
+        <param name="NUMBER_OF_SAMPLES" type="int" value="50"/>
+        <node name="perform_demonstration" pkg="lfd_experiments" type="perform_demonstration_server.py" />
     </group>
 </launch>

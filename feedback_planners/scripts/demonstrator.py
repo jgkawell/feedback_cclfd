@@ -53,16 +53,17 @@ class Demonstrator():
         for i in range(0, num_demos):
             # perform a single demonstration
             temp_array = [cur_type]
-            self.perform_demonstration(temp_array)
+            finished = self.perform_demonstration(temp_array)
 
-            # request feedback about demonstration from user
-            response = self.request_feedback(True)
-            key = (cur_type, i)
+            if finished:
+                # request feedback about demonstration from user
+                response = self.request_feedback(True)
+                key = (cur_type, i)
 
-            if response:
-                results[str(key)] = 1
-            else:
-                results[str(key)] = 0
+                if response:
+                    results[str(key)] = 1
+                else:
+                    results[str(key)] = 0
 
         encoded_data_string = json.dumps(results)
         self.demos_pub.publish(encoded_data_string)
