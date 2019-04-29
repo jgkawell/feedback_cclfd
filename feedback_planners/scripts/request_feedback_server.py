@@ -16,7 +16,7 @@ class RequestFeedbackServer():
         rospy.spin()
 
     def handle_request_feedback(self, temp):
-        rospy.logwarn("REQUEST FEEDBACK: Requesting feedback...")
+        rospy.loginfo("REQUEST FEEDBACK: Requesting feedback...")
 
         print("Good or bad demonstration? (T/F)")
         response = raw_input().upper()

@@ -25,7 +25,7 @@ class Demonstrator():
         rospy.wait_for_service("perform_demonstration")
         try:
             self.perform_demonstration = rospy.ServiceProxy("perform_demonstration", PerformDemonstration)
-            rospy.logwarn("Service setup succeeded (perform_demonstration)")
+            rospy.loginfo("Service setup succeeded (perform_demonstration)")
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (perform_demonstration)")
 
@@ -33,7 +33,7 @@ class Demonstrator():
         rospy.wait_for_service("request_feedback")
         try:
             self.request_feedback = rospy.ServiceProxy("request_feedback", RequestFeedback)
-            rospy.logwarn("Service setup succeeded (request_feedback)")
+            rospy.loginfo("Service setup succeeded (request_feedback)")
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (request_feedback)")
 
@@ -44,7 +44,7 @@ class Demonstrator():
         num_demos = 5
 
 
-        rospy.logwarn("DEMONSTRATOR: Sampling demonstrations...")
+        rospy.loginfo("DEMONSTRATOR: Sampling demonstrations...")
         
         cur_type = constraint_types.data
 

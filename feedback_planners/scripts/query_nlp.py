@@ -25,7 +25,7 @@ class QueryNLP():
     def query(self, val):
 
         if val:
-            rospy.logwarn("QUERY NLP: Querying user...")
+            rospy.loginfo("QUERY NLP: Querying user...")
 
             msg = 1
             self.constraint_types_pub.publish(msg)

@@ -16,7 +16,7 @@ class FakeLfdServer():
         rospy.spin()
 
     def handle_perform_demonstration(self, constraints):
-        rospy.logwarn("FAKE LfD: Performing demonstration...")
+        rospy.loginfo("FAKE LfD: Performing demonstration...")
 
         return True
 
