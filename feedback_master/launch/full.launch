@@ -17,6 +17,7 @@
 
     <!-- Launch sensor nodes -->
     <group>
+        <param name="SHOW_CAMERA" type="string" value="False" />
         <node name="camera" pkg="feedback_sensors" type="camera.py" />
         <node name="mocap" pkg="feedback_sensors" type="mocap.py" />
     </group>
