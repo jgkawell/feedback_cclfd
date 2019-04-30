@@ -37,11 +37,13 @@ class Demonstrator():
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (request_feedback)")
 
+        rospy.loginfo("DEMONSTRATOR: Starting...")
+
     def run(self):
         rospy.spin()
 
     def sample_demonstrations(self, constraint_types):
-        num_demos = 5
+        num_demos = 2
 
 
         rospy.loginfo("DEMONSTRATOR: Sampling demonstrations...")
@@ -52,21 +54,35 @@ class Demonstrator():
         results = dict()
         for i in range(0, num_demos):
             # perform a single demonstration
-            temp_array = [cur_type]
+            temp_array = [i]
             finished = self.perform_demonstration(temp_array)
 
             if finished:
                 # request feedback about demonstration from user
-                response = self.request_feedback(True)
-                key = (cur_type, i)
+                msg = self.request_feedback(True)
+                key = i
 
-                if response:
-                    results[str(key)] = 1
+                if msg.response:
+                    rospy.loginfo("DEMONSTRATOR: Response was POSITIVE!")
+                    results[key] = 1
                 else:
-                    results[str(key)] = 0
+                    rospy.loginfo("DEMONSTRATOR: Response was NEGATIVE")
+                    results[key] = 0
 
+        # save feedback results
+        rospy.loginfo("DEMONSTRATOR: Saving feedback...")
         encoded_data_string = json.dumps(results)
         self.demos_pub.publish(encoded_data_string)
+
+        # demonstrate what has been learned
+        rospy.loginfo("DEMONSTRATOR: Showing what has been learned...")
+        for key, value in results.items():
+            if value:
+                temp_array = [key]
+                self.perform_demonstration(temp_array)
+                break
+
+        rospy.loginfo("FINISHED!!!")
 
 
 if __name__ == '__main__':

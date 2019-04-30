@@ -12,9 +12,11 @@ def camera():
 
     time.sleep(2)
 
+    rospy.loginfo("CAMERA: Starting...")
+
     while not rospy.is_shutdown():
         camera_output = "Camera time %s" % rospy.get_time()
-        rospy.logwarn("CAMERA: Publishing camera data...")
+        # rospy.logwarn("CAMERA: Publishing camera data...")
         pub.publish(camera_output)
         rate.sleep()
 

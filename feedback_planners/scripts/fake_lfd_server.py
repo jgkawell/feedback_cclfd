@@ -2,6 +2,7 @@
 # license removed for brevity
 import rospy
 import numpy as np
+import time
 
 from feedback_planners.srv import PerformDemonstration
 
@@ -13,11 +14,12 @@ class FakeLfdServer():
 
     def run(self):
         service = rospy.Service("perform_demonstration", PerformDemonstration, self.handle_perform_demonstration)
+        rospy.loginfo("FAKE LfD: Starting...")
         rospy.spin()
 
     def handle_perform_demonstration(self, constraints):
         rospy.loginfo("FAKE LfD: Performing demonstration...")
-
+        time.sleep(3)
         return True
 
 if __name__ == '__main__':

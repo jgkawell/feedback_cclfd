@@ -1,44 +1,40 @@
 <launch>
+    <!-- Launch sensor nodes -->
+    <node name="camera" pkg="feedback_sensors" type="camera.py" output="screen" />
+    <node name="mocap" pkg="feedback_sensors" type="mocap.py" output="screen" />
+
     <!-- Launch classifiers -->
-    <group>
-        <node name="face_classifier" pkg="feedback_classifiers" type="face.py" output="screen" />
-        <node name="motion_classifier" pkg="feedback_classifiers" type="motion.py" output="screen" />
-        <node name="synthesizer" pkg="feedback_classifiers" type="synthesizer.py" output="screen" />
-    </group>
+    <node name="face_classifier" pkg="feedback_classifiers" type="face.py" output="screen" />
+    <node name="motion_classifier" pkg="feedback_classifiers" type="motion.py" output="screen" />
+    <node name="synthesizer" pkg="feedback_classifiers" type="synthesizer.py" output="screen" />
 
     <!-- Launch planning nodes -->
-    <group>
-        <node name="query_nlp" pkg="feedback_planners" type="query_nlp.py" output="screen" />
-        <node name="demonstrator" pkg="feedback_planners" type="demonstrator.py" output="screen" />
-        <node name="request_feedback_server" pkg="feedback_planners" type="request_feedback_server.py" output="screen" launch-prefix="gnome-terminal --command" />
-    </group>
-
-    <!-- Launch sensor nodes -->
-    <group>
-        <node name="camera" pkg="feedback_sensors" type="camera.py" output="screen" />
-        <node name="mocap" pkg="feedback_sensors" type="mocap.py" output="screen" />
-    </group>
+    <node name="query_nlp" pkg="feedback_planners" type="query_nlp.py" output="screen" />
+    <node name="demonstrator" pkg="feedback_planners" type="demonstrator.py" output="screen" />
+    <node name="request_feedback_server" pkg="feedback_planners" type="request_feedback_server.py" output="screen" launch-prefix="gnome-terminal --command" />
 
     <!-- Sawyer -->
-    <group>
-        <!-- LfD PARAMETERS -->
-        <param name="CONFIG" type="string" value="/home/jgkawell/sawyer_ws/src/cairo-lfd/lfd_experiments/experimental_data/cup_pour_repair/config.json"/>
-        <param name="DIRECTORY" type="string" value="/home/jgkawell/sawyer_ws/src/cairo-lfd/lfd_experiments/experimental_data/cup_pour_repair/repairs/broken/labeled"/>
-        <param name="BANDWIDTH" type="double" value="0.025"/>
-        <param name="THRESHOLD" type="int" value="-1200"/>
-        <param name="NUMBER_OF_SAMPLES" type="int" value="50"/>
-        <node name="perform_demonstration" pkg="lfd_experiments" type="perform_demonstration_server.py" output="screen" />
+    <!-- Fake LfD server (for debugging) -->
+    <node name="fake_lfd_server" pkg="feedback_planners" type="fake_lfd_server.py" output="screen" />        
 
-        <arg name="electric_gripper" default="true"/>
-        <arg name="vrpn_server" default="desktop-ckithm9.local"/>
-        <node name="joint_trajectory_action_server" pkg="intera_interface" type="joint_trajectory_action_server.py" respawn="true" />
-        <include file="$(find sawyer_moveit_config)/launch/sawyer_moveit.launch">
-            <arg name="electric_gripper" value="$(arg electric_gripper)"/>
-        </include>
-        <node name="tf_visual_tools_publisher" pkg="tf_visual_tools" type="tf_visual_tools_publisher" respawn="true"/>
-        <node name="transform_lookup_service" pkg="cairo_robot_interface" type="transform_lookup_service.py" respawn="true"/>
-        <include file="$(find cairo_robot_interface)/launch/vrpn.launch">
-                <arg name="server" value="$(arg vrpn_server)"/>
-        </include>
-    </group>
+    <!-- LfD PARAMETERS -->
+    <!-- <param name="CONFIG" type="string" value="/home/jgkawell/sawyer_ws/src/cairo-lfd/lfd_experiments/experimental_data/cup_pour_repair/config.json"/> -->
+    <!-- <param name="DIRECTORY" type="string" value="/home/jgkawell/sawyer_ws/src/cairo-lfd/lfd_experiments/experimental_data/cup_pour_repair/repairs/broken/labeled"/> -->
+    <!-- <param name="BANDWIDTH" type="double" value="0.025"/> -->
+    <!-- <param name="THRESHOLD" type="int" value="-1200"/> -->
+    <!-- <param name="NUMBER_OF_SAMPLES" type="int" value="50"/> -->
+    <!-- <node name="perform_demonstration" pkg="lfd_experiments" type="perform_demonstration_server.py" output="screen" /> -->
+
+    <!-- Needed nodes and args for running Sawyer -->
+    <!-- <arg name="electric_gripper" default="true"/> -->
+    <!-- <arg name="vrpn_server" default="desktop-ckithm9.local"/> -->
+    <!-- <node name="joint_trajectory_action_server" pkg="intera_interface" type="joint_trajectory_action_server.py" respawn="true" /> -->
+    <!-- <include file="$(find sawyer_moveit_config)/launch/sawyer_moveit.launch"> -->
+        <!-- <arg name="electric_gripper" value="$(arg electric_gripper)"/> -->
+    <!-- </include> -->
+    <!-- <node name="tf_visual_tools_publisher" pkg="tf_visual_tools" type="tf_visual_tools_publisher" respawn="true"/> -->
+    <!-- <node name="transform_lookup_service" pkg="cairo_robot_interface" type="transform_lookup_service.py" respawn="true"/> -->
+    <!-- <include file="$(find cairo_robot_interface)/launch/vrpn.launch"> -->
+            <!-- <arg name="server" value="$(arg vrpn_server)"/> -->
+        <!-- </include> -->
 </launch>

@@ -12,9 +12,11 @@ def mocap():
 
     time.sleep(2)
 
+    rospy.loginfo("MOCAP: Starting...")
+
     while not rospy.is_shutdown():
         mocap_output = "MoCap time %s" % rospy.get_time()
-        rospy.logwarn("MOCAP: Publishing mocap data...")
+        # rospy.logwarn("MOCAP: Publishing mocap data...")
         pub.publish(mocap_output)
         rate.sleep()
 
