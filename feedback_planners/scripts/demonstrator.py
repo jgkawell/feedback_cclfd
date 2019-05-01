@@ -44,24 +44,17 @@ class Demonstrator():
 
     def sample_demonstrations(self, constraint_types):
         num_demos = 2
-
-
         rospy.loginfo("DEMONSTRATOR: Sampling demonstrations...")
-        
         cur_type = constraint_types.data
-
-
         results = dict()
         for i in range(0, num_demos):
             # perform a single demonstration
-            temp_array = [i]
+            temp_array = i
             finished = self.perform_demonstration(temp_array)
-
-            if finished:
+            if finished.response:
                 # request feedback about demonstration from user
                 msg = self.request_feedback(True)
                 key = i
-
                 if msg.response:
                     rospy.loginfo("DEMONSTRATOR: Response was POSITIVE!")
                     results[key] = 1
@@ -78,7 +71,7 @@ class Demonstrator():
         rospy.loginfo("DEMONSTRATOR: Showing what has been learned...")
         for key, value in results.items():
             if value:
-                temp_array = [key]
+                temp_array = key
                 self.perform_demonstration(temp_array)
                 break
 
