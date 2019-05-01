@@ -15,8 +15,8 @@ def camera():
 
     while not rospy.is_shutdown():
         camera_output = "Camera time %s" % rospy.get_time()
-        rospy.logwarn("CAMERA: Publishing camera data...")
         SHOW_CAMERA = rospy.get_param("SHOW_CAMERA")
+        # SHOW_CAMERA = True
         while(True):
             # Capture frame-by-frame
             ret, frame = cap.read()
@@ -24,8 +24,11 @@ def camera():
             # Display the resulting frame
             if SHOW_CAMERA:
                 cv2.imshow('input-camera.py',frame)
-            
-            pub.publish(bridge.cv2_to_imgmsg(frame,"bgr8"))
+            try:
+                pub.publish(bridge.cv2_to_imgmsg(frame,"bgr8"))
+                rospy.logwarn("CAMERA: Image Published...")
+            except e:
+                print str(e)    
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
