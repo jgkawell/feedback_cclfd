@@ -1,9 +1,11 @@
 <launch>
     <!-- Launch sensor nodes -->
+    <param name="SHOW_CAMERA" type="bool" value="False" />
     <node name="camera" pkg="feedback_sensors" type="camera.py" output="screen" />
     <node name="mocap" pkg="feedback_sensors" type="mocap.py" output="screen" />
 
     <!-- Launch classifiers -->
+    <param name="SHOW_FACE" type="bool" value="False" />
     <node name="face_classifier" pkg="feedback_classifiers" type="face.py" output="screen" />
     <node name="motion_classifier" pkg="feedback_classifiers" type="motion.py" output="screen" />
     <node name="synthesizer" pkg="feedback_classifiers" type="synthesizer.py" output="screen" />
