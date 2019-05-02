@@ -4,10 +4,11 @@ import rospy
 import time
 from std_msgs.msg import Float32
 from lfd.items import StaticObject
+
 def mocap():
     rospy.init_node('mocap', anonymous=True)
     pub = rospy.Publisher('/sensors/mocap', Float32, queue_size=10)
-    rate = rospy.Rate(0.1) # 10hz
+    rate = rospy.Rate(1) 
     left_hand = StaticObject(1, "left_hand", None, "world", "left_hand")
 
     rospy.loginfo("MOCAP: Starting...")
@@ -15,6 +16,7 @@ def mocap():
     while not rospy.is_shutdown():
         rospy.loginfo("MOCAP: Publishing mocap data...")
         z = left_hand.get_state()['position'][2]
+        z = round(z, 4)
         pub.publish(z)
         rate.sleep()
 

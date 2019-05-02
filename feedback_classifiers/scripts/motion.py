@@ -4,21 +4,39 @@ import rospy
 from std_msgs.msg import Bool
 from std_msgs.msg import Float32
 
-pub = rospy.Publisher('/classifiers/motion', Bool, queue_size=10)
+class motion():
+    def __init__(self):
+        rospy.init_node('motion', anonymous=True)
+        self.pub = rospy.Publisher('/classifiers/motion', Bool, queue_size=10)
+        rospy.Subscriber("/sensors/mocap", Float32, self.callback)
+        self.start = True
+        self.pivot = 0
+        self.state = True
 
-def callback(data):
-    # rospy.logwarn("MOTION: I heard %s", data.data)
-    # rospy.logwarn("MOTION: Classifying data...")
-    pub.publish(data.data)
+    def callback(self, data):
+    
+        rospy.logwarn("MOTION: I heard %s", data.data)
+        z=data.data
 
-def motion():
-    rospy.init_node('motion', anonymous=True)
-    rospy.Subscriber("/sensors/mocap", Float32, callback)
-    rospy.loginfo("MOTION: Starting...")
-    rospy.spin()
+        if(self.start==True):
+            self.pivot = z 
+            self.start=False
+            
+        print("z: ",z)
+        print("pivot: ", self.pivot)
+
+        rospy.logwarn("MOTION: Classifying data...")
+        if(z<self.pivot-0.0300):
+            print("Out of bounds")
+            self.state = False
+        else:
+            self.state = True
+        
+        self.pub.publish(self.state)
     
 if __name__ == '__main__':
     try:
-        motion()
+        obj = motion()
+        rospy.spin()
     except rospy.ROSInterruptException:
         pass
