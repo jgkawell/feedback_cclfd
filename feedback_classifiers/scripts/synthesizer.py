@@ -4,37 +4,35 @@ import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Bool
 
-have_face = False
-have_motion = False
+face_label = True
+motion_label = True
 
 def callback_face(data):
-    global have_face
+    global face_label
     # rospy.logwarn("SYNTHESIZER: I heard %s", data.data)
-    have_face = True
+    face_label = data
 
 def callback_motion(data):
-    global have_motion
+    global motion_label
     # rospy.logwarn("SYNTHESIZER: I heard %s", data.data)
-    have_motion = True
+    motion_label = data
 
 def synthesizer():
-    global have_face
-    global have_motion
+    global face_label
+    global motion_label
 
     rospy.init_node('synthesizer', anonymous=True)
-    rospy.Subscriber("/classifiers/face", String, callback_face)
-    rospy.Subscriber("/classifiers/motion", String, callback_motion)
+    rospy.Subscriber("/classifiers/face", Bool, callback_face)
+    rospy.Subscriber("/classifiers/motion", Bool, callback_motion)
     synthesis_pub = rospy.Publisher('/classifiers/synthesis', Bool, queue_size=10)
     
     rospy.loginfo("SYNTHESIZER: Starting...")
 
     triggered = False
     while(not rospy.is_shutdown()):
-        if have_face and have_motion and not triggered:
-            rospy.loginfo("SYNTHESIZER: Synthesizing classifications...")
-            have_face = False
-            have_motion = False
-
+        # if the face is negative or the motion is negative, trigger training
+        if not face_label or not motion_label and not triggered:
+            rospy.loginfo("SYNTHESIZER: Recognized a negative response!")
             synthesis_pub.publish(True)
             triggered = True
 

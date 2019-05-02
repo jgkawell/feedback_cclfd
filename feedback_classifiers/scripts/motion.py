@@ -14,20 +14,12 @@ class motion():
         self.state = True
 
     def callback(self, data):
-    
-        rospy.logwarn("MOTION: I heard %s", data.data)
         z=data.data
-
         if(self.start==True):
             self.pivot = z 
             self.start=False
             
-        print("z: ",z)
-        print("pivot: ", self.pivot)
-
-        rospy.logwarn("MOTION: Classifying data...")
         if(z<self.pivot-0.0300):
-            print("Out of bounds")
             self.state = False
         else:
             self.state = True

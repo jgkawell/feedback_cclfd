@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.7
 # license removed for brevity
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import Bool
 from sensor_msgs.msg import Image
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
@@ -30,7 +30,7 @@ class face():
 
         self.bridge = CvBridge()
         self.image_sub = rospy.Subscriber("/sensors/camera", Image, self.callback)
-        self.image_pub = rospy.Publisher('/classifiers/face', String, queue_size=10)
+        self.image_pub = rospy.Publisher('/classifiers/face', Bool, queue_size=10)
 
         self.SHOW_FACE = rospy.get_param("SHOW_FACE")
 
@@ -62,7 +62,17 @@ class face():
                     prev_emotion = emotion
                     self.emot={0:0,1:0}
                     cv2.putText(full_size_image, labels[emotion], (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 1, cv2.LINE_AA)
-                    self.image_pub.publish(labels[emotion])
+
+                    classification = labels[emotion]
+                    msg = True
+                    if classification == "Negative":
+                        msg = False
+                    elif classification == "Neutral":
+                        msg = True
+                    else:
+                        rospy.logwarn("CAMERA: Bad label!!!")
+                        
+                    self.image_pub.publish(msg)
                 else:
                     cv2.putText(full_size_image, labels[prev_emotion], (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 1, cv2.LINE_AA)
 
