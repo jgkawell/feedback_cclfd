@@ -7,13 +7,14 @@ from std_msgs.msg import String
 pub = rospy.Publisher('/classifiers/motion', String, queue_size=10)
 
 def callback(data):
-    rospy.logwarn("MOTION: I heard %s", data.data)
-    rospy.logwarn("MOTION: Classifying data...")
+    # rospy.logwarn("MOTION: I heard %s", data.data)
+    # rospy.logwarn("MOTION: Classifying data...")
     pub.publish(data.data)
 
 def motion():
     rospy.init_node('motion', anonymous=True)
     rospy.Subscriber("/sensors/mocap", String, callback)
+    rospy.loginfo("MOTION: Starting...")
     rospy.spin()
     
 if __name__ == '__main__':

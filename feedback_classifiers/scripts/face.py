@@ -12,7 +12,7 @@ import os
 import numpy as np
 
 class face():
-
+  
     def __init__(self):
         rospy.init_node('face', anonymous=True)
         #loading the model
@@ -79,9 +79,6 @@ class face():
         cv2.imshow('output-face',full_size_image)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
-
-    
-    
     
 if __name__ == '__main__':
     try:

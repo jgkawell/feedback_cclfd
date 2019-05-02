@@ -13,6 +13,8 @@ def camera():
     bridge = CvBridge()
     pub = rospy.Publisher('/sensors/camera', Image,queue_size=10)
 
+    rospy.loginfo("CAMERA: Starting...")
+
     while not rospy.is_shutdown():
         camera_output = "Camera time %s" % rospy.get_time()
         SHOW_CAMERA = rospy.get_param("SHOW_CAMERA")

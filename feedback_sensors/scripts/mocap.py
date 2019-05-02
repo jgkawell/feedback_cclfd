@@ -10,6 +10,8 @@ def mocap():
     rate = rospy.Rate(0.1) # 10hz
     left_hand = StaticObject(1, "left_hand", None, "world", "left_hand")
 
+    rospy.loginfo("MOCAP: Starting...")
+
     while not rospy.is_shutdown():
         rospy.loginfo("MOCAP: Publishing mocap data...")
         z = left_hand.get_state()['position'][2]

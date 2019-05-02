@@ -25,7 +25,7 @@ class Demonstrator():
         rospy.wait_for_service("perform_demonstration")
         try:
             self.perform_demonstration = rospy.ServiceProxy("perform_demonstration", PerformDemonstration)
-            rospy.logwarn("Service setup succeeded (perform_demonstration)")
+            rospy.loginfo("Service setup succeeded (perform_demonstration)")
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (perform_demonstration)")
 
@@ -33,39 +33,49 @@ class Demonstrator():
         rospy.wait_for_service("request_feedback")
         try:
             self.request_feedback = rospy.ServiceProxy("request_feedback", RequestFeedback)
-            rospy.logwarn("Service setup succeeded (request_feedback)")
+            rospy.loginfo("Service setup succeeded (request_feedback)")
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (request_feedback)")
+
+        rospy.loginfo("DEMONSTRATOR: Starting...")
 
     def run(self):
         rospy.spin()
 
     def sample_demonstrations(self, constraint_types):
-        num_demos = 5
-
-
-        rospy.logwarn("DEMONSTRATOR: Sampling demonstrations...")
-        
+        num_demos = 2
+        rospy.loginfo("DEMONSTRATOR: Sampling demonstrations...")
         cur_type = constraint_types.data
-
-
         results = dict()
         for i in range(0, num_demos):
             # perform a single demonstration
-            temp_array = [cur_type]
-            self.perform_demonstration(temp_array)
+            temp_array = i
+            finished = self.perform_demonstration(temp_array)
+            if finished.response:
+                # request feedback about demonstration from user
+                msg = self.request_feedback(True)
+                key = i
+                if msg.response:
+                    rospy.loginfo("DEMONSTRATOR: Response was POSITIVE!")
+                    results[key] = 1
+                else:
+                    rospy.loginfo("DEMONSTRATOR: Response was NEGATIVE")
+                    results[key] = 0
 
-            # request feedback about demonstration from user
-            response = self.request_feedback(True)
-            key = (cur_type, i)
-
-            if response:
-                results[str(key)] = 1
-            else:
-                results[str(key)] = 0
-
+        # save feedback results
+        rospy.loginfo("DEMONSTRATOR: Saving feedback...")
         encoded_data_string = json.dumps(results)
         self.demos_pub.publish(encoded_data_string)
+
+        # demonstrate what has been learned
+        rospy.loginfo("DEMONSTRATOR: Showing what has been learned...")
+        for key, value in results.items():
+            if value:
+                temp_array = key
+                self.perform_demonstration(temp_array)
+                break
+
+        rospy.loginfo("FINISHED!!!")
 
 
 if __name__ == '__main__':
