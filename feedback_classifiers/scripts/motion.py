@@ -20,6 +20,7 @@ class motion():
             self.start=False
             
         if(z<self.pivot-0.0300):
+            rospy.logwarn("OUT OF BOUNDSs")
             self.state = False
         else:
             self.state = True
