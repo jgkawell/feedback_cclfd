@@ -15,7 +15,7 @@
 
     <!-- Sawyer -->
     <!-- Fake LfD server (for debugging) -->
-    <node name="fake_lfd_server" pkg="feedback_planners" type="fake_lfd_server.py" output="screen" />        
+    <!-- <node name="fake_lfd_server" pkg="feedback_planners" type="fake_lfd_server.py" output="screen" />         -->
 
     <!-- LfD PARAMETERS -->
     <param name="CONFIG" type="string" value="/home/jgkawell/sawyer_ws/src/cairo-lfd/lfd_experiments/experimental_data/feedback_demo/config.json"/>
