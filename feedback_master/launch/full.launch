@@ -1,4 +1,5 @@
 <launch>
+    <!-- Transform between the world and optitrack -->
     <node name="transform" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 world optitrack_world 100" />
 
     <!-- Launch sensor nodes -->
@@ -8,6 +9,7 @@
 
     <!-- Launch classifiers -->
     <param name="SHOW_FACE" type="bool" value="False" />
+    <param name="FACE_CONFIG" type="string" value="$(find feedback_classifiers)/config"/>
     <node name="face_classifier" pkg="feedback_classifiers" type="face.py" output="screen" />
     <node name="motion_classifier" pkg="feedback_classifiers" type="motion.py" output="screen" />
     <node name="synthesizer" pkg="feedback_classifiers" type="synthesizer.py" output="screen" />
@@ -17,30 +19,16 @@
     <node name="demonstrator" pkg="feedback_planners" type="demonstrator.py" output="screen" />
     <node name="request_feedback_server" pkg="feedback_planners" type="request_feedback_server.py" output="screen" launch-prefix="gnome-terminal --command" />
 
-    <!-- Sawyer -->
     <!-- Fake LfD server (for debugging) -->
+    <!-- Uncomment the below node and comment over all the CC-LfD params to run without Sawyer -->
     <!-- <node name="fake_lfd_server" pkg="feedback_planners" type="fake_lfd_server.py" output="screen" />         -->
 
-    <!-- LfD PARAMETERS -->
-    <param name="CONFIG" type="string" value="/home/jgkawell/sawyer_ws/src/cairo-lfd/lfd_experiments/experimental_data/feedback_demo/config.json"/>
-    <param name="POS_DIRECTORY" type="string" value="/home/jgkawell/sawyer_ws/src/cairo-lfd/lfd_experiments/experimental_data/feedback_demo/positive/labeled"/>
-    <param name="NEG_DIRECTORY" type="string" value="/home/jgkawell/sawyer_ws/src/cairo-lfd/lfd_experiments/experimental_data/feedback_demo/negative/labeled"/>
+    <!-- CC-LfD PARAMETERS -->
+    <param name="CONFIG" type="string" value="$(find lfd_experiments)/experimental_data/feedback_demo/config.json"/>
+    <param name="POS_DIRECTORY" type="string" value="$(find lfd_experiments)/experimental_data/feedback_demo/positive/labeled"/>
+    <param name="NEG_DIRECTORY" type="string" value="$(find lfd_experiments)/experimental_data/feedback_demo/negative/labeled"/>
     <param name="BANDWIDTH" type="double" value="0.025"/>
     <param name="THRESHOLD" type="int" value="-1200"/>
     <param name="NUMBER_OF_SAMPLES" type="int" value="50"/>
     <node name="perform_demonstration" pkg="lfd_experiments" type="perform_demonstration_server.py" output="screen" />
-
-
-    <!-- Needed nodes and args for running Sawyer -->
-    <!-- <arg name="electric_gripper" default="true"/> -->
-    <!-- <arg name="vrpn_server" default="desktop-ckithm9.local"/> -->
-    <!-- <node name="joint_trajectory_action_server" pkg="intera_interface" type="joint_trajectory_action_server.py" respawn="true" /> -->
-    <!-- <include file="$(find sawyer_moveit_config)/launch/sawyer_moveit.launch"> -->
-        <!-- <arg name="electric_gripper" value="$(arg electric_gripper)"/> -->
-    <!-- </include> -->
-    <!-- <node name="tf_visual_tools_publisher" pkg="tf_visual_tools" type="tf_visual_tools_publisher" respawn="true"/> -->
-    <!-- <node name="transform_lookup_service" pkg="cairo_robot_interface" type="transform_lookup_service.py" respawn="true"/> -->
-    <!-- <include file="$(find cairo_robot_interface)/launch/vrpn.launch"> -->
-            <!-- <arg name="server" value="$(arg vrpn_server)"/> -->
-    <!-- </include> -->
 </launch>

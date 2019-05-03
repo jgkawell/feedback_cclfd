@@ -15,8 +15,9 @@ class face():
   
     def __init__(self):
         rospy.init_node('face', anonymous=True)
+        config_dir = rospy.get_param("FACE_CONFIG")
         #loading the model
-        self.json_file = open('/home/justabeardo/catkin_ws/fer.json', 'r')
+        self.json_file = open(config_dir + '/fer.json', 'r')
         self.loaded_model_json = self.json_file.read()
         self.json_file.close()
         self.loaded_model = model_from_json(self.loaded_model_json)
@@ -24,7 +25,7 @@ class face():
         self.counter =0
         self.emot ={0:0,1:0}
         # load weights into new model
-        self. loaded_model.load_weights("/home/justabeardo/catkin_ws/fer.h5")
+        self. loaded_model.load_weights(config_dir + "/fer.h5")
 
         rospy.loginfo("Loaded model from disk")
 
@@ -45,7 +46,7 @@ class face():
             print(e)
             
         gray = cv2.cvtColor(full_size_image, cv2.COLOR_BGR2GRAY)
-        face = cv2.CascadeClassifier('/home/justabeardo/catkin_ws/haarcascade_frontalface_default.xml')
+        face = cv2.CascadeClassifier(config_dir + 'haarcascade_frontalface_default.xml')
         faces = face.detectMultiScale(gray, 1.3  , 10)
         for (x, y, w, h) in faces:
             roi_gray = gray[y:y + h, x:x + w]
