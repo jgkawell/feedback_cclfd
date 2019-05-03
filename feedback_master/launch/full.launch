@@ -1,4 +1,6 @@
 <launch>
+    <node name="transform" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 world optitrack_world 100" />
+
     <!-- Launch sensor nodes -->
     <param name="SHOW_CAMERA" type="bool" value="False" />
     <node name="camera" pkg="feedback_sensors" type="camera.py" output="screen" />
@@ -28,16 +30,17 @@
     <param name="NUMBER_OF_SAMPLES" type="int" value="50"/>
     <node name="perform_demonstration" pkg="lfd_experiments" type="perform_demonstration_server.py" output="screen" />
 
+
     <!-- Needed nodes and args for running Sawyer -->
-    <arg name="electric_gripper" default="true"/>
-    <arg name="vrpn_server" default="desktop-ckithm9.local"/>
-    <node name="joint_trajectory_action_server" pkg="intera_interface" type="joint_trajectory_action_server.py" respawn="true" />
-    <include file="$(find sawyer_moveit_config)/launch/sawyer_moveit.launch">
-        <arg name="electric_gripper" value="$(arg electric_gripper)"/>
-    </include>
-    <node name="tf_visual_tools_publisher" pkg="tf_visual_tools" type="tf_visual_tools_publisher" respawn="true"/>
-    <node name="transform_lookup_service" pkg="cairo_robot_interface" type="transform_lookup_service.py" respawn="true"/>
-    <include file="$(find cairo_robot_interface)/launch/vrpn.launch">
-            <arg name="server" value="$(arg vrpn_server)"/>
-    </include>
+    <!-- <arg name="electric_gripper" default="true"/> -->
+    <!-- <arg name="vrpn_server" default="desktop-ckithm9.local"/> -->
+    <!-- <node name="joint_trajectory_action_server" pkg="intera_interface" type="joint_trajectory_action_server.py" respawn="true" /> -->
+    <!-- <include file="$(find sawyer_moveit_config)/launch/sawyer_moveit.launch"> -->
+        <!-- <arg name="electric_gripper" value="$(arg electric_gripper)"/> -->
+    <!-- </include> -->
+    <!-- <node name="tf_visual_tools_publisher" pkg="tf_visual_tools" type="tf_visual_tools_publisher" respawn="true"/> -->
+    <!-- <node name="transform_lookup_service" pkg="cairo_robot_interface" type="transform_lookup_service.py" respawn="true"/> -->
+    <!-- <include file="$(find cairo_robot_interface)/launch/vrpn.launch"> -->
+            <!-- <arg name="server" value="$(arg vrpn_server)"/> -->
+    <!-- </include> -->
 </launch>
