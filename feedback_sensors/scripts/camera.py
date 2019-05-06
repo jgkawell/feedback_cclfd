@@ -8,37 +8,37 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
 def camera():
-    #node initialized
+    # node initialized
     rospy.init_node('camera', anonymous=True)
 
-    #object for video input
+    # object for video input
     cap = cv2.VideoCapture(0)
-    #object to convert cv2 image to ROS image message
+    # object to convert cv2 image to ROS image message
     bridge = CvBridge()
-    #publisher initialized
+    # publisher initialized
     pub = rospy.Publisher('/sensors/camera', Image,queue_size=10)
 
     rospy.loginfo("CAMERA: Starting...")
+    SHOW_CAMERA = rospy.get_param("SHOW_CAMERA")
 
     while not rospy.is_shutdown():
-        SHOW_CAMERA = rospy.get_param("SHOW_CAMERA")
         while(True):
             # Capture frame-by-frame
             ret, frame = cap.read()
     
-            # Display the resulting frame
+            # display the resulting frame
             if SHOW_CAMERA:
                 cv2.imshow('input-camera.py',frame)
             try:
-                #publishing image message
+                # publishing image message
                 pub.publish(bridge.cv2_to_imgmsg(frame,"bgr8"))
             except e:
-                print(str(e))    
-                #quitting if 'q'/'Q' key is pressed
+                rospy.logerr(str(e))    
+                # quitting if 'q'/'Q' key is pressed
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
-        # When everything done, release the capture
+        # when everything done, release the capture
         cap.release()
         cv2.destroyAllWindows()
 

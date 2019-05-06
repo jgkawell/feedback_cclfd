@@ -9,18 +9,17 @@ motion_label = True
 
 def callback_face(data):
     global face_label
-    # rospy.logwarn("SYNTHESIZER: I heard %s", data.data)
     face_label = data.data
 
 def callback_motion(data):
     global motion_label
-    # rospy.logwarn("SYNTHESIZER: I heard %s", data.data)
     motion_label = data.data
 
 def synthesizer():
     global face_label
     global motion_label
 
+    # initialize pub/sub
     rospy.init_node('synthesizer', anonymous=True)
     rospy.Subscriber("/classifiers/face", Bool, callback_face)
     rospy.Subscriber("/classifiers/motion", Bool, callback_motion)
@@ -30,7 +29,7 @@ def synthesizer():
 
     triggered = False
     while(not rospy.is_shutdown()):
-        # if the face is negative or the motion is negative, trigger training
+        # if the face is negative or the motion is negative, trigger skill repair
         if (not face_label or not motion_label) and not triggered:
             rospy.loginfo("SYNTHESIZER: Recognized a negative response!")
             synthesis_pub.publish(True)
