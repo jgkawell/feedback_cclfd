@@ -45,12 +45,13 @@ class Demonstrator():
         # perform a bad demo to start
         finished = self.perform_demonstration(0) # 0 = negative
 
-        if finished:
+        if finished.response:
             self.finished_first_demo = True
 
         rospy.spin()
 
     def sample_demonstrations(self, constraint_types):
+        # run until complete
         while True:
             # don't perform alternative demos until first is finished
             if self.finished_first_demo:
@@ -85,7 +86,6 @@ class Demonstrator():
                         temp_array = key
                         self.perform_demonstration(temp_array)
                         break
-
                 break
             else:
                 # wait a second

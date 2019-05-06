@@ -13,11 +13,13 @@ class FakeLfdServer():
         rospy.init_node('perform_demonstration_server')
 
     def run(self):
+        # setup service
         service = rospy.Service("perform_demonstration", PerformDemonstration, self.handle_perform_demonstration)
         rospy.loginfo("FAKE LfD: Starting...")
         rospy.spin()
 
     def handle_perform_demonstration(self, constraints):
+        # log and then sleep to simulate demonstration being performed
         rospy.loginfo("FAKE LfD: Performing demonstration...")
         time.sleep(3)
         return True

@@ -12,16 +12,19 @@ class RequestFeedbackServer():
         rospy.init_node('request_feedback_server')
 
     def run(self):
+        # setup service
         service = rospy.Service("request_feedback", RequestFeedback, self.handle_request_feedback)
         rospy.spin()
 
     def handle_request_feedback(self, temp):
         rospy.loginfo("REQUEST FEEDBACK: Requesting feedback...")
 
+        # request feedback from user (this is done with keyboard input for now)
         print("Good or bad demonstration? (T/F)")
         response = raw_input().upper()
         print("You responded: %s", response)
 
+        # convert string feedback to boolean
         feedback = False
         if response == "T":
             feedback = True
