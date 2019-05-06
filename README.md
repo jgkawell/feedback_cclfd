@@ -11,7 +11,7 @@ Application: A collaborative human-robot task where the robot performs task via 
 2. Create a catkin workspace
 3. Clone this repo into `<catkin_ws>/src`
 4. Also clone the `master` branch of CAIRO LfD (https://github.com/cairo-robotics/cairo-lfd) as well as all of it's requirements
-5. Run `catkin_make` within the root of your workspace
+5. Run `catkin_make install` within the root of your workspace
 6. Run `roslaunch lfd_experiments cairo_lfd.launch` to start all of the necessary services for the CC-LfD system
 7. Run `roslaunch feedback_master full.launch` to start the feedback process
 
