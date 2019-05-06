@@ -6,6 +6,7 @@ from std_msgs.msg import Float32
 
 class motion():
     def __init__(self):
+        #initializing the node
         rospy.init_node('motion', anonymous=True)
         self.pub = rospy.Publisher('/classifiers/motion', Bool, queue_size=10)
         rospy.Subscriber("/sensors/mocap", Float32, self.callback)
@@ -15,10 +16,12 @@ class motion():
 
     def callback(self, data):
         z=data.data
+        #setting the pivot
         if(self.start==True):
             self.pivot = z 
             self.start=False
-            
+        
+        #setting the bounding region and checking if the hand goes out of bound and publishing it to the synthesizer
         if(z<self.pivot-0.0300):
             rospy.logwarn("OUT OF BOUNDSs")
             self.state = False
