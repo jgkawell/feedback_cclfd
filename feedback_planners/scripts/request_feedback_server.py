@@ -13,7 +13,7 @@ class RequestFeedbackServer():
 
     def run(self):
         # setup service
-        service = rospy.Service("request_feedback", RequestFeedback, self.handle_request_feedback)
+        rospy.Service("request_feedback", RequestFeedback, self.handle_request_feedback)
         rospy.spin()
 
     def handle_request_feedback(self, temp):
