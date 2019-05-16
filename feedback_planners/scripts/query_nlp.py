@@ -7,6 +7,7 @@ from std_msgs.msg import Bool
 from rospy.numpy_msg import numpy_msg
 from feedback_planners.msg import ConstraintTypes
 
+""" This class queries the user for a plain English explanation about what the robot did wrong. """
 class QueryNLP():
 
     def __init__(self):
@@ -23,6 +24,11 @@ class QueryNLP():
             x = 0
 
     def query(self, val):
+
+        # TODO: Replace this with a speech-to-text listener
+        
+        # TODO: Add in a component that extracts constraint features from human's response
+
         if val:
             rospy.loginfo("QUERY NLP: Querying user...")
             msg = 1

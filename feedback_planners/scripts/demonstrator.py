@@ -13,6 +13,7 @@ from feedback_planners.srv import RequestFeedback
 from feedback_planners.srv import PerformDemonstration
 from feedback_planners.msg import ConstraintTypes
 
+""" This class is responsible for sampling constraints and demonstrating them to the user for feedback. """
 class Demonstrator():
 
     def __init__(self):

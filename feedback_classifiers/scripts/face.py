@@ -11,6 +11,7 @@ from keras.models import model_from_json
 import os
 import numpy as np
 
+""" This class classifies the affect of the human's face. """
 class face():
   
     def __init__(self):

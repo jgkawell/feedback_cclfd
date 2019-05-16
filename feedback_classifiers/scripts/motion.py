@@ -4,6 +4,7 @@ import rospy
 from std_msgs.msg import Bool
 from std_msgs.msg import Float32
 
+""" This class classifies the position of the tracked object (human's hand or head, etc.). """
 class motion():
     def __init__(self):
         # initialize the node

@@ -29,6 +29,8 @@ def synthesizer():
 
     triggered = False
     while(not rospy.is_shutdown()):
+
+        # TODO: Replace this with a weighted sum based on confidence levels
         # if the face is negative or the motion is negative, trigger skill repair
         if (not face_label or not motion_label) and not triggered:
             rospy.loginfo("SYNTHESIZER: Recognized a negative response!")

@@ -6,7 +6,7 @@ import time
 
 from feedback_planners.srv import PerformDemonstration
 
-
+""" This class is simply for debugging. If you want to work on the system separate from Sawyer you can run this instead. """
 class FakeLfdServer():
 
     def __init__(self):
@@ -14,7 +14,7 @@ class FakeLfdServer():
 
     def run(self):
         # setup service
-        service = rospy.Service("perform_demonstration", PerformDemonstration, self.handle_perform_demonstration)
+        rospy.Service("perform_demonstration", PerformDemonstration, self.handle_perform_demonstration)
         rospy.loginfo("FAKE LfD: Starting...")
         rospy.spin()
 

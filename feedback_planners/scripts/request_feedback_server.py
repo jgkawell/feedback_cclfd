@@ -5,7 +5,7 @@ import numpy as np
 
 from feedback_planners.srv import RequestFeedback
 
-
+""" This class requests simple postive/negative feedback from the user after each demonstration. """
 class RequestFeedbackServer():
 
     def __init__(self):
@@ -19,11 +19,14 @@ class RequestFeedbackServer():
     def handle_request_feedback(self, temp):
         rospy.loginfo("REQUEST FEEDBACK: Requesting feedback...")
 
+
+        # TODO: Replace this with a speech-to-text listener
         # request feedback from user (this is done with keyboard input for now)
         print("Good or bad demonstration? (T/F)")
         response = raw_input().upper()
         print("You responded: %s", response)
 
+        # TODO: Replace this with a positive/negative classifier
         # convert string feedback to boolean
         feedback = False
         if response == "T":
