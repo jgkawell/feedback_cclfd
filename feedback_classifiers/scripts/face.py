@@ -83,6 +83,7 @@ class face():
                     else:
                         rospy.logwarn("CAMERA: Bad label!!!")
                         
+                    # TODO: Return the classification and some confidence value in the classification                    
                     self.image_pub.publish(msg)
                 else:
                     cv2.putText(full_size_image, labels[prev_emotion], (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 1, cv2.LINE_AA)
