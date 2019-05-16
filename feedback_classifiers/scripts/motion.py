@@ -17,19 +17,22 @@ class motion():
         self.state = True
 
     def callback(self, data):
-        z=data.data
+        # extract message data
+        z = data.data
+
         # setting the pivot
-        if(self.start==True):
-            self.pivot = z 
-            self.start=False
+        if self.start:
+            self.pivot = z
+            self.start = False
         
         # setting the bounding region and checking if the hand goes out of bound and publishing it to the synthesizer
-        if(z<self.pivot-0.0300):
+        if z < self.pivot - 0.0300:
             rospy.logwarn("OUT OF BOUNDSs")
             self.state = False
         else:
             self.state = True
         
+        # TODO: Return the classification and some confidence value in the classification
         self.pub.publish(self.state)
     
 if __name__ == '__main__':

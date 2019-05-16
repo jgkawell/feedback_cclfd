@@ -33,7 +33,7 @@ def camera():
             try:
                 # publishing image message
                 pub.publish(bridge.cv2_to_imgmsg(frame,"bgr8"))
-            except e:
+            except Exception as e:
                 rospy.logerr(str(e))    
                 # quitting if 'q'/'Q' key is pressed
             if cv2.waitKey(1) & 0xFF == ord('q'):
