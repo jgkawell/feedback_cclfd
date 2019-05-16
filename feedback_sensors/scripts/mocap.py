@@ -5,6 +5,7 @@ import time
 from std_msgs.msg import Float32
 from lfd.items import StaticObject
 
+""" This scrip simply reads in mocap data and publishes it as a ROS message. """
 def mocap():
     # node is initialized
     rospy.init_node('mocap', anonymous=True)

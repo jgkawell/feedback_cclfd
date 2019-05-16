@@ -7,6 +7,7 @@ from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
+""" This script simply reads in camera data and publishes it as a ROS message. """
 def camera():
     # node initialized
     rospy.init_node('camera', anonymous=True)
