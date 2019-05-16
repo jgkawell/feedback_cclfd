@@ -17,8 +17,8 @@ class motion():
         self.state = True
 
     def callback(self, data):
-        # extract message data
-        z = data.data
+        # extract z value from message data
+        z = round(data.data[2], 4)
 
         # setting the pivot
         if self.start:
