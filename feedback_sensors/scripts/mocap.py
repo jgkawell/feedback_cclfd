@@ -6,7 +6,10 @@ from std_msgs.msg import Float32
 from geometry_msgs.msg import Pose
 from lfd.items import StaticObject
 
-""" This scrip simply reads in mocap data and publishes it as a ROS message. """
+""" This scrip simply reads in mocap data and publishes
+    it as a ROS message. """
+
+
 def mocap():
     # node is initialized
     rospy.init_node('mocap', anonymous=True)
@@ -25,6 +28,7 @@ def mocap():
         hand_pose.orientation = left_hand.get_state()['orientation']
         pub.publish(hand_pose)
         rate.sleep()
+
 
 if __name__ == '__main__':
     try:

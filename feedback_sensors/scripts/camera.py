@@ -7,7 +7,10 @@ from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
-""" This script simply reads in camera data and publishes it as a ROS message. """
+""" This script simply reads in camera data and
+    publishes it as a ROS message. """
+
+
 def camera():
     # node initialized
     rospy.init_node('camera', anonymous=True)
@@ -17,7 +20,7 @@ def camera():
     # object to convert cv2 image to ROS image message
     bridge = CvBridge()
     # publisher initialized
-    pub = rospy.Publisher('/sensors/camera', Image,queue_size=10)
+    pub = rospy.Publisher('/sensors/camera', Image, queue_size=10)
 
     rospy.loginfo("CAMERA: Starting...")
     SHOW_CAMERA = rospy.get_param("SHOW_CAMERA")
@@ -26,15 +29,15 @@ def camera():
         while(True):
             # Capture frame-by-frame
             ret, frame = cap.read()
-    
+
             # display the resulting frame
             if SHOW_CAMERA:
-                cv2.imshow('input-camera.py',frame)
+                cv2.imshow('input-camera.py', frame)
             try:
                 # publishing image message
-                pub.publish(bridge.cv2_to_imgmsg(frame,"bgr8"))
+                pub.publish(bridge.cv2_to_imgmsg(frame, "bgr8"))
             except Exception as e:
-                rospy.logerr(str(e))    
+                rospy.logerr(str(e))
                 # quitting if 'q'/'Q' key is pressed
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
@@ -43,10 +46,9 @@ def camera():
         cap.release()
         cv2.destroyAllWindows()
 
+
 if __name__ == '__main__':
     try:
         camera()
     except rospy.ROSInterruptException:
         pass
-
-        

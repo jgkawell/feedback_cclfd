@@ -5,7 +5,10 @@ import numpy as np
 
 from feedback_planners.srv import RequestFeedback
 
-""" This class requests simple postive/negative feedback from the user after each demonstration. """
+""" This class requests simple postive/negative feedback
+    from the user after each demonstration. """
+
+
 class RequestFeedbackServer():
 
     def __init__(self):
@@ -13,12 +16,12 @@ class RequestFeedbackServer():
 
     def run(self):
         # setup service
-        rospy.Service("request_feedback", RequestFeedback, self.handle_request_feedback)
+        rospy.Service("request_feedback", RequestFeedback,
+                      self.handle_request_feedback)
         rospy.spin()
 
     def handle_request_feedback(self, temp):
         rospy.loginfo("REQUEST FEEDBACK: Requesting feedback...")
-
 
         # TODO: Replace this with a speech-to-text listener
         # request feedback from user (this is done with keyboard input for now)
@@ -33,6 +36,7 @@ class RequestFeedbackServer():
             feedback = True
 
         return feedback
+
 
 if __name__ == '__main__':
     try:

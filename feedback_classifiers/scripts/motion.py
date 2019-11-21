@@ -4,7 +4,10 @@ import rospy
 from std_msgs.msg import Bool
 from std_msgs.msg import Float32
 
-""" This class classifies the position of the tracked object (human's hand or head, etc.). """
+""" This class classifies the position of the tracked object
+    (human's hand or head, etc.). """
+
+
 class motion():
     def __init__(self):
         # initialize the node
@@ -24,17 +27,20 @@ class motion():
         if self.start:
             self.pivot = z
             self.start = False
-        
-        # setting the bounding region and checking if the hand goes out of bound and publishing it to the synthesizer
+
+        # setting the bounding region and checking if the hand goes out of
+        # bounds and publishing it to the synthesizer
         if z < self.pivot - 0.0300:
             rospy.logwarn("OUT OF BOUNDSs")
             self.state = False
         else:
             self.state = True
-        
-        # TODO: Return the classification and some confidence value in the classification
+
+        # TODO: Return the classification and some confidence
+        # value in the classification
         self.pub.publish(self.state)
-    
+
+
 if __name__ == '__main__':
     try:
         obj = motion()

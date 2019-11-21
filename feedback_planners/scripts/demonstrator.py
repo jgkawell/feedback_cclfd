@@ -13,7 +13,10 @@ from feedback_planners.srv import RequestFeedback
 from feedback_planners.srv import PerformDemonstration
 from feedback_planners.msg import ConstraintTypes
 
-""" This class is responsible for sampling constraints and demonstrating them to the user for feedback. """
+""" This class is responsible for sampling constraints and
+    demonstrating them to the user for feedback. """
+
+
 class Demonstrator():
 
     def __init__(self):
@@ -21,13 +24,17 @@ class Demonstrator():
         self.finished_first_demo = False
 
         # start pub/sub
-        rospy.Subscriber("/planners/constraint_types", numpy_msg(ConstraintTypes), self.sample_demonstrations)
-        self.demos_pub = rospy.Publisher("/planners/demonstrations", String, queue_size=10)
+        rospy.Subscriber("/planners/constraint_types",
+                         numpy_msg(ConstraintTypes),
+                         self.sample_demonstrations)
+        self.demos_pub = rospy.Publisher(
+            "/planners/demonstrations", String, queue_size=10)
 
         # set up client for demonstration service
         rospy.wait_for_service("perform_demonstration")
         try:
-            self.perform_demonstration = rospy.ServiceProxy("perform_demonstration", PerformDemonstration)
+            self.perform_demonstration = rospy.ServiceProxy(
+                "perform_demonstration", PerformDemonstration)
             rospy.loginfo("Service setup succeeded (perform_demonstration)")
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (perform_demonstration)")
@@ -35,7 +42,8 @@ class Demonstrator():
         # set up client for feedback service
         rospy.wait_for_service("request_feedback")
         try:
-            self.request_feedback = rospy.ServiceProxy("request_feedback", RequestFeedback)
+            self.request_feedback = rospy.ServiceProxy(
+                "request_feedback", RequestFeedback)
             rospy.loginfo("Service setup succeeded (request_feedback)")
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (request_feedback)")
@@ -44,7 +52,7 @@ class Demonstrator():
 
     def run(self):
         # perform a bad demo to start
-        finished = self.perform_demonstration(0) # 0 = negative
+        finished = self.perform_demonstration(0)  # 0 = negative
 
         if finished.response:
             self.finished_first_demo = True
@@ -69,10 +77,12 @@ class Demonstrator():
                         msg = self.request_feedback(True)
                         key = i
                         if msg.response:
-                            rospy.loginfo("DEMONSTRATOR: Response was POSITIVE!")
+                            rospy.loginfo(
+                                "DEMONSTRATOR: Response was POSITIVE!")
                             results[key] = 1
                         else:
-                            rospy.loginfo("DEMONSTRATOR: Response was NEGATIVE")
+                            rospy.loginfo(
+                                "DEMONSTRATOR: Response was NEGATIVE")
                             results[key] = 0
 
                 # save feedback results
@@ -90,7 +100,8 @@ class Demonstrator():
                 break
             else:
                 # wait a second
-                rospy.loginfo("DEMONSTRATOR: Waiting for first demo to be finished...")
+                rospy.loginfo(
+                    "DEMONSTRATOR: Waiting for first demo to be finished...")
                 time.sleep(1)
 
         rospy.loginfo("FINISHED!!!")
