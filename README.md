@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/jgkawell/cairo-feedback-cclfd.svg?branch=master)](https://travis-ci.com/jgkawell/cairo-feedback-cclfd)
+
 # CAIRO Feedback LfD
 A system that recognizes fear in collaborative human agents and then demonstrates alternative actions for the human to correct via simple, verbal feedback. The human feedback is translated into constraints that modify a learned LfD skill.
 
