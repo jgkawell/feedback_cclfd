@@ -1,0 +1,8 @@
+language: python
+python: 2.7
+
+before_install:
+    - pip install pycodestyle
+
+script:
+    - pycodestyle --exclude=*/NLPModule.py,*/query_nlp.py,*/QueryStrategy.py .
