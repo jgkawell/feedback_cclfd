@@ -25,12 +25,22 @@ class NoQuery(QueryStrategy):
     """
 
     def query_algorithm_interface(self):
-        pass
+        query_question = ''
+        return query_question
 
 
 class SimpleQuery(Strategy):
     """
     Implement the simple query algorithm using the Strategy interface.
+    """
+    #TODO: implement simple query "what did I do wrong?"
+    def query_algorithm_interface(self):
+        query_question = "what did I do wrong?"
+        return query_question
+
+class TargetedQuery(Strategy):
+    """
+    Implement the targeted query algorithm using the Strategy interface.
     """
     #TODO: implement simple query "what did I do wrong?"
     def query_algorithm_interface(self):

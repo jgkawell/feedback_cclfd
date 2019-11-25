@@ -48,10 +48,10 @@ def query(self, val):
             rospy.loginfo("QUERY NLP: Querying user...")
 
             #check the usage
-
+            # Strategy pattern for changing between different algorithms of querying
             query_algorithm = NoQuery()
             query_user = QueryNLP(query_algorithm)
-            query_user.query_algorithm_interface()
+            query_question = query_user.query_algorithm_interface()
 
 
 
