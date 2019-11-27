@@ -51,7 +51,7 @@ def query(self, val):
             # Strategy pattern for changing between different algorithms of querying
             query_algorithm = NoQuery()
             query_user = QueryNLP(query_algorithm)
-            query_question = query_user.query_algorithm_interface()
+            query_questions = query_user.query_algorithm_interface()
 
 
 
