@@ -37,7 +37,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs # --------- Primitive messages
   visualization_msgs # RViz
   geometry_msgs # ---- Vectors, Quaternions, Poses
-  sensor_msgs 
+  sensor_msgs # ------ Joint states
   # ~ Local Packages ~
   # YOUR PKGs HERE
 )
@@ -80,7 +80,7 @@ include_directories(
 #  9. Tests to build (catkin_add_gtest())
 
 # 10. Install rules (install()) 
-install(DIRECTORY
+install(DIRECTORY # Make directories visible to `rospack`/`roscd`
   launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
