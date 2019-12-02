@@ -1,19 +1,23 @@
 <?xml version="1.0"?>
 <launch>
 
+    <arg name="js_gui"         default="false"/>
 
+    <node pkg="rviz" type="rviz" output="screen" name="rviz"
+	    args="-d $(find feedback_visualizations)/config/robot_viz.rviz" />
     
     <!-- 1. Load the robot description to the parameter server so that RViz can find it -->
     <!--    Use Xacro to expand the description -->
-    <param name="rviz_robot_description" command="$(find xacro)/xacro --inorder '$(find sawyer_description)/urdf/sawyer.urdf.xacro'"/>
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find sawyer_description)/urdf/sawyer.urdf.xacro'"/>
 
-    <!-- <include file="$(find ll4ma_teleop)/launch/lbr4_to_param_server.launch"/> -->
-    
-    <!-- 2. Load the main visualization environment -->
-    <!-- <include file="$(find ll4ma_teleop)/launch/lbr4_commander.launch"/> -->
-    
-    <!-- 3. Start the IK service , Attempt to restart until the params above are available -->
-    <!-- <node name="q_from_pose" pkg="motion_cost" type="get_q_from_pose_serv.py" respawn="true" respawn_delay="15" 
-          output="screen" /> -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+    <arg name="source_list" default="[/viz/ctrl]"/> <!-- sensor_msgs/JointState -->
+
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="/use_gui" value="True"/>
+        <param name="rate" value="300"/>
+        <rosparam param="source_list" subst_value="True">$(arg source_list)</rosparam> 
+    </node>
 
 </launch>
