@@ -4,9 +4,9 @@
 # ~~ Future First ~~
 from __future__ import division # Future imports must be called before everything else, including triple-quote docs!
 
-__progname__ = "joint_test.py"
+__progname__ = "mug_poser.py"
 __version__  = "2019.12" 
-__desc__     = "Exercise the joints"
+__desc__     = "Maintain the mug marker at the proper pose"
 """
 James Watson , Template Version: 2019-03-10
 Built on Wing 101 IDE for Python 2.7
@@ -16,9 +16,6 @@ Dependencies: numpy , rospy
 
 
 """  
-
-[ head_pan , right_j0 , right_j1 , right_j2 , right_j3 , right_j4 , right_j5 , right_j6 ]
-
 ~~~ Developmnent Plan ~~~
 [ ] ITEM1
 [ ] ITEM2
@@ -35,13 +32,14 @@ def prepend_dir_to_path( pathName ): sys.path.insert( 0 , pathName ) # Might nee
 # ~~~ Imports ~~~
 # ~~ Standard ~~
 from math import pi , sqrt , sin , cos
+from time import sleep
 # ~~ Special ~~
 import numpy as np
-import rospy
-from sensor_msgs.msg import JointState
-from std_msgs.msg import Header
-
+import rospy 
+from visualization_msgs.msg import Marker
+from geometry_msgs.msg import TransformStamped
 # ~~ Local ~~
+from rospy_helpers import origin_pose , load_xform_into_pose
 
 # ~~ Constants , Shortcuts , Aliases ~~
 EPSILON = 1e-7
@@ -59,72 +57,82 @@ def __prog_signature__(): return __progname__ + " , Version " + __version__ # Re
 # ~~ Program Constants ~~
 
 
-# == Program Functions ==
+# == Program Assets ==
 
+def get_mug():
+    """ Return  """
+    # 1. Create model
+    mug = Marker()
+    # 2. Populate header
+    mug.header.stamp    = rospy.Time.now()
+    mug.header.frame_id = "base"
+    # 3. Set marker info for a persistent marker
+    mug.ns       = "mug"
+    mug.action   = mug.ADD
+    mug.type     = mug.CYLINDER
+    mug.id       = 100
+    mug.lifetime = rospy.Duration(0) # How long the object should last before being automatically deleted.  0 means forever
+    # 4. Set marker size
+    mug.scale.x = 0.5
+    mug.scale.y = 0.5
+    mug.scale.z = 0.5
+    # 5. Set marker color
+    mug.color.a = 1.0
+    mug.color.r =   3 /255
+    mug.color.g = 252 /255
+    mug.color.b = 240 /255
+    # 6. Set the mug pose
+    mug.pose = origin_pose()
+    # N. Return mug
+    return mug
 
-
-# __ End Func __
+# __ End Assets __
 
 
 # == Program Classes ==
 
-class QTester:
-    """ Exercise the joints """
+class MugPoser:
+    """ A_ONE_LINE_DESCRIPTION_OF_THE_NODE """
+
+    def update_mug( self , msg ):
+        """ Update the mug with the new xform --> pose """
+        load_xform_into_pose( msg.transform , self.marker.pose )
+        self.pub.publish( self.marker )
     
     def __init__( self , refreshRate = 300 ):
         """ A_ONE_LINE_DESCRIPTION_OF_INIT """
         # 1. Start the node
-        rospy.init_node( 'QTester' ) 
+        rospy.init_node( 'NODENAME' ) 
         # 2. Set rate
         self.heartBeatHz = refreshRate # ----------- Node refresh rate [Hz]
         self.idle = rospy.Rate( self.heartBeatHz ) # Best effort to maintain 'heartBeatHz' , URL: http://wiki.ros.org/rospy/Overview/Time        
         
         # 3. Start subscribers and listeners
-        # rospy.Subscriber( "TOPIC_NAME" , MSG_TYPE , CALLBACK_FUNC )
+        rospy.Subscriber( "/viz/wristXform" , TransformStamped , self.update_mug )
         
         # 4. Start publishers
-        self.pub = rospy.Publisher( "/viz/ctrl" , JointState , queue_size = 10 )
+        self.pub = rospy.Publisher( "/viz/markers" , Marker , queue_size = 100 )
         
         # 5. Init vars
-        self.initTime = rospy.Time.now().to_sec()  
-        self.qCmd     = JointState()
+        self.initTime = rospy.Time.now().to_sec() 
+        self.marker   = get_mug()
+        self.sent     = False
 
-        self.qCmd.header = Header()
-        self.qCmd.header.seq   = 0
-        self.qCmd.header.stamp = rospy.get_rostime()
-
-        self.qCmd.name     = [ 'head_pan' , 'right_j0' , 'right_j1' , 'right_j2' , 'right_j3' , 'right_j4' , 'right_j5' , 'right_j6' ]
-        self.qCmd.position = [ 0.0 for i in range( len( self.qCmd.name ) ) ]
-        
-        self.qCmd.header.frame_id = 'pedestal'
-        self.Qspeed     = pi / 300.0
-        # Modes available to command arm
-        # int32 POSITION_MODE   = 1
-        # int32 VELOCITY_MODE   = 2
-        # int32 TORQUE_MODE     = 3
-        # int32 TRAJECTORY_MODE = 4
-        print "Init completed!"
-        
     def run( self ):
         """ A_ONE_LINE_DESCRIPTION_OF_RUNTIME_ACTIVITY """
         
-        print "About to run! `rospy` running?:" , not rospy.is_shutdown()
-
         # 0. While ROS is running
         while ( not rospy.is_shutdown() ):
             
-            qNu = [ self.qCmd.position[i] + self.Qspeed for i in range( len( self.qCmd.name ) ) ]
-            self.qCmd.position = list( qNu )
-            self.qCmd.header.seq += 1
-            self.qCmd.header.stamp = rospy.get_rostime()
+            # self.pub.publish( self.marker )
 
-            print self.qCmd.position
+            # 6. Send the persistent marker to RViz
+            if not self.sent:
+                for i in range(10):
+                    self.pub.publish( self.marker )
+                    sleep( 0.05 )
+                self.sent = True
 
-            if self.qCmd.header.seq % 300 == 0:
-                print qNu
-                print self.qCmd.position
-
-            self.pub.publish( self.qCmd )
             
             # N-1: Wait until the node is supposed to fire next
             self.idle.sleep()        
@@ -148,7 +156,7 @@ if __name__ == "__main__":
     print __prog_signature__()
     termArgs = sys.argv[1:] # Terminal arguments , if they exist
     
-    FOO = QTester( 300 )
+    FOO = MugPoser( 300 )
     FOO.run()    
     
 
@@ -156,14 +164,7 @@ if __name__ == "__main__":
 
 
 # === Spare Parts ==========================================================================================================================
-"""
 
-from intera_core_msgs.msg import (
-    JointCommand,
-    EndpointState,
-    EndpointStates,
-    CollisionDetectionState,
-)
 
-"""
+
 # ___ End Spare ____________________________________________________________________________________________________________________________
