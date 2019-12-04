@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /Grid1
         - /RobotModel1
+        - /Marker1
       Splitter Ratio: 0.5
     Tree Height: 888
   - Class: rviz/Selection
@@ -182,6 +183,14 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /viz/markers
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -222,10 +231,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.125397995
+      Pitch: 0.61539793
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.480399668
+      Yaw: 0.74039942
     Saved: ~
 Window Geometry:
   Displays:
