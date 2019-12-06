@@ -5,4 +5,4 @@ before_install:
     - pip install pycodestyle
 
 script:
-    - pycodestyle --exclude=*/NLPModule.py,*/query_nlp.py,*/QueryStrategy.py,*/feedback_visualizations/*.py .
+    - pycodestyle --exclude=*/NLPModule.py,*/query_nlp.py,*/QueryStrategy.py,./feedback_visualizations/*.py .
