@@ -4,6 +4,7 @@
 import rospy
 import io
 import os
+import errno
 
 # Google Cloud API
 from google.cloud import texttospeech
@@ -38,6 +39,7 @@ class NLPServer():
     def textToSpeech(self, tts_srv):
         """
         This method uses tts api to convert text to speech
+        https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries#client-libraries-install-python
         :param text_message: string which is needed to be converted to speech
         :return success: whether or not the TTS succeeded
 
@@ -70,9 +72,18 @@ class NLPServer():
             response = client.synthesize_speech(
                 synthesis_input, voice, audio_config)
 
-            # Generate random file name
+            # Generate random file name name so nothing is overwritten
+            cur_file = os.path.dirname(os.path.abspath(__file__))
             temp_num = randint(100000, 999999)
-            file_name = "../out/output" + str(temp_num) + ".wav"
+            file_name = cur_file + "/../out/output" + str(temp_num) + ".wav"
+
+            # Make sure file exists
+            if not os.path.exists(os.path.dirname(file_name)):
+                try:
+                    os.makedirs(os.path.dirname(file_name))
+                except OSError as exc:  # Guard against race condition
+                    if exc.errno != errno.EEXIST:
+                        raise
 
             # The response"s audio_content is binary.
             with open(file_name, "wb") as out:
@@ -89,11 +100,11 @@ class NLPServer():
     def speechToText(self, stt_srv):
         """
         This method uses stt api to convert speech to text
+        https://cloud.google.com/speech-to-text/docs/quickstart-client-libraries
         :param input: file path or trigger to record
         :return output: string created from audio
         """
 
-        success = True
         response_text = ""
         rospy.loginfo("NLP Server STT: Computing text from speech: %s",
                       stt_srv.input)
@@ -122,7 +133,6 @@ class NLPServer():
 
         except Exception as ex:
             rospy.logerr("NLP Server STT: %s", str(ex))
-            success = False
 
         return response_text
 
