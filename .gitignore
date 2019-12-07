@@ -1,3 +1,6 @@
+# Out files from NLP
+feedback_planners/out/
+
 # ROS
 devel/
 
