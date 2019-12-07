@@ -25,6 +25,8 @@ class NLPServer():
 
     def __init__(self):
         rospy.init_node("nlp_server")
+        # Create a repeater for user input
+        self.pub = rospy.Publisher( "/viz/user_feedback" , String , queue_size = 100 )
 
     def run(self):
         """
@@ -34,6 +36,7 @@ class NLPServer():
         rospy.Service("/nlp/tts", TTS, self.textToSpeech)
         rospy.Service("/nlp/stt", STT, self.speechToText)
         rospy.loginfo("NLP Server: Starting...")
+
         rospy.spin()
 
     def textToSpeech(self, tts_srv):
@@ -134,6 +137,10 @@ class NLPServer():
         except Exception as ex:
             rospy.logerr("NLP Server STT: %s", str(ex))
 
+        # Return the text
+        msg = String()
+        msg.data = response_text
+        self.pub.publish( msg )
         return response_text
 
 

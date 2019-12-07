@@ -12,7 +12,7 @@
 
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 
-    <arg name="source_list" default="[/viz/ctrl]"/> <!-- sensor_msgs/JointState -->
+    <arg name="source_list" default="[/robot/joint_states]"/> <!-- sensor_msgs/JointState -->
 
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
         <param name="/use_gui" value="True"/>
@@ -20,6 +20,6 @@
         <rosparam param="source_list" subst_value="True">$(arg source_list)</rosparam> 
     </node>
 
-    <node pkg="feedback_visualizations" name="wrist_frame_listener" type="wrist_frame_listener.py" output="screen"/>
+    <!--node pkg="feedback_visualizations" name="wrist_frame_listener" type="wrist_frame_listener.py" output="screen"/ -->
 
 </launch>

@@ -25,7 +25,6 @@ class QueryNLP():
         rospy.Subscriber("/classifiers/synthesis", Bool, self.query)
 
         # self.constraint_types_pub = rospy.Publisher("/planners/constraint_types", numpy_msg(ConstraintTypes), queue_size=10)
-        
 
     def run(self):
         while(not rospy.is_shutdown()):
