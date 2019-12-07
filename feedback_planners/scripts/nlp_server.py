@@ -39,7 +39,7 @@ class NLPServer():
     def textToSpeech(self, tts_srv):
         """
         This method uses tts api to convert text to speech
-        Based off of: https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries#client-libraries-install-python
+        https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries#client-libraries-install-python
         :param text_message: string which is needed to be converted to speech
         :return success: whether or not the TTS succeeded
 
@@ -81,7 +81,7 @@ class NLPServer():
             if not os.path.exists(os.path.dirname(file_name)):
                 try:
                     os.makedirs(os.path.dirname(file_name))
-                except OSError as exc: # Guard against race condition
+                except OSError as exc:  # Guard against race condition
                     if exc.errno != errno.EEXIST:
                         raise
 
@@ -100,7 +100,7 @@ class NLPServer():
     def speechToText(self, stt_srv):
         """
         This method uses stt api to convert speech to text
-        Based off of: https://cloud.google.com/speech-to-text/docs/quickstart-client-libraries
+        https://cloud.google.com/speech-to-text/docs/quickstart-client-libraries
         :param input: file path or trigger to record
         :return output: string created from audio
         """
