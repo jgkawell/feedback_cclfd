@@ -80,9 +80,9 @@ def get_text():
     txt.color.r = 255 /255
     txt.color.g = 204 /255
     txt.color.b = 0 /255
-    # 6. Set the mug pose
-    txt.pose = origin_pose() #  TODO: Determine appropriate location
-    # N. Return mug
+    # 6. Set the text pose
+    txt.pose = origin_pose() #  TODO: Determine appropriate location - may not exist for this Marker type?
+    # N. Return text
     return txt
 
 # __ End Assets __
@@ -96,7 +96,7 @@ class TextPoser:
     def update_txt(self, msg):
         """ Update the text with the new xform --> pose """
         load_xform_into_pose( txt.transform , self.marker.pose )
-        self.pub.publish( self.marker )
+        self.pub.publish(self.marker)
     
     def __init__( self , refreshRate = 300 ):
         """ A_ONE_LINE_DESCRIPTION_OF_INIT """
@@ -107,7 +107,7 @@ class TextPoser:
         self.idle = rospy.Rate( self.heartBeatHz ) # Best effort to maintain 'heartBeatHz' , URL: http://wiki.ros.org/rospy/Overview/Time        
         
         # 3. Start subscribers and listeners
-        rospy.Subscriber("/viz/wristXform", TransformStamped, self.update_txt) #TODO: Change this subscriber?
+        rospy.Subscriber("/viz/user_feedback", string, self.update_txt)
         
         # 4. Start publishers
         self.pub = rospy.Publisher( "/viz/markers" , Marker , queue_size = 100 )
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     print __prog_signature__()
     termArgs = sys.argv[1:] # Terminal arguments , if they exist
     
-    FOO = MugPoser( 300 )
+    FOO = TextPoser( 300 )
     FOO.run()    
     
 

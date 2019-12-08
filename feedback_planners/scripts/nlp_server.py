@@ -140,7 +140,7 @@ class NLPServer():
         # Return the text
         msg = String()
         msg.data = response_text
-        self.pub.publish( msg )
+        self.pub.publish(msg)
         return response_text
 
 
