@@ -75,11 +75,46 @@ class TargetedQuery(Strategy):
         pass
 
     def query_algorithm_interface(self):
+        query_question = "what did I do wrong?"
+        return query_question
+
+
+class TargetedQuery(Strategy):
+    """
+    Implement the targeted query algorithm
+    using the Strategy interface.
+    """
+    # TODO: get time of failure from synthesizer
+    def __init__(self):
+        self._states_of_interest = []
+        self._queries = {}
+
+    # TODO: keyframes from states
+    def get_keyframes(self, states_of_interest):
         """
-        This method for the main algorithms uses the states from
-        synthesizer to generate boolean queries map to constraints
-        :return: dictionary of keyframes mapped to constrains and
-            their truth value
+        transforms states to keyframes
+        :param states_of_interest: states where skill augmentation is required
+        :return: keyframes where augmentation is required
+        """
+        pass
+
+    # TODO: get constraint a key frame
+    def get_constraints(self, key_frame):
+        """
+        gets the constraints for a particular keyframe
+        :param key_frame: key frame of interest
+        :return: constraints for a input key frame
+        (for now tuple of constraint and boolean value of constraint,
+            need a better data structure)
+        """
+        pass
+
+    def query_algorithm_interface(self):
+        """
+        This method for the main algorithms uses the states
+        from synthesizer to generate boolean queries map to constraints
+        :return: dictionary of keyframes mapped to constrains
+            and their truth value
         """
         # states to keyframe transformation
         key_frames = self.get_keyframes(self._states_of_interest)
