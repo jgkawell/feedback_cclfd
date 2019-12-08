@@ -18,6 +18,7 @@ class RequestFeedbackServer():
         # setup service
         rospy.Service("request_feedback", RequestFeedback,
                       self.handle_request_feedback)
+        print("REQUEST FEEDBACK: Waiting for robot...")
         rospy.spin()
 
     def handle_request_feedback(self, temp):
