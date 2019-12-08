@@ -16,6 +16,7 @@ from QueryStrategy import NoQuery, SimpleQuery, TargetedQuery
      1. No query
      2. Targeted Query"""
 
+
 class QueryNLP():
 
     def __init__(self):
@@ -43,16 +44,18 @@ class QueryNLP():
 
                 # check the usage
                 # Strategy pattern for different algorithms of querying
-                query_strategy = NoQuery()
-                query_question = query_strategy.query_algorithm_interface(msg.timestamp)
+                strategy = NoQuery()
+                query_question = strategy.query_algorithm_interface(
+                    msg.timestamp)
 
             if self.query_strategy == "targeted":
                 rospy.loginfo("QUERY NLP: Querying using targeted...")
 
                 # check the usage
                 # Strategy pattern for different algorithms of querying
-                query_strategy = TargetedQuery()
-                query_question = query_strategy.query_algorithm_interface(msg.timestamp)
+                strategy = TargetedQuery()
+                query_question = strategy.query_algorithm_interface(
+                    msg.timestamp)
 
 
 if __name__ == '__main__':

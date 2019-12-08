@@ -45,18 +45,17 @@ class SimpleQuery(QueryStrategy):
         return query_question
 
 
-
-
 class TargetedQuery(QueryStrategy):
     """
     Implement the targeted query algorithm
     using the Strategy interface.
     """
     # TODO: get time of failure from synthesizer
+
     def __init__(self):
         self._states_of_interest = []
         self._queries = {}
-        
+
     # TODO: keyframes from states
     def get_keyframes(self, states_of_interest):
         """

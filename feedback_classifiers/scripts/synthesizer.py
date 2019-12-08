@@ -13,8 +13,8 @@ from feedback_classifiers.msg import Classification
 class synthesizer():
 
     def __init__(self):
-        self.face_label = True
-        self.motion_label = True
+        self.face = True
+        self.motion = True
 
         # initialize pub/sub
         rospy.init_node('synthesizer', anonymous=True)
@@ -33,7 +33,7 @@ class synthesizer():
 
             # TODO: Replace this with a weighted sum based on confidence levels
             # if the face is negative or the motion is negative, trigger repair
-            if (not self.face_label or not self.motion_label) and not triggered:
+            if (not self.face or not self.motion) and not triggered:
                 rospy.loginfo("SYNTHESIZER: Recognized a negative response!")
                 msg.timestamp = rospy.Time.now()
                 msg.classification = False
@@ -41,10 +41,10 @@ class synthesizer():
                 triggered = True
 
     def callback_face(self, msg):
-        self.face_label = msg.data
+        self.face = msg.data
 
     def callback_motion(self, msg):
-        self.motion_label = msg.data
+        self.motion = msg.data
 
 
 if __name__ == '__main__':
