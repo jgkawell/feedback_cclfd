@@ -4,9 +4,10 @@ import rospy
 import numpy as np
 import abc
 
-from std_msgs.msg import Bool
+from feedback_classifiers.msg import Classification
 from rospy.numpy_msg import numpy_msg
 from feedback_planners.msg import ConstraintTypes
+from QueryStrategy import NoQuery, SimpleQuery, TargetedQuery
 
 """ This class queries the user for a plain English
     explanation about what the robot did wrong. It
@@ -15,47 +16,43 @@ from feedback_planners.msg import ConstraintTypes
      1. No query
      2. Targeted Query"""
 
-
 class QueryNLP():
 
-    def __init__(self, QueryStrategy):
+    def __init__(self):
         rospy.init_node('query_nlp')
 
-        self._QueryStrategy = QueryStrategy
+        self.query_strategy = rospy.get_param("QUERY_STRATEGY")
 
-        # start pub/sub
-        # TODO: Change synthesizer to accomadate the time stamp
-        rospy.Subscriber("/classifiers/synthesis", Bool, self.query)
+        # Initialize subscriber
+        rospy.Subscriber("/classifiers/synthesis", Classification, self.query)
 
     def run(self):
         while(not rospy.is_shutdown()):
             # keep running to check for info on sub
-            x = 0
+            pass
 
+    def query(self, msg):
 
-def query(self, val):
+        # TODO: connect to text-to-speech api/command
 
-    # TODO: Replace this with a text-to-speech api/command
+        # Only query if synthesizer publishes false
+        if not msg.classification:
 
-    # TODO: Query based on the strategy
+            if self.query_strategy == "none":
+                rospy.loginfo("QUERY NLP: No query...")
 
-    if val:
-        rospy.loginfo("QUERY NLP: Querying user...")
+                # check the usage
+                # Strategy pattern for different algorithms of querying
+                query_strategy = NoQuery()
+                query_question = query_strategy.query_algorithm_interface(msg.timestamp)
 
-        # check the usage
-        # Strategy pattern for changing algorithms of querying
-        query_algorithm = NoQuery()
-        query_user = QueryNLP(query_algorithm)
-        query_questions = query_user.query_algorithm_interface()
+            if self.query_strategy == "targeted":
+                rospy.loginfo("QUERY NLP: Querying using targeted...")
 
-    if val:
-        rospy.loginfo("QUERY NLP: Querying user...")
-
-        # check the usage
-        # Strategy pattern for different algorithms of querying
-        query_algorithm = NoQuery()
-        query_user = QueryNLP(query_algorithm)
-        query_questions = query_user.query_algorithm_interface()
+                # check the usage
+                # Strategy pattern for different algorithms of querying
+                query_strategy = TargetedQuery()
+                query_question = query_strategy.query_algorithm_interface(msg.timestamp)
 
 
 if __name__ == '__main__':

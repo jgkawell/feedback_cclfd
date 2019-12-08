@@ -4,15 +4,17 @@
 import abc
 
 
-class QueryStrategy(metaclass=abc.ABCMeta):
+class QueryStrategy(object):
     """
     Declare an interface common to all supported Query algorithms. QueryNLP
     uses this interface to call the algorithm defined by a
     ConcreteStrategy.
     """
 
+    __metaclass__ = abc.ABCMeta
+
     @abc.abstractmethod
-    def query_algorithm_interface(self):
+    def query_algorithm_interface(self, timestamp):
         pass
 
 
@@ -27,59 +29,25 @@ class NoQuery(QueryStrategy):
     Implement the  no query algorithm using the Strategy interface.
     """
 
-    def query_algorithm_interface(self):
+    def query_algorithm_interface(self, timestamp):
         query_question = ''
         return query_question
 
 
-class SimpleQuery(Strategy):
+class SimpleQuery(QueryStrategy):
     """
     Implement the simple query algorithm using the Strategy interface.
     """
     # TODO: implement simple query "what did I do wrong?"
 
-    def query_algorithm_interface(self):
+    def query_algorithm_interface(self, timestamp):
         query_question = "what did I do wrong?"
         return query_question
 
 
-class TargetedQuery(Strategy):
-    """
-    Implement the targeted query algorithm using the Strategy interface.
-    """
-    # TODO: get states from classification synthesizer
-
-    def __init__(self):
-        self._states_of_interest = []
-        self._queries = {}
-
-    # TODO: keyframes from states
-
-    def get_keyframes(self, states_of_interest):
-        """
-        transforms states to keyframes
-        :param states_of_interest: states where skill augmentation is required
-        :return: keyframes where augmentation is required
-        """
-        pass
-
-    # TODO: get constraint a key frame
-    def get_constraints(self, key_frame):
-        """
-        gets the constraints for a particular keyframe
-        :param key_frame: key frame of interest
-        :return: constraints for a input key frame
-        (for now tuple of constraint and boolean value of constraint,
-            need a better data structure)
-        """
-        pass
-
-    def query_algorithm_interface(self):
-        query_question = "what did I do wrong?"
-        return query_question
 
 
-class TargetedQuery(Strategy):
+class TargetedQuery(QueryStrategy):
     """
     Implement the targeted query algorithm
     using the Strategy interface.
@@ -88,7 +56,7 @@ class TargetedQuery(Strategy):
     def __init__(self):
         self._states_of_interest = []
         self._queries = {}
-
+        
     # TODO: keyframes from states
     def get_keyframes(self, states_of_interest):
         """
