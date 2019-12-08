@@ -28,31 +28,29 @@ class synthesizer():
     def main(self):
         # loop checking the labels sent in by the other classifiers
         triggered = False
-        while(not rospy.is_shutdown()):
-            # Create classification msg
-            msg = Classification()
-            msg.timestamp = rospy.Time.now()
+        msg = Classification()
+        while not rospy.is_shutdown():
 
             # TODO: Replace this with a weighted sum based on confidence levels
             # if the face is negative or the motion is negative, trigger repair
-            if (not face_label or not motion_label) and not triggered:
+            if (not self.face_label or not self.motion_label) and not triggered:
                 rospy.loginfo("SYNTHESIZER: Recognized a negative response!")
-                msg.classification = True
+                msg.timestamp = rospy.Time.now()
+                msg.classification = False
                 self.synthesis_pub.publish(msg)
                 triggered = True
 
-    def callback_face(self, data):
-        global face_label
-        face_label = data.data
+    def callback_face(self, msg):
+        self.face_label = msg.data
 
-    def callback_motion(self, data):
-        global motion_label
-        motion_label = data.data
+    def callback_motion(self, msg):
+        self.motion_label = msg.data
 
 
 if __name__ == '__main__':
     try:
         obj = synthesizer()
+        obj.main()
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
