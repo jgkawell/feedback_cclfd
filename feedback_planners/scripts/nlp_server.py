@@ -93,7 +93,6 @@ class NLPServer():
         :return output: string created from audio
         """
 
-        success = True
         response_text = ""
         rospy.loginfo("NLP Server STT: Computing text from speech: %s",
                       stt_srv.input)
@@ -122,7 +121,6 @@ class NLPServer():
 
         except Exception as ex:
             rospy.logerr("NLP Server STT: %s", str(ex))
-            success = False
 
         return response_text
 
