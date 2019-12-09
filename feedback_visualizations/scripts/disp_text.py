@@ -94,6 +94,6 @@ class TextPoser:
 if __name__ == "__main__":
     try:
         obj = TextPoser(300)
-        obj.main()
+        obj.run()
     except rospy.ROSInterruptException:
         pass

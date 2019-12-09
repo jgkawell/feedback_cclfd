@@ -131,7 +131,8 @@ class NLPServer():
             response = client.recognize(config, audio)
             for result in response.results:
                 cur_result = u"{}".format(result.alternatives[0].transcript)
-                rospy.loginfo("NLP Server STT: Transcript: %s", cur_result)
+                rospy.loginfo("NLP Server STT: Transcript: %s",
+                              cur_result.lower())
                 response_text += cur_result.encode('ascii', 'ignore')
 
         except Exception as ex:
