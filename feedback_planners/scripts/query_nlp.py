@@ -8,12 +8,14 @@ from feedback_classifiers.msg import Classification
 from rospy.numpy_msg import numpy_msg
 from feedback_planners.msg import ConstraintTypes
 from QueryStrategy import NoQuery, SimpleQuery, TargetedQuery
+from feedback_planners.srv import TTS, TTSResponse
+
 
 """ This class queries the user for a plain English
     explanation about what the robot did wrong. It
     also uses the strategy pattern to switch between
     the following algorithms:
-     1. No query
+     1. Simple query
      2. Targeted Query"""
 
 
@@ -30,6 +32,15 @@ class QueryNLP():
                                    numpy_msg(ConstraintTypes),
                                    queue_size=10)
 
+        # Set up client for NLP TTS service
+        rospy.wait_for_service("/nlp/tts")
+        try:
+            self.tts_server = rospy.ServiceProxy(
+                "/nlp/tts", TTS)
+            rospy.loginfo("Service setup succeeded (/nlp/tts)")
+        except rospy.ServiceException:
+            rospy.logwarn("Service setup failed (/nlp/tts)")
+
     def run(self):
         while(not rospy.is_shutdown()):
             # keep running to check for info on sub
@@ -43,12 +54,12 @@ class QueryNLP():
         if not msg.classification:
 
             query_question = ""
-            if self.query_strategy == "none":
+            if self.query_strategy == "simple":
                 rospy.loginfo("QUERY NLP: No query...")
 
                 # check the usage
                 # Strategy pattern for different algorithms of querying
-                strategy = NoQuery()
+                strategy = SimpleQuery()
                 query_question = strategy.query_algorithm_interface(
                     msg.timestamp)
 
@@ -60,6 +71,9 @@ class QueryNLP():
                 strategy = TargetedQuery()
                 query_question = strategy.query_algorithm_interface(
                     msg.timestamp)
+
+            # Create speech from text query
+            self.tts_server(query_question)
 
             # Run demonstration using given constraints
             constraints = ConstraintTypes()
