@@ -16,7 +16,9 @@ class RequestFeedbackServer():
     def __init__(self):
         rospy.init_node('request_feedback_server')
 
-    def run(self):
+        # Get filepath of demo voice data from rosparam
+        self.demo_filepath = rospy.get_param("DEMO_VOICE_FILEPATH")
+
         # Set up server
         rospy.Service("request_feedback", RequestFeedback,
                       self.handle_request_feedback)
@@ -39,7 +41,8 @@ class RequestFeedbackServer():
         except rospy.ServiceException:
             rospy.logerr("Service setup failed (/nlp/stt)")
 
-        print("REQUEST FEEDBACK: Waiting for robot...")
+    def main(self):
+        rospy.loginfo("REQUEST FEEDBACK: Starting...")
         rospy.spin()
 
     def handle_request_feedback(self, temp):
@@ -49,11 +52,9 @@ class RequestFeedbackServer():
         if not self.tts_server("Was that a good demonstration?"):
             rospy.logerr("REQUEST FEEDBACK: TTS failed!")
 
-        # Get filepath of demo voice data from rosparam
-        filepath = rospy.get_param("DEMO_VOICE_FILEPATH")
-
         # Create text response using NLP engine
-        response = self.stt_server(filepath + "/good-demonstration.wav").output
+        response = self.stt_server(
+            self.demo_filepath + "/good-demonstration.wav").output
         rospy.loginfo("REQUEST FEEDBACK: User responded: %s" % response)
 
         # Check if response was positive or negative
@@ -70,6 +71,6 @@ class RequestFeedbackServer():
 if __name__ == '__main__':
     try:
         obj = RequestFeedbackServer()
-        obj.run()
+        obj.main()
     except rospy.ROSInterruptException:
         pass

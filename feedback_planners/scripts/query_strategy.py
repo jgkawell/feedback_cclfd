@@ -18,19 +18,13 @@ class QueryStrategy(object):
         pass
 
 
-"""
-I am writing different algorithm classes below, which
-can be separated later into different files later
-"""
-
-
 class NoQuery(QueryStrategy):
     """
-    Implement the  no query algorithm using the Strategy interface.
+    Implement the no query algorithm using the Strategy interface.
     """
 
     def query_algorithm_interface(self, timestamp):
-        query_question = ''
+        query_question = ""
         return query_question
 
 
@@ -38,7 +32,6 @@ class SimpleQuery(QueryStrategy):
     """
     Implement the simple query algorithm using the Strategy interface.
     """
-    # TODO: implement simple query "what did I do wrong?"
 
     def query_algorithm_interface(self, timestamp):
         query_question = "What did I do wrong?"
@@ -50,13 +43,17 @@ class TargetedQuery(QueryStrategy):
     Implement the targeted query algorithm
     using the Strategy interface.
     """
-    # TODO: get time of failure from synthesizer
+
+    # TODO: Get time of failure from synthesizer.
+    # This is already being published, so just need
+    # to access and store the data. Will be passed into
+    # the query_algorithm_interface method.
 
     def __init__(self):
         self._states_of_interest = []
         self._queries = {}
 
-    # TODO: keyframes from states
+    # TODO: Keyframes from states
     def get_keyframes(self, states_of_interest):
         """
         transforms states to keyframes
@@ -65,7 +62,7 @@ class TargetedQuery(QueryStrategy):
         """
         pass
 
-    # TODO: get constraint a key frame
+    # TODO: Get constraint a key frame
     def get_constraints(self, key_frame):
         """
         gets the constraints for a particular keyframe
@@ -76,6 +73,7 @@ class TargetedQuery(QueryStrategy):
         """
         pass
 
+    # TODO: Creat query from keyframe/constraint data
     def query_algorithm_interface(self):
         """
         This method for the main algorithms uses the states
@@ -89,4 +87,5 @@ class TargetedQuery(QueryStrategy):
         for key_frame in key_frames:
             self._queries[key_frame] = self.get_constraints(key_frame)
 
-        return self._queries
+        query_question = "Should I have oriented the knife downwards?"
+        return query_question

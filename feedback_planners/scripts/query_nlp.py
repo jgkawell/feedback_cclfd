@@ -7,9 +7,8 @@ import abc
 from feedback_classifiers.msg import Classification
 from rospy.numpy_msg import numpy_msg
 from feedback_planners.msg import ConstraintTypes
-from QueryStrategy import NoQuery, SimpleQuery, TargetedQuery
-from feedback_planners.srv import TTS, TTSResponse
-
+from query_strategy import NoQuery, SimpleQuery, TargetedQuery
+from feedback_planners.srv import STT, STTResponse, TTS, TTSResponse
 
 """ This class queries the user for a plain English
     explanation about what the robot did wrong. It
@@ -24,6 +23,8 @@ class QueryNLP():
     def __init__(self):
         rospy.init_node('query_nlp')
 
+        # Get data from rosparam
+        self.demo_filepath = rospy.get_param("DEMO_VOICE_FILEPATH")
         self.query_strategy = rospy.get_param("QUERY_STRATEGY")
 
         # Initialize subscriber
@@ -41,39 +42,59 @@ class QueryNLP():
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (/nlp/tts)")
 
-    def run(self):
-        while(not rospy.is_shutdown()):
-            # keep running to check for info on sub
-            pass
+        # Set up client for NLP STT service
+        rospy.wait_for_service("/nlp/stt")
+        try:
+            self.stt_server = rospy.ServiceProxy(
+                "/nlp/stt", STT)
+            rospy.loginfo("Service setup succeeded (/nlp/stt)")
+        except rospy.ServiceException:
+            rospy.logerr("Service setup failed (/nlp/stt)")
+
+    def main(self):
+        rospy.loginfo("QUERY NLP: Starting...")
+        rospy.spin()
 
     def query(self, msg):
-
-        # TODO: connect to text-to-speech api/command
-
         # Only query if synthesizer publishes false
         if not msg.classification:
-
+            # Strategy pattern for different algorithms of querying
             query_question = ""
+
+            if self.query_strategy == "none":
+                rospy.loginfo("QUERY NLP: No query...")
+                strategy = NoQuery()
+                query_question = strategy.query_algorithm_interface(
+                    msg.timestamp)
+
             if self.query_strategy == "simple":
                 rospy.loginfo("QUERY NLP: Simple query...")
-
-                # check the usage
-                # Strategy pattern for different algorithms of querying
                 strategy = SimpleQuery()
                 query_question = strategy.query_algorithm_interface(
                     msg.timestamp)
 
             if self.query_strategy == "targeted":
-                rospy.loginfo("QUERY NLP: Querying using targeted...")
-
-                # check the usage
-                # Strategy pattern for different algorithms of querying
+                rospy.loginfo("QUERY NLP: Targeted query...")
                 strategy = TargetedQuery()
                 query_question = strategy.query_algorithm_interface(
                     msg.timestamp)
 
             # Create speech from text query
             self.tts_server(query_question)
+
+            # Listen for response
+            response = self.stt_server(
+                self.demo_filepath + "/positive-constraint-comment.wav").output
+
+            # Check if response was positive or negative
+            if 'yes' in response.lower():
+                rospy.loginfo("QUERY NLP: Positive response")
+                feedback = True
+            else:
+                rospy.loginfo("QUERY NLP: Negative response")
+                feedback = False
+
+            # TODO: Modify constraint based on feedback
 
             # Run demonstration using given constraints
             constraints = ConstraintTypes()
@@ -84,6 +105,6 @@ class QueryNLP():
 if __name__ == '__main__':
     try:
         obj = QueryNLP()
-        obj.run()
+        obj.main()
     except rospy.ROSInterruptException:
         pass
