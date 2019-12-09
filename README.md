@@ -7,14 +7,21 @@ Contribution: A system that recognizes undesirable effects caused by the way it 
 
 Application: A collaborative human-robot task where the robot performs task via CC-LfD and receives feedback in the form of verbal boolean responses.
 
+## Installation
+
+The "easy" way to run this is to do everything in simulation within the provided Docker images. You can find the instructions for this at [this repository](https://github.com/jgkawell/docker-scripts). You'll want to follow the instructions for setting up the `jgkawell/ompl:lfd` tag (`lfd-nvidia` if you're running Nvidia graphics).
+
+If you'd rather run things locally, [the same repository](https://github.com/jgkawell/docker-scripts) also has scripts within [a subdirectory](https://github.com/jgkawell/docker-scripts/tree/master/tools/linux) that will allow you to install everything on a clean Ubuntu 16.04 system (either running locally or within WSL). Simply run the scripts in this order: `ros` -> `ompl` -> `sawyer` -> `lfd`.
+
 ## How to use
 
-1. Install ROS
-2. Create a catkin workspace
-3. Clone this repo into `<catkin_ws>/src`
-4. Also clone the `master` branch of CAIRO LfD (https://github.com/cairo-robotics/cairo-lfd) as well as all of it's requirements
-5. Run `catkin_make install` within the root of your workspace
-6. Run `roslaunch lfd_experiments cairo_lfd.launch` to start all of the necessary services for the CC-LfD system
-7. Run `roslaunch feedback_master full.launch` to start the feedback process
+You'll need to have three terminals open to run this system. In each, you'll need to run the following commands which I have numbered below:
 
-NOTE: This system currently works only on a Sawyer arm, using the webcam in the primary computer and must be connected to an OptiTrack motion capture system. The steps above assume that you are connected to the same network as both the Sawyer and the OptiTrack and that all necessary setup on those systems have been made.
+1. cd ~/ws_moveit && ./intera.sh sim && roslaunch lfd_experiments feedback.launch
+2. cd ~/ws_moveit && ./intera.sh sim && roslaunch feedback_visualizations rviz_main.launch
+3. cd ~/ws_moveit && ./intera.sh sim && roslaunch feedback_master sim.launch
+
+The first part of each of those commands simply sets you up in the simulated Sawyer robot environment. `feedback.launch` sets up all the needed robot subsystems for running Sawyer within Gazebo and initializes it for the CC-LfD skill execution system. `rviz_main.launch` sets up an Rviz window to display path planning and scene objects. `sim.launch` actually runs the simulation as a demo of a cup hand off skill repair scenario.
+
+
+NOTE: If you're not running this in simulation, the system currently works only on a Sawyer arm, using the webcam in the primary computer and must be connected to an OptiTrack motion capture system. The steps above assume that you are connected to the same network as both the Sawyer and the OptiTrack and that all necessary setup on those systems have been made.
