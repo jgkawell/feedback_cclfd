@@ -41,6 +41,7 @@ from pykdl_utils.kdl_kinematics import KDLKinematics
 from moveit_msgs.msg import DisplayTrajectory
 from geometry_msgs.msg import PoseArray
 from geometry_msgs.msg import Pose
+from pyquaternion import Quaternion
 # ~ ROS Access Object ~
 rospack = rospkg.RosPack()
 
@@ -71,12 +72,15 @@ class MovePlanListener:
         """ Push plan to the visualizer """
         traj = msg.trajectory.joint_trajectory.points
         outMsg = PoseArray()
+        print "Received a trajectory!"
         for pnt in traj:
             q_i = pnt.positions
+            x_matx = self.kdl_kin.forward( q_i )
+            print x_matx
             x_i = Pose()
-            x_i.position.x = q_i[0][3]
-            x_i.position.y = q_i[1][3]
-            x_i.position.z = q_i[2][3]
+            x_i.position.x = 0.0
+            x_i.position.y = 0.0
+            x_i.position.z = 0.0
             x_i.orientation.w = 1.0
             x_i.orientation.x = 0.0
             x_i.orientation.y = 0.0

@@ -39,6 +39,7 @@ import numpy as np
 import rospy 
 from visualization_msgs.msg import Marker
 from geometry_msgs.msg import TransformStamped
+from std_msgs.msg import String
 # ~~ Local ~~
 from rospy_helpers import origin_pose , load_xform_into_pose
 
@@ -107,7 +108,7 @@ class TextPoser:
         self.idle = rospy.Rate( self.heartBeatHz ) # Best effort to maintain 'heartBeatHz' , URL: http://wiki.ros.org/rospy/Overview/Time        
         
         # 3. Start subscribers and listeners
-        rospy.Subscriber("/viz/user_feedback", string, self.update_txt)
+        rospy.Subscriber("/viz/user_feedback", String, self.update_txt)
         
         # 4. Start publishers
         self.pub = rospy.Publisher( "/viz/markers" , Marker , queue_size = 100 )

@@ -24,6 +24,7 @@
 
     <node pkg="feedback_visualizations" name="wrist_frame_listener" type="wrist_frame_listener.py" output="screen"/>
     <node pkg="feedback_visualizations" name="mug_poser" type="mug_poser.py" output="screen"/>
+    <node pkg="feedback_visualizations" name="mvt_plan_listener" type="mvt_plan_listener.py" output="screen"/>
     <node pkg="feedback_visualizations" name="path_display" type="path_display.py" output="screen"/>
 
 </launch>
