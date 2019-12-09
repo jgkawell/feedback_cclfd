@@ -14,16 +14,16 @@ from feedback_planners.srv import PerformDemonstration
 class FakeLfdServer():
 
     def __init__(self):
-        rospy.init_node('perform_demonstration_server')
+        rospy.init_node('feedback_demonstration_server')
 
     def run(self):
         # setup service
-        rospy.Service("perform_demonstration", PerformDemonstration,
-                      self.handle_perform_demonstration)
+        rospy.Service("feedback_demonstration", PerformDemonstration,
+                      self.handle_feedback_demonstration)
         rospy.loginfo("FAKE LfD: Starting...")
         rospy.spin()
 
-    def handle_perform_demonstration(self, constraints):
+    def handle_feedback_demonstration(self, constraints):
         # log and then sleep to simulate demonstration being performed
         rospy.loginfo("FAKE LfD: Performing demonstration...")
         time.sleep(3)
