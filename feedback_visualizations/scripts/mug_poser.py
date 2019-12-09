@@ -38,6 +38,8 @@ import numpy as np
 import rospy 
 from visualization_msgs.msg import Marker
 from geometry_msgs.msg import TransformStamped
+import tf2_ros
+from geometry_msgs.msg import TransformStamped
 # ~~ Local ~~
 from rospy_helpers import origin_pose , load_xform_into_pose
 
@@ -73,9 +75,9 @@ def get_mug():
     mug.id       = 100
     mug.lifetime = rospy.Duration(0) # How long the object should last before being automatically deleted.  0 means forever
     # 4. Set marker size
-    mug.scale.x = 0.5
-    mug.scale.y = 0.5
-    mug.scale.z = 0.5
+    mug.scale.x = 0.08
+    mug.scale.y = 0.08
+    mug.scale.z = 0.10
     # 5. Set marker color
     mug.color.a = 1.0
     mug.color.r =   3 /255
@@ -94,9 +96,35 @@ def get_mug():
 class MugPoser:
     """ A_ONE_LINE_DESCRIPTION_OF_THE_NODE """
 
+    def send_pose( self , pPosn , pOrnt , baseFrame , trgtFrame , pTime ):
+        """ Send a stamped transform with the given data """
+        # 1. Create message
+        xform = TransformStamped()
+        # ~ Transform Header ~
+        xform.header.stamp    = pTime
+        xform.header.frame_id = baseFrame
+        xform.child_frame_id  = trgtFrame
+        # ~ Position ~
+        xform.transform.translation.x = pPosn[0]
+        xform.transform.translation.y = pPosn[1]
+        xform.transform.translation.z = pPosn[2]
+        # ~ Orientation ~
+        xform.transform.rotation.x = pOrnt[0]
+        xform.transform.rotation.y = pOrnt[1]
+        xform.transform.rotation.z = pOrnt[2]
+        xform.transform.rotation.w = pOrnt[3]
+        # 2. Send message
+        self.moveOut.sendTransform( xform )    
+
     def update_mug( self , msg ):
         """ Update the mug with the new xform --> pose """
-        load_xform_into_pose( msg.transform , self.marker.pose )
+        # A. Create a transform from the wrist to the mug
+        posn = [ 0 , 0     , 0.080 ]
+        ornt = [ 0 , 0.707 , 0     , 0.707 ]
+        t_i  = rospy.Time.now()
+        self.send_pose( posn , ornt , "right_hand" , "mug_frame" , t_i )
+        xform = self.tfBuffer.lookup_transform( "base" , "mug_frame" , rospy.Time(0) )
+        load_xform_into_pose( xform.transform , self.marker.pose )
         self.pub.publish( self.marker )
     
     def __init__( self , refreshRate = 300 ):
@@ -109,9 +137,11 @@ class MugPoser:
         
         # 3. Start subscribers and listeners
         rospy.Subscriber( "/viz/wristXform" , TransformStamped , self.update_mug )
-        
+        self.tfBuffer = tf2_ros.Buffer() # Needed for tf2
+        self.listener = tf2_ros.TransformListener( self.tfBuffer )
         # 4. Start publishers
-        self.pub = rospy.Publisher( "/viz/markers" , Marker , queue_size = 100 )
+        self.pub     = rospy.Publisher( "/viz/markers" , Marker , queue_size = 100 )
+        self.moveOut = tf2_ros.TransformBroadcaster()
         
         # 5. Init vars
         self.initTime = rospy.Time.now().to_sec() 

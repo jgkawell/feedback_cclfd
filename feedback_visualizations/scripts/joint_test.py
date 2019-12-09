@@ -148,7 +148,8 @@ if __name__ == "__main__":
     print __prog_signature__()
     termArgs = sys.argv[1:] # Terminal arguments , if they exist
     
-    FOO = QTester( 300 )
+    refreshRateHz = rospy.get_param( 'graphics_refresh_rate' , 60 )
+    FOO = QTester( refreshRateHz )
     FOO.run()    
     
 

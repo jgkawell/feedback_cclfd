@@ -68,24 +68,21 @@ def __prog_signature__(): return __progname__ + " , Version " + __version__ # Re
 
 class FrameListener:
     
-    def __init__( self ):
+    def __init__( self , refreshRate = 300 ):
         """ Listens to a particular transform and reports it periodically """
         # 1. Start the node
         rospy.init_node( 'FrameListener' ) 
         # 2. Set rate
-        try: 
-            self.heartBeatHz = int( rospy.get_param( "/update_freq_Hz" ) )
-        except:
-            self.heartBeatHz = 300 # Node refresh rate [Hz]
+        self.heartBeatHz = refreshRate # ----------- Node refresh rate [Hz]
         self.idle = rospy.Rate( self.heartBeatHz ) # Best effort to maintain 'heartBeatHz' , URL: http://wiki.ros.org/rospy/Overview/Time        
         # 3. Start subscribers
         self.tfBuffer = tf2_ros.Buffer() # Needed for tf2
         self.listener = tf2_ros.TransformListener( self.tfBuffer )
         # 4. Start publishers
-        self.pub = rospy.Publisher( "/viz/wristXform" , TransformStamped , queue_size = 10 )
+        self.pub     = rospy.Publisher( "/viz/wristXform" , TransformStamped , queue_size = 10 )
         # 5. Init vars
         self.initTime = rospy.Time.now().to_sec()   
-        self.runCount = 0
+        self.runCount = 0 
         
     def run( self ):
         """ Listen and report transform """
@@ -95,7 +92,7 @@ class FrameListener:
             
             # 1.
             try:
-                xform = self.tfBuffer.lookup_transform( "base" , "right_wrist" , rospy.Time(0) )
+                xform = self.tfBuffer.lookup_transform( "base" , "right_hand" , rospy.Time(0) )
                 self.pub.publish( xform )
                 self.runCount += 1
 
@@ -129,7 +126,8 @@ if __name__ == "__main__":
     print __prog_signature__()
     termArgs = sys.argv[1:] # Terminal arguments , if they exist
     
-    FOO = FrameListener()
+    refreshRateHz = rospy.get_param( 'graphics_refresh_rate' , 60 )
+    FOO = FrameListener( refreshRateHz )
     FOO.run()    
     
            
