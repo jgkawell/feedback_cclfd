@@ -1,6 +1,6 @@
 <launch>
     <!-- Setup parameters -->
-    <param name="QUERY_STRATEGY" type="string" value="simple" />
+    <param name="QUERY_STRATEGY" type="string" value="targeted" />
     <param name="MAIN_FILEPATH" type="string" value="$(find lfd_experiments)/experiment_data/cc_lfd/feedback_demo/new_data"/>
     <param name="DEMO_VOICE_FILEPATH" type="string" value="$(find feedback_master)/demo_data"/>
 

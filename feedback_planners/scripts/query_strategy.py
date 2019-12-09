@@ -60,7 +60,7 @@ class TargetedQuery(QueryStrategy):
         :param states_of_interest: states where skill augmentation is required
         :return: keyframes where augmentation is required
         """
-        pass
+        return []
 
     # TODO: Get constraint a key frame
     def get_constraints(self, key_frame):
@@ -71,10 +71,10 @@ class TargetedQuery(QueryStrategy):
         (for now tuple of constraint and boolean value of constraint,
             need a better data structure)
         """
-        pass
+        return []
 
     # TODO: Creat query from keyframe/constraint data
-    def query_algorithm_interface(self):
+    def query_algorithm_interface(self, timestamp):
         """
         This method for the main algorithms uses the states
         from synthesizer to generate boolean queries map to constraints

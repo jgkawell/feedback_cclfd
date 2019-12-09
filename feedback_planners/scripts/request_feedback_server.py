@@ -53,7 +53,6 @@ class RequestFeedbackServer():
         # Create text response using NLP engine
         response = self.stt_server(
             self.demo_filepath + "/good-demonstration.wav").output
-        rospy.loginfo("REQUEST FEEDBACK: User responded: %s" % response)
 
         # Check if response was positive or negative
         if 'yes' in response.lower():
