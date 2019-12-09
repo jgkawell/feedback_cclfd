@@ -63,7 +63,8 @@ _DEFAULTSCALE =   0.01 # Default width of `LINE_STRIP`
 _DISTMARGIN   =   0.02 # Limit on how close wrist point history can be together
 _HISTORYLIMIT =  25 # -- Max number of points of wrist history to display
 _PATHNUMLIMIT =  10 # -- Max number of paths to show on the screen
-_GREEN        = [ 0/255.0 , 255/255.0 , 0/255.0 ]
+_GREEN        = [   0/255.0 , 255/255.0 ,   0/255.0 ]
+_BLUE         = [  66/255.0 , 227/255.0 , 255/255.0 ] # 66, 227, 255
 _NAMESPACE    = "paths"
 
 # == Program Classes ==
@@ -77,7 +78,7 @@ class PathDisplay:
         for pose in msg.poses:
             posn , ornt = unpack_ROS_pose( pose )
             nuPath.append( posn )
-        self.add_path( nuPath )
+        self.add_path( nuPath , _BLUE )
     
     def update_history( self , msg ):
         """ Update the mug with the new xform --> pose """

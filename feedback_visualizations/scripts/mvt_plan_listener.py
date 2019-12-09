@@ -16,9 +16,17 @@ Dependencies: numpy , rospy
 
 
 """  
-~~~ Developmnent Plan ~~~
-[ ] ITEM1
-[ ] ITEM2
+~~~ NOTE: This module REQUIRES KDL to Run! ~~~
+# In the src/ directory ...
+
+git clone https://github.com/gt-ros-pkg/hrl-kdl.git
+cd hrl-kdl/pykdl_utils/
+python setup.py install
+cd ../hrl_geom/
+python setup.py install
+cd ../..
+catkin build
+
 """
 
 # === Init Environment =====================================================================================================================
@@ -71,7 +79,8 @@ class MovePlanListener:
     def plan_receiver( self, msg ):
         """ Push plan to the visualizer """
         self.planCount += 1
-        traj = msg.trajectory.joint_trajectory.points
+        first = msg.trajectory[0]
+        traj = first.joint_trajectory.points
         outMsg = PoseArray()
         print "Received a trajectory!"
         for pnt in traj:

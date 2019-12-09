@@ -92,7 +92,7 @@ class FrameListener:
             
             # 1.
             try:
-                xform = self.tfBuffer.lookup_transform( "base" , "right_hand" , rospy.Time(0) )
+                xform = self.tfBuffer.lookup_transform( "base" , "right_wrist" , rospy.Time(0) )
                 self.pub.publish( xform )
                 self.runCount += 1
 
