@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 # license removed for brevity
 import os
+import sys
 import rospy
 import numpy as np
 
@@ -23,13 +24,14 @@ class teleop():
 
     def main(self):
 
-        while not rospy.is_shutdown():
-            print("TELEOP: Press [enter] to trigger" +
-                  " negative classification...")
-            raw_input().upper()
-            print("TELEOP: Trigging negative classification!")
-            self.pub_face.publish(False)
-            self.pub_motion.publish(False)
+        print("TELEOP: Press [enter] to trigger" +
+              " negative classification...")
+        raw_input().upper()
+        print("TELEOP: Trigging negative classification!")
+        self.pub_face.publish(False)
+        self.pub_motion.publish(False)
+
+        sys.exit(0)
 
 
 if __name__ == '__main__':

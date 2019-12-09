@@ -44,7 +44,7 @@ class RequestFeedbackServer():
         rospy.loginfo("REQUEST FEEDBACK: Starting...")
         rospy.spin()
 
-    def handle_request_feedback(self, temp):
+    def handle_request_feedback(self, feedback_type):
         rospy.loginfo("REQUEST FEEDBACK: Requesting feedback...")
 
         # Request feedback from user using NLP engine
@@ -52,8 +52,12 @@ class RequestFeedbackServer():
             rospy.logerr("REQUEST FEEDBACK: TTS failed!")
 
         # Create text response using NLP engine
-        response = self.stt_server(
-            self.demo_filepath + "/good-demonstration.wav").output
+        if feedback_type.input:
+            response = self.stt_server(
+                self.demo_filepath + "/good-demonstration.wav").output
+        else:
+            response = self.stt_server(
+                self.demo_filepath + "/bad-demonstration.wav").output
 
         # Check if response was positive or negative
         if 'yes' in response.lower():
