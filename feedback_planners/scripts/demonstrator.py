@@ -35,7 +35,6 @@ class Demonstrator():
         try:
             self.feedback_demonstration = rospy.ServiceProxy(
                 "feedback_demonstration", PerformDemonstration)
-            rospy.loginfo("Service setup succeeded (feedback_demonstration)")
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (feedback_demonstration)")
 
@@ -44,7 +43,6 @@ class Demonstrator():
         try:
             self.request_feedback = rospy.ServiceProxy(
                 "request_feedback", RequestFeedback)
-            rospy.loginfo("Service setup succeeded (request_feedback)")
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (request_feedback)")
 

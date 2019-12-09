@@ -38,7 +38,6 @@ class QueryNLP():
         try:
             self.tts_server = rospy.ServiceProxy(
                 "/nlp/tts", TTS)
-            rospy.loginfo("Service setup succeeded (/nlp/tts)")
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (/nlp/tts)")
 
@@ -47,7 +46,6 @@ class QueryNLP():
         try:
             self.stt_server = rospy.ServiceProxy(
                 "/nlp/stt", STT)
-            rospy.loginfo("Service setup succeeded (/nlp/stt)")
         except rospy.ServiceException:
             rospy.logerr("Service setup failed (/nlp/stt)")
 
