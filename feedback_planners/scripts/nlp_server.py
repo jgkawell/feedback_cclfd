@@ -4,6 +4,7 @@
 import rospy
 import io
 import os
+import errno
 
 # Google Cloud API
 from google.cloud import texttospeech
@@ -70,9 +71,18 @@ class NLPServer():
             response = client.synthesize_speech(
                 synthesis_input, voice, audio_config)
 
-            # Generate random file name
+            # Generate random file name name so nothing is overwritten
+            cur_file = os.path.dirname(os.path.abspath(__file__))
             temp_num = randint(100000, 999999)
-            file_name = "../out/output" + str(temp_num) + ".wav"
+            file_name = cur_file + "/../out/output" + str(temp_num) + ".wav"
+
+            # Make sure file exists
+            if not os.path.exists(os.path.dirname(file_name)):
+                try:
+                    os.makedirs(os.path.dirname(file_name))
+                except OSError as exc:  # Guard against race condition
+                    if exc.errno != errno.EEXIST:
+                        raise
 
             # The response"s audio_content is binary.
             with open(file_name, "wb") as out:

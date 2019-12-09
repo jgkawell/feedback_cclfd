@@ -41,7 +41,7 @@ class SimpleQuery(QueryStrategy):
     # TODO: implement simple query "what did I do wrong?"
 
     def query_algorithm_interface(self, timestamp):
-        query_question = "what did I do wrong?"
+        query_question = "What did I do wrong?"
         return query_question
 
 
