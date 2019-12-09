@@ -26,6 +26,9 @@ class QueryNLP():
 
         # Initialize subscriber
         rospy.Subscriber("/classifiers/synthesis", Classification, self.query)
+        self.pub = rospy.Publisher("/planners/constraint_types",
+                                   numpy_msg(ConstraintTypes),
+                                   queue_size=10)
 
     def run(self):
         while(not rospy.is_shutdown()):
@@ -39,6 +42,7 @@ class QueryNLP():
         # Only query if synthesizer publishes false
         if not msg.classification:
 
+            query_question = ""
             if self.query_strategy == "none":
                 rospy.loginfo("QUERY NLP: No query...")
 
@@ -56,6 +60,11 @@ class QueryNLP():
                 strategy = TargetedQuery()
                 query_question = strategy.query_algorithm_interface(
                     msg.timestamp)
+
+            # Run demonstration using given constraints
+            constraints = ConstraintTypes()
+            constraints.data = 0
+            self.pub.publish(constraints)
 
 
 if __name__ == '__main__':
