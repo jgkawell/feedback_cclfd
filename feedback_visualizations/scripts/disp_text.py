@@ -61,6 +61,7 @@ class TextPoser:
         self.idle = rospy.Rate(self.heartBeatHz)
         # 3. Start subscribers and listeners
         rospy.Subscriber("/viz/user_feedback", String, self.update_txt)
+        rospy.Subscriber("/viz/robot_feedback", String, self.update_txt)
         # 4. Start publishers
         self.pub = rospy.Publisher("/viz/markers", Marker, queue_size=100)
         # 5. Init vars
