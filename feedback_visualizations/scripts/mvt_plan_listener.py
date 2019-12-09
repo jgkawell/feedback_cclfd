@@ -52,22 +52,13 @@ class MovePlanListener:
         self.heartBeatHz = refreshRate  # ----------- Node refresh rate [Hz]
         # Best effort to maintain 'heartBeatHz'
         # URL: http://wiki.ros.org/rospy/Overview/Time
-        self.idle = rospy.Rate(self.heartBeatHz)
 
-        # 3. Start subscribers and listeners
-        rospy.Subscriber("/move_group/display_planned_path",
-                         DisplayTrajectory, self.plan_receiver)
-
-        # 4. Start publishers
-        self.pub = rospy.Publisher(
-            "/viz/pointPlans", PoseArray, queue_size=100)
-
-        # 5. Init vars
+        # 3. Init vars
         self.initTime = rospy.Time.now().to_sec()
         self.kdl_kin = None
         self.planCount = 0
 
-        # 6. Load the robot description
+        # 4. Load the robot description
         descPath = rospack.get_path('sawyer_description')
         print "Found the following path for 'sawyer_description':", descPath
         command_string = "rosrun xacro xacro --inorder " + \
@@ -79,17 +70,29 @@ class MovePlanListener:
 
             try:
                 robot_urdf = URDF.from_xml_string(robot_desc)
-                self.kdl_kin = KDLKinematics(robot_urdf, 'base', 'right_wrist')
+                self.kdl_kin = KDLKinematics(robot_urdf, 'base', 'right_hand')
+                rospy.loginfo(self.kdl_kin)
                 print("Kinematic chain SUCCESS! " +
                       "Test Pose:\n", self.kdl_kin.forward(
-                        [pi, pi, pi, pi, pi, pi]))
+                          [pi, pi, pi, pi, pi, pi, pi]))
             except Exception as err:
-                print "There was a problem reading the URDF: \n\t", err
+                rospy.logwarn(
+                    "There was a problem reading the URDF: %s" % err.message)
 
         except subprocess.CalledProcessError as process_error:
             rospy.logfatal(
                 'Failed to run xacro command: %s' % process_error.output)
             sys.exit(1)
+
+        self.idle = rospy.Rate(self.heartBeatHz)
+
+        # 5. Start subscribers and listeners
+        rospy.Subscriber("/move_group/display_planned_path",
+                         DisplayTrajectory, self.plan_receiver)
+
+        # 6. Start publishers
+        self.pub = rospy.Publisher(
+            "/viz/pointPlans", PoseArray, queue_size=100)
 
     def run(self):
         """ A_ONE_LINE_DESCRIPTION_OF_RUNTIME_ACTIVITY """

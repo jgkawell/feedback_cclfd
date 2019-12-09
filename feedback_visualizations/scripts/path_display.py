@@ -18,8 +18,8 @@ from geometry_msgs.msg import TransformStamped
 # ~~ Program Constants ~~
 _DEFAULTSCALE = 0.01  # Default width of `LINE_STRIP`
 _DISTMARGIN = 0.02  # Limit on how close wrist point history can be together
-_HISTORYLIMIT = 25  # -- Max number of points of wrist history to display
-_PATHNUMLIMIT = 10  # -- Max number of paths to show on the screen
+_HISTORYLIMIT = 50  # -- Max number of points of wrist history to display
+_PATHNUMLIMIT = 1  # -- Max number of paths to show on the screen
 _GREEN = [0/255.0, 255/255.0,   0/255.0]
 _BLUE = [66/255.0, 227/255.0, 255/255.0]  # 66, 227, 255
 _NAMESPACE = "paths"
@@ -41,7 +41,6 @@ class PathDisplay:
         # 1. Get the position from the message
         posn, ornt = unpack_ROS_xform(msg)
         dist = vec_dif_mag(posn, self.pathList[0][-1])
-        # print "Got" , posn
         # 2. If the next point is sufficient distance from the last
         if dist >= _DISTMARGIN:
             self.pathList[0].append(posn)
