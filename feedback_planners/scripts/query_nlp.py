@@ -13,9 +13,11 @@ from feedback_planners.srv import STT, STTResponse, TTS, TTSResponse
 """ This class queries the user for a plain English
     explanation about what the robot did wrong. It
     also uses the strategy pattern to switch between
-    the following algorithms:
-     1. Simple query
-     2. Targeted Query"""
+    the following algorithms. You can set the query
+    type in the launch files:
+     1. No query
+     2. Simple query
+     3. Targeted Query"""
 
 
 class QueryNLP():

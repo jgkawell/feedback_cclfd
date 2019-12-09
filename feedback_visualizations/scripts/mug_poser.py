@@ -44,7 +44,6 @@ def get_mug():
 
 
 class MugPoser:
-    """ A_ONE_LINE_DESCRIPTION_OF_THE_NODE """
 
     def send_pose(self, pPosn, pOrnt, baseFrame, trgtFrame, pTime):
         """ Send a stamped transform with the given data """
@@ -79,7 +78,6 @@ class MugPoser:
         self.pub.publish(self.marker)
 
     def __init__(self, refreshRate=300):
-        """ A_ONE_LINE_DESCRIPTION_OF_INIT """
         # 1. Start the node
         rospy.init_node('NODENAME')
         # 2. Set rate
@@ -101,8 +99,6 @@ class MugPoser:
         self.sent = False
 
     def run(self):
-        """ A_ONE_LINE_DESCRIPTION_OF_RUNTIME_ACTIVITY """
-
         # 0. While ROS is running
         while (not rospy.is_shutdown()):
 

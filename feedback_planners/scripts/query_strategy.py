@@ -87,5 +87,6 @@ class TargetedQuery(QueryStrategy):
         for key_frame in key_frames:
             self._queries[key_frame] = self.get_constraints(key_frame)
 
+        # TODO: Generate this question using the above methods
         query_question = "Should I have oriented the cup upwards?"
         return query_question

@@ -24,7 +24,6 @@ class QTester:
     """ Exercise the joints """
 
     def __init__(self, refreshRate=300):
-        """ A_ONE_LINE_DESCRIPTION_OF_INIT """
         # 1. Start the node
         rospy.init_node('QTester')
         # 2. Set rate
@@ -110,9 +109,6 @@ class QTester:
         print "... COMPLETE"
 
     def run(self):
-        """ A_ONE_LINE_DESCRIPTION_OF_RUNTIME_ACTIVITY """
-
-        print "About to run! `rospy` running?:", not rospy.is_shutdown()
 
         if 0:
             sleep(2.0)

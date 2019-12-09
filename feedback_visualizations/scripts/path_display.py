@@ -26,7 +26,6 @@ _NAMESPACE = "paths"
 
 
 class PathDisplay:
-    """ A_ONE_LINE_DESCRIPTION_OF_THE_NODE """
 
     def add_Pose_arr(self, msg):
         """ Add the path to the list of paths """
@@ -47,7 +46,6 @@ class PathDisplay:
             # print "Append , There are" , len( self.pathList[0] ) , "elements"
 
     def __init__(self, refreshRate=300):
-        """ A_ONE_LINE_DESCRIPTION_OF_INIT """
         # 1. Start the node
         rospy.init_node('PathDisplay')
         # 2. Set rate

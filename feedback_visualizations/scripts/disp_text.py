@@ -25,7 +25,8 @@ def get_text():
     txt.type = txt.TEXT_VIEW_FACING
     txt.text = "Speech to Text Display"
     txt.id = 100
-    # How long the object should last before being automatically deleted.  0 means forever
+    # How long the object should last before being automatically deleted.
+    # 0 means forever
     txt.lifetime = rospy.Duration(0)
     # 4. Set marker size
     txt.scale.z = .1
@@ -44,7 +45,6 @@ def get_text():
 
 
 class TextPoser:
-    """ A_ONE_LINE_DESCRIPTION_OF_THE_NODE """
 
     def update_txt(self, msg):
         """ Update the text with the new xform --> pose """
@@ -52,7 +52,6 @@ class TextPoser:
         self.pub.publish(self.marker)
 
     def __init__(self, refreshRate=300):
-        """ A_ONE_LINE_DESCRIPTION_OF_INIT """
         # 1. Start the node
         rospy.init_node('NODENAME')
         # 2. Set rate
@@ -70,8 +69,6 @@ class TextPoser:
         self.sent = False
 
     def run(self):
-        """ A_ONE_LINE_DESCRIPTION_OF_RUNTIME_ACTIVITY """
-
         # While ROS is running
         while (not rospy.is_shutdown()):
 

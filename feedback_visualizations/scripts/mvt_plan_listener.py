@@ -19,7 +19,6 @@ rospack = rospkg.RosPack()
 
 
 class MovePlanListener:
-    """ A_ONE_LINE_DESCRIPTION_OF_THE_NODE """
 
     def plan_receiver(self, msg):
         """ Push plan to the visualizer """
@@ -45,7 +44,6 @@ class MovePlanListener:
         self.pub.publish(outMsg)
 
     def __init__(self, refreshRate=300):
-        """ A_ONE_LINE_DESCRIPTION_OF_INIT """
         # 1. Start the node
         rospy.init_node('MovPlanListen')
         # 2. Set rate
@@ -95,8 +93,6 @@ class MovePlanListener:
             "/viz/pointPlans", PoseArray, queue_size=100)
 
     def run(self):
-        """ A_ONE_LINE_DESCRIPTION_OF_RUNTIME_ACTIVITY """
-
         # 0. While ROS is running
         while (not rospy.is_shutdown()):
 
