@@ -55,7 +55,7 @@ class QueryNLP():
 
             query_question = ""
             if self.query_strategy == "simple":
-                rospy.loginfo("QUERY NLP: No query...")
+                rospy.loginfo("QUERY NLP: Simple query...")
 
                 # check the usage
                 # Strategy pattern for different algorithms of querying

@@ -2,6 +2,7 @@
     <!-- Setup parameters -->
     <param name="QUERY_STRATEGY" type="string" value="simple" />
     <param name="MAIN_FILEPATH" type="string" value="$(find lfd_experiments)/experiment_data/cc_lfd/feedback_demo/new_data"/>
+    <param name="DEMO_VOICE_FILEPATH" type="string" value="$(find feedback_master)/demo_data"/>
 
     <!-- Fake LfD server (for debugging) -->
     <!-- Uncomment the below node and comment over all the CC-LfD params to run without Sawyer -->
@@ -11,10 +12,10 @@
     <node name="synthesizer" pkg="feedback_classifiers" type="synthesizer.py" output="screen" />
 
     <!-- Launch planning nodes -->
+    <node name="nlp_server" pkg="feedback_planners" type="nlp_server.py" output="screen" />
     <node name="query_nlp" pkg="feedback_planners" type="query_nlp.py" output="screen" />
     <node name="demonstrator" pkg="feedback_planners" type="demonstrator.py" output="screen" />
-    <node name="nlp_server" pkg="feedback_planners" type="nlp_server.py" output="screen" />
-    <node name="request_feedback_server" pkg="feedback_planners" type="request_feedback_server.py" output="screen" launch-prefix="xterm -e" />
+    <node name="request_feedback_server" pkg="feedback_planners" type="request_feedback_server.py" output="screen" />
     <node name="teleop" pkg="feedback_master" type="teleop.py" output="screen" launch-prefix="xterm -e" />
 
     <!-- Launch CC-LfD server -->

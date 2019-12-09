@@ -80,7 +80,7 @@ class NLPServer():
             if not os.path.exists(os.path.dirname(file_name)):
                 try:
                     os.makedirs(os.path.dirname(file_name))
-                except OSError as exc: # Guard against race condition
+                except OSError as exc:  # Guard against race condition
                     if exc.errno != errno.EEXIST:
                         raise
 

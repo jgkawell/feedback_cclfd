@@ -1,9 +1,11 @@
 #!/usr/bin/env python2.7
 # license removed for brevity
+import re
 import rospy
 import numpy as np
 
 from feedback_planners.srv import RequestFeedback
+from feedback_planners.srv import STT, STTResponse, TTS, TTSResponse
 
 """ This class requests simple postive/negative feedback
     from the user after each demonstration. """
@@ -15,26 +17,52 @@ class RequestFeedbackServer():
         rospy.init_node('request_feedback_server')
 
     def run(self):
-        # setup service
+        # Set up server
         rospy.Service("request_feedback", RequestFeedback,
                       self.handle_request_feedback)
+
+        # Set up client for NLP TTS service
+        rospy.wait_for_service("/nlp/tts")
+        try:
+            self.tts_server = rospy.ServiceProxy(
+                "/nlp/tts", TTS)
+            rospy.loginfo("Service setup succeeded (/nlp/tts)")
+        except rospy.ServiceException:
+            rospy.logerr("Service setup failed (/nlp/tts)")
+
+        # Set up client for NLP STT service
+        rospy.wait_for_service("/nlp/stt")
+        try:
+            self.stt_server = rospy.ServiceProxy(
+                "/nlp/stt", STT)
+            rospy.loginfo("Service setup succeeded (/nlp/stt)")
+        except rospy.ServiceException:
+            rospy.logerr("Service setup failed (/nlp/stt)")
+
         print("REQUEST FEEDBACK: Waiting for robot...")
         rospy.spin()
 
     def handle_request_feedback(self, temp):
         rospy.loginfo("REQUEST FEEDBACK: Requesting feedback...")
 
-        # TODO: Replace this with a speech-to-text listener
-        # request feedback from user (this is done with keyboard input for now)
-        print("Good or bad demonstration? (T/F)")
-        response = raw_input().upper()
-        print("You responded: %s", response)
+        # Request feedback from user using NLP engine
+        if not self.tts_server("Was that a good demonstration?"):
+            rospy.logerr("REQUEST FEEDBACK: TTS failed!")
 
-        # TODO: Replace this with a positive/negative classifier
-        # convert string feedback to boolean
-        feedback = False
-        if response == "T":
+        # Get filepath of demo voice data from rosparam
+        filepath = rospy.get_param("DEMO_VOICE_FILEPATH")
+
+        # Create text response using NLP engine
+        response = self.stt_server(filepath + "/good-demonstration.wav").output
+        rospy.loginfo("REQUEST FEEDBACK: User responded: %s" % response)
+
+        # Check if response was positive or negative
+        if 'yes' in response.lower():
+            rospy.loginfo("REQUEST FEEDBACK: Positive response")
             feedback = True
+        else:
+            rospy.loginfo("REQUEST FEEDBACK: Negative response")
+            feedback = False
 
         return feedback
 
