@@ -26,7 +26,7 @@ class NLPServer():
     def __init__(self):
         rospy.init_node("nlp_server")
         # Create a repeater for user input
-        self.pub = rospy.Publisher( "/viz/user_feedback" , String , queue_size = 100 )
+        self.pub = rospy.Publisher("/viz/user_feedback", String, queue_size=10)
 
     def run(self):
         """

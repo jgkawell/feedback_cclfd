@@ -17,6 +17,7 @@ from feedback_planners.srv import STT, STTResponse, TTS, TTSResponse
      1. Simple query
      2. Targeted Query"""
 
+
 class QueryNLP():
 
     def __init__(self):
