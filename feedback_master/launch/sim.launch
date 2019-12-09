@@ -12,7 +12,6 @@
     <node name="teleop" pkg="feedback_master" type="teleop.py" output="screen" launch-prefix="xterm -e" />
 
     <!-- CC-LfD PARAMETERS -->
-    <param name="CONFIG" type="string" value="$(find lfd_experiments)/experimental_data/feedback_demo/config.json"/>
-    <param name="DEMO_DIRECTORY" type="string" value="$(find lfd_experiments)/experimental_data/feedback_demo/new_data/labeled"/>
+    <param name="MAIN_FILEPATH" type="string" value="$(find lfd_experiments)/experiment_data/cc_lfd/feedback_demo/new_data"/>
     <node name="feedback_demonstration" pkg="lfd_experiments" type="feedback_demonstration_server.py" output="screen" />
 </launch>
