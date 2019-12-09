@@ -1,5 +1,6 @@
 #!/usr/bin/env python2.7
 # license removed for brevity
+
 import re
 import rospy
 import numpy as np
