@@ -84,6 +84,8 @@ class MovePlanListener:
             outMsg.poses.append( x_i )
         self.pub.publish( outMsg )
 
+        
+
     def __init__( self , refreshRate = 300 ):
         """ A_ONE_LINE_DESCRIPTION_OF_INIT """
         # 1. Start the node
@@ -94,6 +96,7 @@ class MovePlanListener:
         
         # 3. Start subscribers and listeners
         rospy.Subscriber( "/move_group/display_planned_path" , DisplayTrajectory , self.plan_receiver )
+        
         
         # 4. Start publishers
         self.pub = rospy.Publisher( "/viz/pointPlans" , PoseArray , queue_size = 100 )
@@ -151,7 +154,8 @@ if __name__ == "__main__":
     print __prog_signature__()
     termArgs = sys.argv[1:] # Terminal arguments , if they exist
     
-    FOO = MovePlanListener( 300 )
+    refreshRateHz = rospy.get_param( 'graphics_refresh_rate' , 60 )
+    FOO = MovePlanListener( refreshRateHz )
     FOO.run()    
     
 

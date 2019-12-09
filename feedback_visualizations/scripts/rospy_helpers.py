@@ -102,6 +102,12 @@ def unpack_ROS_xform( xform ):
     ornt = [ xform.transform.rotation.x    , xform.transform.rotation.y    , xform.transform.rotation.z    , xform.transform.rotation.w ]
     return posn , ornt
 
+def unpack_ROS_pose( pose ):
+    """ Unpack the ROS transform message into position and orientation """
+    posn = [ pose.position.x    , pose.position.y    , pose.position.z    ] 
+    ornt = [ pose.orientation.x , pose.orientation.y , pose.orientation.z , pose.orientation.w ]
+    return posn , ornt
+
 def load_xform_into_pose( xform , pose ):
     """ Transfer frame data from transform to a pose """
     # Load translation --> position
@@ -114,7 +120,13 @@ def load_xform_into_pose( xform , pose ):
     pose.orientation.y = xform.rotation.y
     pose.orientation.z = xform.rotation.z
     
+def vec_mag( vec ): 
+    """ Return the magnitude of a vector """
+    return np.linalg.norm( vec )
 
+def vec_dif_mag( vec1 , vec2 ):
+    """ Return the magnitude of the vector difference between 'vec1' and 'vec2' """
+    return vec_mag( np.subtract( vec1 , vec2 ) )
 
 # ___ END FUNC _____________________________________________________________________________________________________________________________
 
@@ -124,11 +136,30 @@ if __name__ == "__main__":
 
 # === CLASSES ==============================================================================================================================
 
+class RollingList( list ): 
+    """ A rolling window based on 'list' """ 
 
+    def __init__( self , winLen , initVal = 0.0 , *args ):
+        """ Normal 'list' init """
+        list.__init__( self , [ initVal for i in range( winLen ) ] , *args )
 
+    def append( self , item ):
+        """ Append an item to the back of the list """
+        list.append( self , item )
+        del self[0]
 
+    def prepend( self , item ):
+        """ Prepend an item to the front of the list """
+        self.insert( 0 , item )
+        del self[-1]
 
-    
+    def get_average( self ):
+        """ Get the rolling average , NOTE: Calling this function after inserting non-numeric or non-scalar elements will result in an error """
+        return sum( self ) * 1.0 / len( self )
+
+    def item_list( self ):
+        """ Return a copy of the RollingList as a list """
+        return self[:]   
 
 # ___ END CLASS ____________________________________________________________________________________________________________________________
 
