@@ -31,13 +31,13 @@ class Demonstrator():
             "/planners/demonstrations", String, queue_size=10)
 
         # set up client for demonstration service
-        rospy.wait_for_service("perform_demonstration")
+        rospy.wait_for_service("feedback_demonstration")
         try:
-            self.perform_demonstration = rospy.ServiceProxy(
-                "perform_demonstration", PerformDemonstration)
-            rospy.loginfo("Service setup succeeded (perform_demonstration)")
+            self.feedback_demonstration = rospy.ServiceProxy(
+                "feedback_demonstration", PerformDemonstration)
+            rospy.loginfo("Service setup succeeded (feedback_demonstration)")
         except rospy.ServiceException:
-            rospy.logwarn("Service setup failed (perform_demonstration)")
+            rospy.logwarn("Service setup failed (feedback_demonstration)")
 
         # set up client for feedback service
         rospy.wait_for_service("request_feedback")
@@ -52,7 +52,8 @@ class Demonstrator():
 
     def run(self):
         # perform a bad demo to start
-        finished = self.perform_demonstration(0)  # 0 = negative
+        rospy.loginfo("DEMONSTRATOR: Starting first skill execution...")
+        finished = self.feedback_demonstration(0)  # 0 = negative
 
         if finished.response:
             self.finished_first_demo = True
@@ -71,7 +72,7 @@ class Demonstrator():
                 for i in range(0, num_demos):
                     # perform a single demonstration
                     temp_array = i
-                    finished = self.perform_demonstration(temp_array)
+                    finished = self.feedback_demonstration(temp_array)
                     if finished.response:
                         # request feedback about demonstration from user
                         msg = self.request_feedback(True)
@@ -95,7 +96,7 @@ class Demonstrator():
                 for key, value in results.items():
                     if value:
                         temp_array = key
-                        self.perform_demonstration(temp_array)
+                        self.feedback_demonstration(temp_array)
                         break
                 break
             else:
