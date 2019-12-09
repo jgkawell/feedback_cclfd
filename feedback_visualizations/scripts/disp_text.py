@@ -34,12 +34,13 @@ def prepend_dir_to_path( pathName ): sys.path.insert( 0 , pathName ) # Might nee
 # ~~ Standard ~~
 from math import pi , sqrt , sin , cos
 from time import sleep
+from std_msgs.msg import String
 # ~~ Special ~~
 import numpy as np
 import rospy 
 from visualization_msgs.msg import Marker
 from geometry_msgs.msg import TransformStamped
-from std_msgs.msg import String
+from geometry_msgs.msg import Pose  as ROSPose
 # ~~ Local ~~
 from rospy_helpers import origin_pose , load_xform_into_pose
 
@@ -72,17 +73,21 @@ def get_text():
     txt.ns       = "text"
     txt.action   = txt.ADD
     txt.type     = txt.TEXT_VIEW_FACING
+    txt.text     = "Speech to Text Display"
     txt.id       = 100
     txt.lifetime = rospy.Duration(0) # How long the object should last before being automatically deleted.  0 means forever
     # 4. Set marker size
-    txt.scale.z = 0.5
+    txt.scale.z = .1
     # 5. Set marker color
     txt.color.a = 1.0
     txt.color.r = 255 /255
     txt.color.g = 204 /255
     txt.color.b = 0 /255
     # 6. Set the text pose
-    txt.pose = origin_pose() #  TODO: Determine appropriate location - may not exist for this Marker type?
+    txt.pose = ROSPose()
+    txt.pose.position.x = 0.0
+    txt.pose.position.y = 0.0
+    txt.pose.position.z = 1.0
     # N. Return text
     return txt
 
@@ -96,7 +101,7 @@ class TextPoser:
 
     def update_txt(self, msg):
         """ Update the text with the new xform --> pose """
-        load_xform_into_pose( txt.transform , self.marker.pose )
+        self.marker.text = msg.data
         self.pub.publish(self.marker)
     
     def __init__( self , refreshRate = 300 ):
@@ -115,7 +120,7 @@ class TextPoser:
         
         # 5. Init vars
         self.initTime = rospy.Time.now().to_sec() 
-        self.marker   = get_mug()
+        self.marker   = get_text()
         self.sent     = False
 
     def run( self ):
