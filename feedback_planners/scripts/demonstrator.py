@@ -69,11 +69,12 @@ class Demonstrator():
                 results = dict()
                 for i in range(0, num_demos):
                     # perform a single demonstration
-                    temp_array = i
-                    finished = self.feedback_demonstration(temp_array)
+                    constraint = i
+                    finished = self.feedback_demonstration(constraint)
                     if finished.response:
                         # request feedback about demonstration from user
-                        msg = self.request_feedback(True)
+                        feedback_type = constraint == 1
+                        msg = self.request_feedback(feedback_type)
                         key = i
                         if msg.response:
                             rospy.loginfo(
@@ -93,8 +94,8 @@ class Demonstrator():
                 rospy.loginfo("DEMONSTRATOR: Showing what has been learned...")
                 for key, value in results.items():
                     if value:
-                        temp_array = key
-                        self.feedback_demonstration(temp_array)
+                        constraint = key
+                        self.feedback_demonstration(constraint)
                         break
                 break
             else:
