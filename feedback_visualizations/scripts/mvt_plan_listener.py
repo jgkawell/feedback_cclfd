@@ -70,25 +70,25 @@ class MovePlanListener:
     
     def plan_receiver( self, msg ):
         """ Push plan to the visualizer """
+        self.planCount += 1
         traj = msg.trajectory.joint_trajectory.points
         outMsg = PoseArray()
         print "Received a trajectory!"
         for pnt in traj:
-            q_i = pnt.positions
-            x_matx = self.kdl_kin.forward( q_i )
-            print x_matx
+            q_i    = pnt.positions # Joint positions
+            x_matx = np.array( self.kdl_kin.forward( q_i ) )
+            R      = x_matx[0:3,0:3]
+            quat   = Quaternion( matrix = R )
             x_i = Pose()
-            x_i.position.x = 0.0
-            x_i.position.y = 0.0
-            x_i.position.z = 0.0
-            x_i.orientation.w = 1.0
-            x_i.orientation.x = 0.0
-            x_i.orientation.y = 0.0
-            x_i.orientation.z = 0.0
+            x_i.position.x = x_matx[0,3]
+            x_i.position.y = x_matx[1,3]
+            x_i.position.z = x_matx[2,3]
+            x_i.orientation.w = quat.elements[0]
+            x_i.orientation.x = quat.elements[1]
+            x_i.orientation.y = quat.elements[2]
+            x_i.orientation.z = quat.elements[3]
             outMsg.poses.append( x_i )
         self.pub.publish( outMsg )
-
-        
 
     def __init__( self , refreshRate = 300 ):
         """ A_ONE_LINE_DESCRIPTION_OF_INIT """
@@ -101,13 +101,13 @@ class MovePlanListener:
         # 3. Start subscribers and listeners
         rospy.Subscriber( "/move_group/display_planned_path" , DisplayTrajectory , self.plan_receiver )
         
-        
         # 4. Start publishers
         self.pub = rospy.Publisher( "/viz/pointPlans" , PoseArray , queue_size = 100 )
         
         # 5. Init vars
-        self.initTime = rospy.Time.now().to_sec()  
-        self.kdl_kin  = None
+        self.initTime  = rospy.Time.now().to_sec()  
+        self.kdl_kin   = None
+        self.planCount = 0
 
         # 6. Load the robot description
         descPath = rospack.get_path('sawyer_description')
@@ -142,6 +142,7 @@ class MovePlanListener:
         # N. Post-shutdown activities
         else:
             print "\nNode Shutdown after" , rospy.Time.now().to_sec() - self.initTime , "seconds"
+            print "Received" , self.planCount , "plans in total"
         
 
 # __ End Class __
