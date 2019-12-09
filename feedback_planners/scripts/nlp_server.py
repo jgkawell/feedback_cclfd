@@ -26,7 +26,10 @@ class NLPServer():
     def __init__(self):
         rospy.init_node("nlp_server")
         # Create a repeater for user input
-        self.pub = rospy.Publisher("/viz/user_feedback", String, queue_size=10)
+        self.pub_user = rospy.Publisher("/viz/user_feedback",
+                                        String, queue_size=10)
+        self.pub_robot = rospy.Publisher("/viz/robot_speaking",
+                                         String, queue_size=10)
 
     def run(self):
         """
@@ -98,6 +101,11 @@ class NLPServer():
             rospy.logerr("NLP Server TTS: %s", str(ex))
             success = False
 
+        # Publish robot speech
+        msg = String()
+        msg.data = "Robot: " + tts_srv.input.lower()
+        self.pub_robot.publish(msg)
+
         return success
 
     def speechToText(self, stt_srv):
@@ -131,7 +139,8 @@ class NLPServer():
             response = client.recognize(config, audio)
             for result in response.results:
                 cur_result = u"{}".format(result.alternatives[0].transcript)
-                rospy.loginfo("NLP Server STT: Transcript: %s", cur_result)
+                rospy.loginfo("NLP Server STT: Transcript: %s",
+                              cur_result.lower())
                 response_text += cur_result.encode('ascii', 'ignore')
 
         except Exception as ex:
@@ -139,8 +148,8 @@ class NLPServer():
 
         # Return the text
         msg = String()
-        msg.data = response_text
-        self.pub.publish(msg)
+        msg.data = "User: " + response_text.lower()
+        self.pub_user.publish(msg)
         return response_text
 
 

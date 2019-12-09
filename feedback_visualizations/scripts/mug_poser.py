@@ -34,9 +34,9 @@ def get_mug():
     mug.scale.z = 0.10
     # 5. Set marker color
     mug.color.a = 1.0
-    mug.color.r = 3 / 255
-    mug.color.g = 252 / 255
-    mug.color.b = 240 / 255
+    mug.color.r = 3 / 255.0
+    mug.color.g = 252 / 255.0
+    mug.color.b = 240 / 255.0
     # 6. Set the mug pose
     mug.pose = origin_pose()
     # N. Return mug
@@ -44,7 +44,6 @@ def get_mug():
 
 
 class MugPoser:
-    """ A_ONE_LINE_DESCRIPTION_OF_THE_NODE """
 
     def send_pose(self, pPosn, pOrnt, baseFrame, trgtFrame, pTime):
         """ Send a stamped transform with the given data """
@@ -69,7 +68,7 @@ class MugPoser:
     def update_mug(self, msg):
         """ Update the mug with the new xform --> pose """
         # A. Create a transform from the wrist to the mug
-        posn = [0, 0, 0.080]
+        posn = [0, 0, 0.140]
         ornt = [0, 0.707, 0, 0.707]
         t_i = rospy.Time.now()
         self.send_pose(posn, ornt, "right_hand", "mug_frame", t_i)
@@ -79,7 +78,6 @@ class MugPoser:
         self.pub.publish(self.marker)
 
     def __init__(self, refreshRate=300):
-        """ A_ONE_LINE_DESCRIPTION_OF_INIT """
         # 1. Start the node
         rospy.init_node('NODENAME')
         # 2. Set rate
@@ -87,7 +85,6 @@ class MugPoser:
         # Best effort to maintain 'heartBeatHz'
         # URL: http://wiki.ros.org/rospy/Overview/Time
         self.idle = rospy.Rate(self.heartBeatHz)
-
         # 3. Start subscribers and listeners
         rospy.Subscriber("/viz/wristXform", TransformStamped, self.update_mug)
         self.tfBuffer = tf2_ros.Buffer()  # Needed for tf2
@@ -102,8 +99,6 @@ class MugPoser:
         self.sent = False
 
     def run(self):
-        """ A_ONE_LINE_DESCRIPTION_OF_RUNTIME_ACTIVITY """
-
         # 0. While ROS is running
         while (not rospy.is_shutdown()):
 
