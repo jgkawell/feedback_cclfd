@@ -17,11 +17,11 @@ If you'd rather run things locally, [the same repository](https://github.com/jgk
 
 You'll need to have three terminals open to run this system. In each, you'll need to run the following commands which I have numbered below:
 
-1. cd ~/ws_moveit && ./intera.sh sim && roslaunch lfd_experiments feedback.launch
-2. cd ~/ws_moveit && ./intera.sh sim && roslaunch feedback_visualizations rviz_main.launch
-3. cd ~/ws_moveit && ./intera.sh sim && roslaunch feedback_master sim.launch
+1. `cd ~/ws_moveit && ./intera.sh sim && roslaunch lfd_experiments feedback.launch`
+2. `cd ~/ws_moveit && ./intera.sh sim && roslaunch feedback_visualizations rviz_main.launch`
+3. `cd ~/ws_moveit && ./intera.sh sim && roslaunch feedback_master sim.launch`
 
 The first part of each of those commands simply sets you up in the simulated Sawyer robot environment. `feedback.launch` sets up all the needed robot subsystems for running Sawyer within Gazebo and initializes it for the CC-LfD skill execution system. `rviz_main.launch` sets up an Rviz window to display path planning and scene objects. `sim.launch` actually runs the simulation as a demo of a cup hand off skill repair scenario.
 
 
-NOTE: If you're not running this in simulation, the system currently works only on a Sawyer arm, using the webcam in the primary computer and must be connected to an OptiTrack motion capture system. The steps above assume that you are connected to the same network as both the Sawyer and the OptiTrack and that all necessary setup on those systems have been made.
+NOTE: If you're not running this in simulation, the system currently works only on a Sawyer arm, using the webcam in the primary computer and must be connected to an OptiTrack motion capture system. This requires a lot more setup and instructions than can be covered here.
