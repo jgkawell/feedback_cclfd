@@ -5,8 +5,12 @@
     <param name="DEMO_VOICE_FILEPATH" type="string" value="$(find feedback_master)/demo_data"/>
 
     <!-- Fake LfD server (for debugging) -->
-    <!-- Uncomment the below node and comment over all the CC-LfD params to run without Sawyer -->
+    <!-- Uncomment the below node and comment over the real node if not using Sawyer -->
     <!-- <node name="fake_lfd_server" pkg="feedback_planners" type="fake_lfd_server.py" output="screen" />         -->
+    
+    <!-- Launch CC-LfD server -->
+    <!-- Comment the below node if using the fake server above -->
+    <node name="feedback_demonstration" pkg="lfd_experiments" type="feedback_demonstration_server.py" output="screen" />
 
     <!-- Launch classifiers -->
     <node name="synthesizer" pkg="feedback_classifiers" type="synthesizer.py" output="screen" />
@@ -18,7 +22,4 @@
     <node name="request_feedback_server" pkg="feedback_planners" type="request_feedback_server.py" output="screen" />
     <node name="teleop" pkg="feedback_master" type="teleop.py" output="screen" launch-prefix="xterm -e" />
 
-    <!-- Launch CC-LfD server -->
-    <!-- Comment the below node if using the fake server above -->
-    <node name="feedback_demonstration" pkg="lfd_experiments" type="feedback_demonstration_server.py" output="screen" />
 </launch>
