@@ -52,7 +52,7 @@ class face():
         try:
             full_size_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
         except CvBridgeError as e:
-            print(e)
+            rospy.logerr("FACE: {}".format(e))
 
         # converting into grayscale and detecting the faces, creating the
         # bounding box and cropping the image using haar-cascade classifier
@@ -93,7 +93,7 @@ class face():
                     elif classification == "Neutral":
                         msg = True
                     else:
-                        rospy.logwarn("CAMERA: Bad label!!!")
+                        rospy.logwarn("FACE: Bad label!!!")
 
                     # TODO: Return the classification and some confidence
                     # value in the classification

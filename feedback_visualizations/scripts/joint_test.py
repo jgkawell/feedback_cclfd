@@ -24,18 +24,14 @@ class QTester:
     """ Exercise the joints """
 
     def __init__(self, refreshRate=300):
-        # 1. Start the node
+        # Start the node
         rospy.init_node('QTester')
-        # 2. Set rate
+        # Set rate
         self.heartBeatHz = refreshRate  # ----------- Node refresh rate [Hz]
         # Best effort to maintain 'heartBeatHz'
         # URL: http://wiki.ros.org/rospy/Overview/Time
         self.idle = rospy.Rate(self.heartBeatHz)
-
-        # 3. Start subscribers and listeners
-        # rospy.Subscriber( "TOPIC_NAME" , MSG_TYPE , CALLBACK_FUNC )
-
-        # 4. Start publishers
+        # Start publishers
         self.pub = rospy.Publisher("/viz/ctrl", JointState, queue_size=10)
         self.pubX = rospy.Publisher(
             "/viz/pointPlans", PoseArray, queue_size=100)
@@ -43,20 +39,16 @@ class QTester:
             "/move_group/display_planned_path",
             DisplayTrajectory,
             queue_size=100)
-
-        # 5. Init vars
+        # Init vars
         self.initTime = rospy.Time.now().to_sec()
         self.qCmd = JointState()
-
         self.qCmd.header = Header()
         self.qCmd.header.seq = 0
         self.qCmd.header.stamp = rospy.get_rostime()
-
         self.qCmd.name = ['head_pan', 'right_j0', 'right_j1',
                           'right_j2', 'right_j3', 'right_j4',
                           'right_j5', 'right_j6']
         self.qCmd.position = [0.0 for i in range(len(self.qCmd.name))]
-
         self.qCmd.header.frame_id = 'pedestal'
         self.Qspeed = pi / 300.0
         # Modes available to command arm
@@ -64,14 +56,14 @@ class QTester:
         # int32 VELOCITY_MODE   = 2
         # int32 TORQUE_MODE     = 3
         # int32 TRAJECTORY_MODE = 4
-        print "Init completed!"
+        rospy.loginfo("JOINT TEST: Init completed!")
 
     def test_planned_paths_X(self):
         """ Spam the system with dummy poses """
         Z = 0.0
-        print "Publishing pose plans ..."
+        rospy.loginfo("JOINT TEST: Publishing pose plans ...")
         for i in range(3):
-            print i+1
+            rospy.loginfo("JOINT TEST: %d", i+1)
             Z += 0.100
             arr = PoseArray()
             N = 100
@@ -85,16 +77,16 @@ class QTester:
                 pose_i.position.z = pnt[2]
                 arr.poses.append(pose_i)
             self.pubX.publish(arr)
-        print "... COMPLETE"
+        rospy.loginfo("JOINT TEST: COMPLETE")
 
     def test_planned_paths_Q(self):
         """ Spam the system with dummy configurations """
-        print "Publishing configuration plans ..."
+        rospy.loginfo("JOINT TEST: Publishing configuration plans")
         starts = [0.0, pi/3.0, 2.5*pi/3.0]
         span = 1.50*pi/6.0
         N = 100
         for i in range(3):
-            print i+1
+            rospy.loginfo("JOINT TEST: %d", i+1)
             angles = np.linspace(starts[i], starts[i] + span, N)
             traj = DisplayTrajectory()
             rTrj = RobotTrajectory()
@@ -106,7 +98,7 @@ class QTester:
             sleep(1.0)
             traj.trajectory.append(rTrj)
             self.pubQ.publish(traj)
-        print "... COMPLETE"
+        rospy.loginfo("JOINT TEST: COMPLETE")
 
     def run(self):
 
@@ -117,7 +109,7 @@ class QTester:
             sleep(2.0)
             self.test_planned_paths_Q()
 
-        # 0. While ROS is running
+        # While ROS is running
         while (not rospy.is_shutdown()):
 
             qNu = [self.qCmd.position[i] +
@@ -128,12 +120,12 @@ class QTester:
 
             self.pub.publish(self.qCmd)
 
-            # N-1: Wait until the node is supposed to fire next
+            # Wait until the node is supposed to fire next
             self.idle.sleep()
 
-        # N. Post-shutdown activities
+        # Post-shutdown activities
         else:
-            rospy.loginfo("Node Shutdown after %d seconds." %
+            rospy.loginfo("Node Shutdown after %d seconds.",
                           rospy.Time.now().to_sec() - self.initTime)
 
 

@@ -104,7 +104,7 @@ def vec_dif_mag(vec1, vec2):
 
 if __name__ == "__main__":
     for i in xrange(30):
-        print vec3d_rand_corners([0, 0, 0], [100, 100, 100])
+        rospy.loginfo(vec3d_rand_corners([0, 0, 0], [100, 100, 100]))
 
 
 class RollingList(list):

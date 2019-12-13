@@ -37,34 +37,33 @@ class PathDisplay:
 
     def update_history(self, msg):
         """ Update the mug with the new xform --> pose """
-        # 1. Get the position from the message
+        # Get the position from the message
         posn, ornt = unpack_ROS_xform(msg)
         dist = vec_dif_mag(posn, self.pathList[0][-1])
-        # 2. If the next point is sufficient distance from the last
+        # If the next point is sufficient distance from the last
         if dist >= _DISTMARGIN:
             self.pathList[0].append(posn)
-            # print "Append , There are" , len( self.pathList[0] ) , "elements"
 
     def __init__(self, refreshRate=300):
-        # 1. Start the node
+        # Start the node
         rospy.init_node('PathDisplay')
-        # 2. Set rate
+        # Set rate
         self.heartBeatHz = refreshRate  # ----------- Node refresh rate [Hz]
         # Best effort to maintain 'heartBeatHz'
         # URL: http://wiki.ros.org/rospy/Overview/Time
         self.idle = rospy.Rate(self.heartBeatHz)
 
-        # 3. Start subscribers and listeners
+        # Start subscribers and listeners
         rospy.Subscriber("/viz/pointPlans", PoseArray, self.add_Pose_arr)
         rospy.Subscriber("/viz/wristXform", TransformStamped,
                          self.update_history)
 
-        # 4. Start publishers
+        # Start publishers
         self.pubSngl = rospy.Publisher("/viz/markers", Marker, queue_size=100)
         self.pubMany = rospy.Publisher(
             "/viz/mrkr_arr", MarkerArray, queue_size=100)
 
-        # 5. Init vars
+        # Init vars
         self.initTime = rospy.Time.now().to_sec()
         # NOTE: The first element is ALWAYS the path traced by the wrist
         self.pathList = [RollingList(_HISTORYLIMIT, initVal=[0, 0, 0])]
@@ -79,10 +78,10 @@ class PathDisplay:
 
     def add_path(self, path, color=_GREEN):
         """ Add a list of points to the list of paths """
-        # 1. Add the path and the color
+        # Add the path and the color
         self.pathList.append(path)
         self.colrList.append(color)
-        # 2. If the number of paths have been exceeded
+        # If the number of paths have been exceeded
         # then erase the first static path (index 1)
         if (len(self.pathList) - 1) > _PATHNUMLIMIT:
             self.pathList.pop(1)
@@ -99,12 +98,12 @@ class PathDisplay:
                            scale=_DEFAULTSCALE, color=_GREEN,
                            mrkrNS=_NAMESPACE):
         """ Return a marker composed of the points """
-        # 1. Create marker
+        # Create marker
         trace = Marker()
-        # 2. Populate header
+        # Populate header
         trace.header.stamp = rospy.Time.now()
         trace.header.frame_id = "base"
-        # 3. Set marker info for a persistent marker
+        # Set marker info for a persistent marker
         trace.ns = mrkrNS
         trace.action = trace.ADD
         trace.type = trace.LINE_STRIP
@@ -112,25 +111,25 @@ class PathDisplay:
         # How long the object should last before being automatically deleted.
         # 0 means forever
         trace.lifetime = rospy.Duration(0)
-        # 4. Set marker size
+        # Set marker size
         # Line strips: Only scale.x is used and it controls
         # the width of the line segments.
         trace.scale.x = scale
-        # 5. Set marker color
+        # Set marker color
         trace.color.a = 1.0
         trace.color.r = color[0]
         trace.color.g = color[1]
         trace.color.b = color[2]
-        # 6. Set the marker pose
+        # Set the marker pose
         trace.pose = origin_pose()
-        # 7. Build the points list
+        # Build the points list
         for pnt in ptsList:
             mrkrPnt = Point()
             mrkrPnt.x = pnt[0]
             mrkrPnt.y = pnt[1]
             mrkrPnt.z = pnt[2]
             trace.points.append(mrkrPnt)
-        # N. Return marker
+        # Return marker
         return trace
 
     def publish_all(self):
@@ -143,7 +142,7 @@ class PathDisplay:
 
     def test_lines(self):
         """ Spam some lines to the screen  """
-        print("Running the test function ...")
+        rospy.loginfo("PATH DISPLAY: Running the test function")
 
         def circ_angle(index, N):
             return 2*pi*(index/N)
@@ -159,21 +158,20 @@ class PathDisplay:
     def run(self):
         """ Publish all of the currently stored paths """
 
-        # 0. While ROS is running
+        # While ROS is running
         while (not rospy.is_shutdown()):
-
             if 0 and (not self.hasRun):
                 self.test_lines()
                 self.hasRun = True
 
             self.publish_all()
 
-            # N-1: Wait until the node is supposed to fire next
+            # Wait until the node is supposed to fire next
             self.idle.sleep()
 
-        # N. Post-shutdown activities
+        # Post-shutdown activities
         else:
-            rospy.loginfo("Node Shutdown after %d seconds." %
+            rospy.loginfo("Node Shutdown after %d seconds.",
                           rospy.Time.now().to_sec() - self.initTime)
 
 

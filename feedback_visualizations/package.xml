@@ -1,85 +1,45 @@
 <?xml version="1.0"?>
-<package>
-	
-<!-- === REQUIRED TAGS ================================================================================================================= -->
-	
-	<!-- There are a minimal set of tags that need to be nested within the <package> tag to make the package manifest complete. -->
-
-	<!-- REQ'D: <name> - The name of the package -->
-	<name>feedback_visualizations</name>
-
-	<!-- REQ'D: <version> - The version number of the package (required to be 3 dot-separated integers) -->
-	<version>2019.12.1</version>
-
-	<!-- REQ'D: <description> - A description of the package contents -->
-	<description>Display the robot and its goals</description>
-
-	<!-- REQ'D: <maintainer> - The name of the person(s) that is/are maintaining the package -->
-	<!-- One maintainer tag required, multiple allowed, one person per tag --> 
-	<maintainer email="james.watson-2@colorado.edu">James Watson</maintainer>
-
-	<!-- REQ'D: <license> - The software license(s) (e.g. GPL, BSD, ASL) under which the code is released. -->
-	<!-- One license tag required, multiple allowed, one license per tag -->
-	<!-- Commonly used license strings: -->
-	<!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-	<license>Use parent licence!</license>
-	
-<!-- ___ END REQUIRED __________________________________________________________________________________________________________________ -->
-	
-	
-<!-- === DEPENDENCIES ================================================================================================================== -->
-
-	<!-- The package manifest with minimal tags does not specify any dependencies on other packages. 
-		 Packages can have six types of dependencies: -->
-
-	<!-- Build Dependencies specify which packages are needed to build this package.  This is the case when any file from these packages is 
-		 required at build time. This can be including headers from these packages at compilation time, linking against libraries 
-		 from these packages or requiring any other resource at build time (especially when these packages are find_package()-ed in CMake). 
-		 In a cross-compilation scenario build dependencies are for the targeted architecture. -->
-		 
-	<buildtool_depend>catkin</buildtool_depend>
-	
-	<!-- THIS NEEDS TO MATCH THE RUN DEPENDENCIES LIST BELOW -->
-	<build_depend>cmake_modules</build_depend>
-	<build_depend>roslib</build_depend>
-	<build_depend>roscpp</build_depend>
-	<build_depend>rospy</build_depend>
-	<build_depend>tf2</build_depend>
-	<build_depend>tf2_ros</build_depend>
-	<build_depend>message_generation</build_depend>
-	<build_depend>std_msgs</build_depend>
-	<build_depend>visualization_msgs</build_depend>
-	<build_depend>geometry_msgs</build_depend>
-    <build_depend>sensor_msgs</build_depend>
-
-	<!-- Build Export Dependencies specify which packages are needed to build libraries against this package. This is the case when you 
-		 transitively include their headers in public headers in this package 
-		 (especially when these packages are declared as (CATKIN_)DEPENDS in catkin_package() in CMake). -->
-
-	<!-- Execution Dependencies specify which packages are needed to run code in this package. This is the case when you depend on 
-		 shared libraries in this package (especially when these packages are declared as (CATKIN_)DEPENDS in catkin_package() in CMake). -->
-		 
-	<!-- THIS NEEDS TO MATCH THE BUILD DEPENDENCIES LIST ABOVE -->
-	<run_depend>cmake_modules</run_depend>
-	<run_depend>roslib</run_depend>
-	<run_depend>roscpp</run_depend>
-	<run_depend>rospy</run_depend>
-	<run_depend>tf2</run_depend>
-	<run_depend>tf2_ros</run_depend>
-	<run_depend>message_runtime</run_depend>
-	<run_depend>std_msgs</run_depend>
-	<run_depend>visualization_msgs</run_depend>
-	<run_depend>geometry_msgs</run_depend>
-    <run_depend>sensor_msgs</run_depend>
-
-	<!-- Test Dependencies specify only additional dependencies for unit tests. 
-		 They should never duplicate any dependencies already mentioned as build or run dependencies. -->
-
-	<!-- Build Tool Dependencies specify build system tools which this package needs to build itself. Typically the only build tool needed 
-		 is catkin. In a cross-compilation scenario build tool dependencies are for the architecture on which the compilation is performed. -->
-
-	<!-- Documentation Tool Dependencies specify documentation tools which this package needs to generate documentation. -->
-	
-<!-- ___ END DEPEND ____________________________________________________________________________________________________________________ -->
-	
+<package format="2">
+  <name>feedback_visualizations</name>
+  <version>0.0.0</version>
+  <description>Display the robot and its goals</description>
+  <maintainer email="james.watson-2@colorado.edu">James Watson</maintainer>
+  <license>MIT</license>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>python-numpy</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>roslib</build_depend>
+  <build_depend>cmake_modules</build_depend>
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>rospy</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <build_depend>tf2</build_depend>
+  <build_depend>tf2_ros</build_depend>
+  <build_depend>visualization_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>python-numpy</exec_depend>
+  <exec_depend>cmake_modules</exec_depend>
+  <exec_depend>roslib</exec_depend>
+  <exec_depend>tf2</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+      <!-- Other tools can request additional information be placed here -->
+  
+  </export>
 </package>
