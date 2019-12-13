@@ -1,3 +1,0 @@
-/robot/limb/right/joint_command
-
-/robot/joint_states
