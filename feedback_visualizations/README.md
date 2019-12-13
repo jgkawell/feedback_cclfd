@@ -1,6 +1,6 @@
 # feedback_visualizations
 
-NOTE: The `mvt_plan_listener.py` module REQUIRES KDL to Run!
+NOTE: The `mvt_plan_listener.py` module REQUIRES KDL to run! This is included in the Docker image of this repository though.
 
 ```
 # In the src/ directory ...
