@@ -3,8 +3,12 @@
 # Build from sawyer ompl dev box
 FROM jgkawell/ompl:sawyer AS base
 
+# Load feedback CC-LfD
+COPY . /root/ws_moveit/src/cairo-feedback-cclfd
+
 # Clone CAIRO CC-LfD
 RUN cd ~/ws_moveit/src && git clone https://github.com/cairo-robotics/cairo-lfd.git
+RUN cd ~/ws_moveit/src/cairo-lfd && git checkout constraint_augmentation
 
 # Clone and install KDL for MoveIt plan listener
 RUN cd ~/ws_moveit/src \
@@ -16,10 +20,6 @@ RUN cd ~/ws_moveit/src \
 
 # Clone CAIRO constraint classification
 RUN cd ~/ws_moveit/src && git clone https://github.com/cairo-robotics/constraint_classification.git
-
-# Clone CAIRO feedback CC-LfD
-RUN cd ~/ws_moveit/src && git clone https://github.com/jgkawell/cairo-feedback-cclfd.git
-RUN cd ~/ws_moveit/src && git checkout constraint_augmentation
 
 # Clone CAIRO robot interface
 RUN cd ~/ws_moveit/src && git clone https://github.com/cairo-robotics/cairo-robot-interface.git
