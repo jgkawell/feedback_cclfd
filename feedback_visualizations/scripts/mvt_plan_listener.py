@@ -26,7 +26,6 @@ class MovePlanListener:
         first = msg.trajectory[0]
         traj = first.joint_trajectory.points
         outMsg = PoseArray()
-        print "Received a trajectory!"
         for pnt in traj:
             q_i = pnt.positions  # Joint positions
             x_matx = np.array(self.kdl_kin.forward(q_i))

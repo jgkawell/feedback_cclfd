@@ -2,6 +2,7 @@
 # license removed for brevity
 
 import re
+import time
 import rospy
 import numpy as np
 
@@ -51,6 +52,9 @@ class RequestFeedbackServer():
         if not self.tts_server("Was that a good demonstration?"):
             rospy.logerr("REQUEST FEEDBACK: TTS failed!")
 
+        # Wait for response
+        time.sleep(5)
+
         # Create text response using NLP engine
         if feedback_type.input:
             response = self.stt_server(
@@ -58,6 +62,9 @@ class RequestFeedbackServer():
         else:
             response = self.stt_server(
                 self.demo_filepath + "/bad-demonstration.wav").output
+
+        # Wait for response
+        time.sleep(5)
 
         # Check if response was positive or negative
         if 'yes' in response.lower():

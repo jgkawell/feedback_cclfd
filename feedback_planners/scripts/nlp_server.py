@@ -26,10 +26,8 @@ class NLPServer():
     def __init__(self):
         rospy.init_node("nlp_server")
         # Create a repeater for user input
-        self.pub_user = rospy.Publisher("/viz/user_feedback",
-                                        String, queue_size=10)
-        self.pub_robot = rospy.Publisher("/viz/robot_speaking",
-                                         String, queue_size=10)
+        self.pub = rospy.Publisher("/viz/user_feedback",
+                                   String, queue_size=10)
 
     def run(self):
         """
@@ -104,7 +102,7 @@ class NLPServer():
         # Publish robot speech
         msg = String()
         msg.data = "Robot: " + tts_srv.input.lower()
-        self.pub_robot.publish(msg)
+        self.pub.publish(msg)
 
         return success
 
@@ -149,7 +147,7 @@ class NLPServer():
         # Return the text
         msg = String()
         msg.data = "User: " + response_text.lower()
-        self.pub_user.publish(msg)
+        self.pub.publish(msg)
         return response_text
 
 
