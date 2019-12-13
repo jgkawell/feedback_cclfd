@@ -15,7 +15,6 @@ class teleop():
 
     def __init__(self):
         rospy.init_node('teleop', anonymous=True)
-
         # initializing publisher
         self.pub_face = rospy.Publisher(
             '/classifiers/face', Bool, queue_size=10)
@@ -23,14 +22,15 @@ class teleop():
             '/classifiers/motion', Bool, queue_size=10)
 
     def main(self):
-
-        print("TELEOP: Press [enter] to trigger" +
-              " negative classification...")
+        # Request input from user
+        rospy.loginfo("TELEOP: Press [enter] to trigger" +
+                      " negative classification...")
         raw_input().upper()
-        print("TELEOP: Trigging negative classification!")
+        rospy.loginfo("TELEOP: Trigging negative classification!")
+        # Publish negative classifications
         self.pub_face.publish(False)
         self.pub_motion.publish(False)
-
+        # Exit cleanly
         sys.exit(0)
 
 
