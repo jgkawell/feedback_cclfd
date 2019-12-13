@@ -53,7 +53,7 @@ class TextPoser:
 
     def __init__(self, refreshRate=300):
         # 1. Start the node
-        rospy.init_node('NODENAME')
+        rospy.init_node('disp_text')
         # 2. Set rate
         self.heartBeatHz = refreshRate  # ----------- Node refresh rate [Hz]
         # Best effort to maintain 'heartBeatHz'
@@ -61,7 +61,6 @@ class TextPoser:
         self.idle = rospy.Rate(self.heartBeatHz)
         # 3. Start subscribers and listeners
         rospy.Subscriber("/viz/user_feedback", String, self.update_txt)
-        rospy.Subscriber("/viz/robot_feedback", String, self.update_txt)
         # 4. Start publishers
         self.pub = rospy.Publisher("/viz/markers", Marker, queue_size=100)
         # 5. Init vars

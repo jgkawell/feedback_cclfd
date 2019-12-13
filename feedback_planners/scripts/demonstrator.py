@@ -12,6 +12,7 @@ from rospy.numpy_msg import numpy_msg
 from feedback_planners.srv import RequestFeedback
 from feedback_planners.srv import PerformDemonstration
 from feedback_planners.msg import ConstraintTypes
+from feedback_planners.srv import TTS, TTSResponse
 
 """ This class is responsible for sampling constraints and
     demonstrating them to the user for feedback. """
@@ -46,11 +47,20 @@ class Demonstrator():
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (request_feedback)")
 
+        # Set up client for NLP TTS service
+        rospy.wait_for_service("/nlp/tts")
+        try:
+            self.tts_server = rospy.ServiceProxy(
+                "/nlp/tts", TTS)
+        except rospy.ServiceException:
+            rospy.logerr("Service setup failed (/nlp/tts)")
+
         rospy.loginfo("DEMONSTRATOR: Starting...")
 
     def run(self):
         # perform a bad demo to start
         rospy.loginfo("DEMONSTRATOR: Starting first skill execution...")
+        self.tts_server("I am going to hand you the mug.")
         finished = self.feedback_demonstration(0)  # 0 = negative
 
         if finished.response:
@@ -70,6 +80,7 @@ class Demonstrator():
                 for i in range(0, num_demos):
                     # perform a single demonstration
                     constraint = i
+                    self.tts_server("I am going to try the skill again.")
                     finished = self.feedback_demonstration(constraint)
                     if finished.response:
                         # request feedback about demonstration from user
@@ -92,6 +103,7 @@ class Demonstrator():
 
                 # demonstrate what has been learned
                 rospy.loginfo("DEMONSTRATOR: Showing what has been learned...")
+                self.tts_server("Let me show you what I have learned.")
                 for key, value in results.items():
                     if value:
                         constraint = key
@@ -104,6 +116,7 @@ class Demonstrator():
                     "DEMONSTRATOR: Waiting for first demo to be finished...")
                 time.sleep(1)
 
+        self.tts_server("Thank you for helping me learn!")
         rospy.loginfo("FINISHED!!!")
 
 

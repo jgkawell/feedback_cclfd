@@ -3,6 +3,7 @@
 import rospy
 import numpy as np
 import abc
+import time
 
 from feedback_classifiers.msg import Classification
 from rospy.numpy_msg import numpy_msg
@@ -82,9 +83,15 @@ class QueryNLP():
             # Create speech from text query
             self.tts_server(query_question)
 
+            # Wait for response
+            time.sleep(5)
+
             # Listen for response
             response = self.stt_server(
                 self.demo_filepath + "/positive-constraint-comment.wav").output
+
+            # Wait for response
+            time.sleep(5)
 
             # Check if response was positive or negative
             if 'yes' in response.lower():
