@@ -1,11 +1,20 @@
 [![Build Status](https://travis-ci.com/jgkawell/cairo-feedback-cclfd.svg?branch=master)](https://travis-ci.com/jgkawell/cairo-feedback-cclfd)
 
-# CAIRO Feedback LfD
-A system that recognizes fear in collaborative human agents and then demonstrates alternative actions for the human to correct via simple, verbal feedback. The human feedback is translated into constraints that modify a learned LfD skill.
+# Feedback CC-LfD
 
-Contribution: A system that recognizes undesirable effects caused by the way it executed a task and can update its policy based on human feedback.
+In the field of human-robot interaction (HRI), there is much interest in training methods that teach robot collaborators how to effectively execute tasks alongside human teammates. However, because of the complexity of deployment environments and the personal preferences of human teammates, these pre-trained policies often lead to behavior that cause a human collaborator to be forced off of a desired path to task completion or even to experience discomfort. Here, we introduce a system that can perform in-task, active learning to adapt its policy to a human teammate. This is accomplished by recognizing when a human teammate deviates from a desired task path or shows signs of discomfort due to robotic behavior and then augmenting a pre-trained policy based off of human feedback. Further, we demonstrate an implementation of this technique through a task where a simple handoff task fails and is repaired through a simulated environment.
 
-Application: A collaborative human-robot task where the robot performs task via CC-LfD and receives feedback in the form of verbal boolean responses.
+Our most recent work focuses on the integration of NLP methods to both convert text to speech (for the robot to ask the user for feedback) as well as converting speech to text (for the user to give that feedback). For the NLP functions we utilized Google Cloud's APIs which provide a fairly simple interface to deploy STT/TTS solutions. The whole system is deployed using Docker and Travis runs continuous integration (CI) performing automated Docker builds as well as code style checking (using `pycodestyle`).
+
+Additionally, we ported everything into a simulated environment that utilizes the Gazebo simulation of a Sawyer robot instead of a physical system. This allows for quick development that can happen away from the physical robot systems in our lab. This actually occupied a lot of the development time for this last effort as the process of porting everything into a working Docker environment was quite a task. All of this is fully documented in [this repository](https://github.com/jgkawell/docker-scripts).
+
+This project has a demo built in that allows for a simple walkthrough of the system. The demo runs everything in simulation and demonstrates the Sawyer arm attempting a simple handoff task with a mug. The robot initially fails the handoff by flipping the cup upside down and the user can trigger a skill repair scenario using a teleop key (on a physical system this is done using computer vision and motion capture). This then prompts the robot to ask for feedback from the user and then show a variety of different ways it can perform the skill until the user confirms that it has been repaired. The robot then shows the relearned skill to the user.
+
+As a side bonus feature, some extra visualization of the robot's movement and NLP systems have been integrated into Rviz. These are displayed as the demo is running to show what the NLP system is processing and how the robot is path planning throughout the scene.
+
+Some current limitations of this project are that within Docker the audio from the NLP system does not get broadcast to the user but instead is simply written to an audio file local to the Docker container. Obviously this will need to be added for proper user trials in the future. Additionally, the learning system of the robot is still in the implementation phase and so the demo actually is more of a Wizard of Oz approach than a real implementation. Both of these features are in development with the intention of completion during the next few months.
+
+Steps to install this project and subsequently run the demo are provided below.
 
 ## Installation
 
