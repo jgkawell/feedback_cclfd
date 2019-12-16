@@ -13,7 +13,7 @@ from google.cloud.speech_v1 import enums
 
 # Other imports
 from std_msgs.msg import String
-from feedback_planners.srv import STT, STTResponse, TTS, TTSResponse
+from feedback_cclfd.srv import STT, STTResponse, TTS, TTSResponse
 from random import randint
 
 """ This NLP command module can be used to invoke NLP such as:

@@ -3,7 +3,7 @@
 import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Bool
-from feedback_classifiers.msg import Classification
+from feedback_cclfd.msg import Classification
 
 
 """ This class synthesizes the various classifications of human

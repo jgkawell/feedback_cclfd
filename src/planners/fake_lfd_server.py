@@ -4,7 +4,7 @@ import rospy
 import numpy as np
 import time
 
-from feedback_planners.srv import PerformDemonstration
+from feedback_cclfd.srv import PerformDemonstration
 
 """ This class is simply for debugging.
     If you want to work on the system
