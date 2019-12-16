@@ -4,24 +4,24 @@
 
     <!-- Launch sensor nodes -->
     <param name="SHOW_CAMERA" type="bool" value="False" />
-    <node name="camera" pkg="feedback_sensors" type="camera.py" output="screen" />
-    <node name="mocap" pkg="feedback_sensors" type="mocap.py" output="screen" />
+    <node name="camera" pkg="feedback_cclfd" type="camera.py" output="screen" />
+    <node name="mocap" pkg="feedback_cclfd" type="mocap.py" output="screen" />
 
     <!-- Launch classifiers -->
     <param name="SHOW_FACE" type="bool" value="False" />
-    <param name="FACE_CONFIG" type="string" value="$(find feedback_classifiers)/config"/>
-    <node name="face_classifier" pkg="feedback_classifiers" type="face.py" output="screen" />
-    <node name="motion_classifier" pkg="feedback_classifiers" type="motion.py" output="screen" />
-    <node name="synthesizer" pkg="feedback_classifiers" type="synthesizer.py" output="screen" />
+    <param name="FACE_CONFIG" type="string" value="$(find feedback_cclfd)/config"/>
+    <node name="face_classifier" pkg="feedback_cclfd" type="face.py" output="screen" />
+    <node name="motion_classifier" pkg="feedback_cclfd" type="motion.py" output="screen" />
+    <node name="synthesizer" pkg="feedback_cclfd" type="synthesizer.py" output="screen" />
 
     <!-- Launch planning nodes -->
-    <node name="query_nlp" pkg="feedback_planners" type="query_nlp.py" output="screen" />
-    <node name="demonstrator" pkg="feedback_planners" type="demonstrator.py" output="screen" />
-    <node name="request_feedback_server" pkg="feedback_planners" type="request_feedback_server.py" output="screen" launch-prefix="gnome-terminal --command" />
+    <node name="query_nlp" pkg="feedback_cclfd" type="query_nlp.py" output="screen" />
+    <node name="demonstrator" pkg="feedback_cclfd" type="demonstrator.py" output="screen" />
+    <node name="request_feedback_server" pkg="feedback_cclfd" type="request_feedback_server.py" output="screen" launch-prefix="gnome-terminal --command" />
 
     <!-- Fake LfD server (for debugging) -->
     <!-- Uncomment the below node and comment over all the CC-LfD params to run without Sawyer -->
-    <!-- <node name="fake_lfd_server" pkg="feedback_planners" type="fake_lfd_server.py" output="screen" />         -->
+    <!-- <node name="fake_lfd_server" pkg="feedback_cclfd" type="fake_lfd_server.py" output="screen" />         -->
 
     <!-- CC-LfD PARAMETERS -->
     <param name="CONFIG" type="string" value="$(find lfd_experiments)/experimental_data/feedback_demo/config.json"/>
