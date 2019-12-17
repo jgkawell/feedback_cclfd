@@ -1,5 +1,8 @@
 # Out files from NLP
-feedback_planners/out/
+out/
+
+# Google Cloud API credentials
+config/google-credentials.json
 
 # ROS
 devel/

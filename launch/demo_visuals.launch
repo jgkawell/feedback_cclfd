@@ -6,14 +6,14 @@
     <arg name="js_gui" default="false"/>
 
     <node pkg="rviz" type="rviz" output="screen" name="rviz"
-	    args="-d $(find feedback_visualizations)/config/demo_viz.rviz" />
+	    args="-d $(find feedback_cclfd)/config/demo_viz.rviz" />
 
-    <node pkg="feedback_visualizations" name="wrist_frame_listener" type="wrist_frame_listener.py" output="screen"/>
-    <node pkg="feedback_visualizations" name="mug_poser" type="mug_poser.py" output="screen"/>
-    <node pkg="feedback_visualizations" name="mvt_plan_listener" type="mvt_plan_listener.py" output="screen"/>
-    <node pkg="feedback_visualizations" name="path_display" type="path_display.py" output="screen"/>
-    <node pkg="feedback_visualizations" name="disp_text" type="disp_text.py" output="screen"/>
-    
+    <node pkg="feedback_cclfd" name="wrist_frame_listener" type="wrist_frame_listener.py" output="screen"/>
+    <node pkg="feedback_cclfd" name="mug_poser" type="mug_poser.py" output="screen"/>
+    <node pkg="feedback_cclfd" name="mvt_plan_listener" type="mvt_plan_listener.py" output="screen"/>
+    <node pkg="feedback_cclfd" name="path_display" type="path_display.py" output="screen"/>
+    <node pkg="feedback_cclfd" name="disp_text" type="disp_text.py" output="screen"/>
+
     <!-- The below is for a demo without a real or simulated Sawyer -->
     <!-- Load the robot description to the parameter server so that RViz can find it -->
     <!-- <param name="robot_description" command="$(find xacro)/xacro inorder '$(find sawyer_description)/urdf/sawyer.urdf.xacro'"/>
@@ -23,7 +23,7 @@
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
         <param name="/use_gui" value="True"/>
         <param name="rate" value="300"/>
-        <rosparam param="source_list" subst_value="True">$(arg source_list)</rosparam> 
+        <rosparam param="source_list" subst_value="True">$(arg source_list)</rosparam>
     </node> -->
 
 </launch>

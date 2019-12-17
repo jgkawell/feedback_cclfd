@@ -5,11 +5,11 @@ import numpy as np
 import abc
 import time
 
-from feedback_classifiers.msg import Classification
 from rospy.numpy_msg import numpy_msg
-from feedback_planners.msg import ConstraintTypes
 from query_strategy import NoQuery, SimpleQuery, TargetedQuery
-from feedback_planners.srv import STT, STTResponse, TTS, TTSResponse
+from feedback_cclfd.msg import Classification
+from feedback_cclfd.msg import ConstraintTypes
+from feedback_cclfd.srv import STT, STTResponse, TTS, TTSResponse
 
 """ This class queries the user for a plain English
     explanation about what the robot did wrong. It

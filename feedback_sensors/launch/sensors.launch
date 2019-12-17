@@ -1,3 +1,0 @@
-<launch>
-    <node name="face_sensor" pkg="feedback_sensors" type="faceSensor.py" />
-</launch>
