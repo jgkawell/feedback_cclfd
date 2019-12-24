@@ -27,8 +27,8 @@ If you'd rather run things locally, [the same repository](https://github.com/jgk
 You'll need to have three terminals open to run this system. In each, you'll need to run the following commands which I have numbered below:
 
 1. `sim` and then `roslaunch lfd_experiments feedback.launch`
-2. `sim` and then `roslaunch feedback_visualizations demo.launch`
-3. `sim` and then `roslaunch feedback_master demo.launch`
+2. `sim` and then `roslaunch feedback_cclfd demo_visuals.launch`
+3. `sim` and then `roslaunch feedback_cclfd demo_main.launch`
 
 The first part of each of those commands simply sets you up in the simulated Sawyer robot environment. `roslaunch lfd_experiments feedback.launch` sets up all the needed robot subsystems for running Sawyer within Gazebo and initializes it for the CC-LfD skill execution system. `roslaunch feedback_visualizations demo.launch` sets up an Rviz window to display path planning and scene objects. `roslaunch feedback_master demo.launch` actually runs the simulation as a demo of a cup hand off skill repair scenario.
 
