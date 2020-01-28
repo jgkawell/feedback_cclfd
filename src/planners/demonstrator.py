@@ -48,12 +48,12 @@ class Demonstrator():
             rospy.logwarn("Service setup failed (request_feedback)")
 
         # Set up client for NLP TTS service
-        rospy.wait_for_service("/nlp/tts")
+        rospy.wait_for_service("/nlp/google/tts")
         try:
             self.tts_server = rospy.ServiceProxy(
-                "/nlp/tts", TTS)
+                "/nlp/google/tts", TTS)
         except rospy.ServiceException:
-            rospy.logerr("Service setup failed (/nlp/tts)")
+            rospy.logerr("Service setup failed (/nlp/google/tts)")
 
         rospy.loginfo("DEMONSTRATOR: Starting...")
 
