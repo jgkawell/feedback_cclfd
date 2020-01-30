@@ -7,7 +7,7 @@ import rospy
 import numpy as np
 
 from feedback_cclfd.srv import RequestFeedback
-from feedback_cclfd.srv import STT, STTResponse, TTS, TTSResponse
+from cairo_nlp.srv import STT, STTResponse, TTS, TTSResponse
 
 """ This class requests simple postive/negative feedback
     from the user after each demonstration. """

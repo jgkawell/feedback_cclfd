@@ -12,7 +12,7 @@ from rospy.numpy_msg import numpy_msg
 from feedback_cclfd.srv import RequestFeedback
 from feedback_cclfd.srv import PerformDemonstration
 from feedback_cclfd.msg import ConstraintTypes
-from feedback_cclfd.srv import TTS, TTSResponse
+from cairo_nlp.srv import TTS, TTSResponse
 
 """ This class is responsible for sampling constraints and
     demonstrating them to the user for feedback. """
