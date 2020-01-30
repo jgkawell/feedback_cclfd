@@ -41,6 +41,9 @@ RUN cd ~/catkin_ws && catkin build
 # Clean up apt
 RUN rm -rf /var/lib/apt/lists/*
 
+# Export Google dir for every terminal
+RUN echo "export GOOGLE_APPLICATION_CREDENTIALS=/root/catkin_ws/config/google-credentials.json" >> /root/.bashrc
+
 
 ### NVIDIA STAGE ###
 
