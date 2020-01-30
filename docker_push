@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker push jgkawell/feedback-cclfd:simple
+docker push jgkawell/feedback-cclfd:simple-nvidia
