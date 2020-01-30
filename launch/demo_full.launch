@@ -1,0 +1,7 @@
+<launch>
+  <group name="wg">
+    <include file="$(find lfd_experiments)/launch/feedback.launch" />
+    <include file="$(find feedback_cclfd)/launch/demo_visuals.launch" />
+    <include file="$(find feedback_cclfd)/launch/demo_logic.launch" />
+  </group>
+</launch>
