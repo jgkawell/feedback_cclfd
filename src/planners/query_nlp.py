@@ -9,7 +9,7 @@ from rospy.numpy_msg import numpy_msg
 from query_strategy import NoQuery, SimpleQuery, TargetedQuery
 from feedback_cclfd.msg import Classification
 from feedback_cclfd.msg import ConstraintTypes
-from feedback_cclfd.srv import STT, STTResponse, TTS, TTSResponse
+from cairo_nlp.srv import STT, STTResponse, TTS, TTSResponse
 
 """ This class queries the user for a plain English
     explanation about what the robot did wrong. It
@@ -37,20 +37,20 @@ class QueryNLP():
                                    queue_size=10)
 
         # Set up client for NLP TTS service
-        rospy.wait_for_service("/nlp/tts")
+        rospy.wait_for_service("/nlp/google/tts")
         try:
             self.tts_server = rospy.ServiceProxy(
-                "/nlp/tts", TTS)
+                "/nlp/google/tts", TTS)
         except rospy.ServiceException:
-            rospy.logwarn("Service setup failed (/nlp/tts)")
+            rospy.logwarn("Service setup failed (/nlp/google/tts)")
 
         # Set up client for NLP STT service
-        rospy.wait_for_service("/nlp/stt")
+        rospy.wait_for_service("/nlp/google/stt")
         try:
             self.stt_server = rospy.ServiceProxy(
-                "/nlp/stt", STT)
+                "/nlp/google/stt", STT)
         except rospy.ServiceException:
-            rospy.logerr("Service setup failed (/nlp/stt)")
+            rospy.logerr("Service setup failed (/nlp/google/stt)")
 
     def main(self):
         rospy.loginfo("QUERY NLP: Starting...")

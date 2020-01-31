@@ -60,7 +60,7 @@ class TextPoser:
         # URL: http://wiki.ros.org/rospy/Overview/Time
         self.idle = rospy.Rate(self.heartBeatHz)
         # Start subscribers and listeners
-        rospy.Subscriber("/viz/user_feedback", String, self.update_txt)
+        rospy.Subscriber("/nlp/google_server", String, self.update_txt)
         # Start publishers
         self.pub = rospy.Publisher("/viz/markers", Marker, queue_size=100)
         # Init vars

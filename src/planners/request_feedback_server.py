@@ -7,7 +7,7 @@ import rospy
 import numpy as np
 
 from feedback_cclfd.srv import RequestFeedback
-from feedback_cclfd.srv import STT, STTResponse, TTS, TTSResponse
+from cairo_nlp.srv import STT, STTResponse, TTS, TTSResponse
 
 """ This class requests simple postive/negative feedback
     from the user after each demonstration. """
@@ -26,20 +26,20 @@ class RequestFeedbackServer():
                       self.handle_request_feedback)
 
         # Set up client for NLP TTS service
-        rospy.wait_for_service("/nlp/tts")
+        rospy.wait_for_service("/nlp/google/tts")
         try:
             self.tts_server = rospy.ServiceProxy(
-                "/nlp/tts", TTS)
+                "/nlp/google/tts", TTS)
         except rospy.ServiceException:
-            rospy.logerr("Service setup failed (/nlp/tts)")
+            rospy.logerr("Service setup failed (/nlp/google/tts)")
 
         # Set up client for NLP STT service
-        rospy.wait_for_service("/nlp/stt")
+        rospy.wait_for_service("/nlp/google/stt")
         try:
             self.stt_server = rospy.ServiceProxy(
-                "/nlp/stt", STT)
+                "/nlp/google/stt", STT)
         except rospy.ServiceException:
-            rospy.logerr("Service setup failed (/nlp/stt)")
+            rospy.logerr("Service setup failed (/nlp/google/stt)")
 
     def main(self):
         rospy.loginfo("REQUEST FEEDBACK: Starting...")

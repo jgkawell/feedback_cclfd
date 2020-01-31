@@ -15,8 +15,10 @@
     <!-- Launch classifiers -->
     <node name="synthesizer" pkg="feedback_cclfd" type="synthesizer.py" output="screen" />
 
+    <!-- Launch NLP -->
+    <node name="nlp_google_server" pkg="cairo_nlp" type="nlp_google_server.py" output="screen" />
+
     <!-- Launch planning nodes -->
-    <node name="nlp_server" pkg="feedback_cclfd" type="nlp_server.py" output="screen" />
     <node name="query_nlp" pkg="feedback_cclfd" type="query_nlp.py" output="screen" />
     <node name="demonstrator" pkg="feedback_cclfd" type="demonstrator.py" output="screen" />
     <node name="request_feedback_server" pkg="feedback_cclfd" type="request_feedback_server.py" output="screen" />

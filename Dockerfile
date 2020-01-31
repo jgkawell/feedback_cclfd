@@ -1,41 +1,55 @@
 ### BASE STAGE ###
 
 # Build from sawyer ompl dev box
-FROM jgkawell/ompl:sawyer AS base
+FROM jgkawell/cairo-lfd:simple AS base
 
-# Load feedback CC-LfD
-COPY . /root/ws_moveit/src/cairo-feedback-cclfd
-
-# Clone CAIRO CC-LfD
-RUN cd ~/ws_moveit/src && git clone https://github.com/cairo-robotics/cairo-lfd.git
-RUN cd ~/ws_moveit/src/cairo-lfd && git checkout constraint_augmentation
+# Needed for NLP audio packages
+RUN apt -y update && apt -y install \
+        python-catkin-tools \
+        portaudio19-dev \
+        gcc \
+        g++
 
 # Clone and install KDL for MoveIt plan listener
-RUN cd ~/ws_moveit/src \
+RUN cd ~/catkin_ws/src \
         && git clone https://github.com/gt-ros-pkg/hrl-kdl.git \
         && cd hrl-kdl/pykdl_utils/ \
         && python setup.py install \
         && cd ../hrl_geom \
         && python setup.py install
 
-# Clone CAIRO constraint classification
-RUN cd ~/ws_moveit/src && git clone https://github.com/cairo-robotics/constraint_classification.git
+# Clone NLP package
+RUN cd ~/catkin_ws/src && git clone https://github.com/cairo-robotics/cairo-nlp.git
 
-# Clone CAIRO robot interface
-RUN cd ~/ws_moveit/src && git clone https://github.com/cairo-robotics/cairo-robot-interface.git
+# Load feedback CC-LfD
+COPY . /root/catkin_ws/src/feedback_cclfd
 
-# Clone CAIRO collision / scene repo
-RUN cd ~/ws_moveit/src && git clone https://github.com/cairo-robotics/collision_objects.git
+# Install Python requirements
+RUN cd ~/catkin_ws/src/feedback_cclfd && pip install -r requirements.txt
+RUN cd ~/catkin_ws/src/cairo-nlp && pip install -r requirements.txt
 
-# Install LfD Python requirements
-RUN cd ~/ws_moveit/src/cairo-lfd && pip install -r requirements.txt
-RUN cd ~/ws_moveit/src/cairo-feedback-cclfd && pip install -r requirements.txt
+# Current workaround since Google Cloud installation is broken
+RUN pip install --upgrade pip
+RUN pip install --upgrade 'setuptools<45.0.0'
+RUN pip install --upgrade 'cachetools<5.0'
+RUN pip install --upgrade cryptography
+RUN python -m easy_install --upgrade pyOpenSSL
 
 # Finally build the workspace
-RUN cd ~/ws_moveit && catkin build
-
-# Added alias for Intera to .bashrc
-RUN echo 'alias sim="cd ~/ws_moveit && clear && ./intera.sh sim"' >> ~/.bashrc
+RUN cd ~/catkin_ws && catkin build
 
 # Clean up apt
 RUN rm -rf /var/lib/apt/lists/*
+
+# Export Google dir for every terminal
+RUN echo "export GOOGLE_APPLICATION_CREDENTIALS=/root/catkin_ws/config/google-credentials.json" >> /root/.bashrc
+
+
+### NVIDIA STAGE ###
+
+# Extra needed setup for Nvidia-based graphics
+FROM base AS nvidia
+
+# Copy over needed OpenGL files from Nvidia's image
+COPY --from=nvidia/opengl:1.0-glvnd-runtime-ubuntu16.04 /usr/local /usr/local
+COPY --from=nvidia/opengl:1.0-glvnd-runtime-ubuntu16.04 /etc/ld.so.conf.d/glvnd.conf /etc/ld.so.conf.d/glvnd.conf

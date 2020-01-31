@@ -12,7 +12,7 @@ from rospy.numpy_msg import numpy_msg
 from feedback_cclfd.srv import RequestFeedback
 from feedback_cclfd.srv import PerformDemonstration
 from feedback_cclfd.msg import ConstraintTypes
-from feedback_cclfd.srv import TTS, TTSResponse
+from cairo_nlp.srv import TTS, TTSResponse
 
 """ This class is responsible for sampling constraints and
     demonstrating them to the user for feedback. """
@@ -48,12 +48,12 @@ class Demonstrator():
             rospy.logwarn("Service setup failed (request_feedback)")
 
         # Set up client for NLP TTS service
-        rospy.wait_for_service("/nlp/tts")
+        rospy.wait_for_service("/nlp/google/tts")
         try:
             self.tts_server = rospy.ServiceProxy(
-                "/nlp/tts", TTS)
+                "/nlp/google/tts", TTS)
         except rospy.ServiceException:
-            rospy.logerr("Service setup failed (/nlp/tts)")
+            rospy.logerr("Service setup failed (/nlp/google/tts)")
 
         rospy.loginfo("DEMONSTRATOR: Starting...")
 
