@@ -6,21 +6,85 @@ In the field of human-robot interaction (HRI), there is much interest in trainin
 
 Our most recent work focuses on the integration of NLP methods to both convert text to speech (for the robot to ask the user for feedback) as well as converting speech to text (for the user to give that feedback). For the NLP functions we utilized Google Cloud's APIs which provide a fairly simple interface to deploy STT/TTS solutions. The whole system is deployed using Docker and Travis runs continuous integration (CI) performing automated Docker builds as well as code style checking (using `pycodestyle`).
 
-Additionally, we ported everything into a simulated environment that utilizes the Gazebo simulation of a Sawyer robot instead of a physical system. This allows for quick development that can happen away from the physical robot systems in our lab. This actually occupied a lot of the development time for this last effort as the process of porting everything into a working Docker environment was quite a task. All of this is fully documented in [this repository](https://github.com/jgkawell/docker-scripts).
-
 This project has a demo built in that allows for a simple walkthrough of the system. The demo runs everything in simulation and demonstrates the Sawyer arm attempting a simple handoff task with a mug. The robot initially fails the handoff by flipping the cup upside down and the user can trigger a skill repair scenario using a teleop key (on a physical system this is done using computer vision and motion capture). This then prompts the robot to ask for feedback from the user and then show a variety of different ways it can perform the skill until the user confirms that it has been repaired. The robot then shows the relearned skill to the user.
 
 As a side bonus feature, some extra visualization of the robot's movement and NLP systems have been integrated into Rviz. These are displayed as the demo is running to show what the NLP system is processing and how the robot is path planning throughout the scene.
 
-Some current limitations of this project are that within Docker the audio from the NLP system does not get broadcast to the user but instead is simply written to an audio file local to the Docker container. Obviously this will need to be added for proper user trials in the future. Additionally, the learning system of the robot is still in the implementation phase and so the demo actually is more of a Wizard of Oz approach than a real implementation. Both of these features are in development with the intention of completion during the next few months.
-
 Steps to install this project and subsequently run the demo are provided below.
 
-## Installation
+## Setup
 
-The "easy" way to run this is to do everything in simulation within the provided Docker images. You can find the instructions for this at [this repository](https://github.com/jgkawell/docker-scripts). You'll want to follow the instructions for setting up the `jgkawell/ompl:lfd` tag (`lfd-nvidia` if you're running Nvidia graphics).
+### Docker
 
-If you'd rather run things locally, [the same repository](https://github.com/jgkawell/docker-scripts) also has scripts within [a subdirectory](https://github.com/jgkawell/docker-scripts/tree/master/tools/linux) that will allow you to install everything on a clean Ubuntu 16.04 system (either running locally or within WSL). Simply run the scripts in this order: `ros` -> `ompl` -> `sawyer` -> `lfd`.
+As long as your network is fast, I would suggest pulling this image from Docker Hub instead of building locally from the Dockerfile. I also suggest using the launch script I've written to automate this process (pulling image, setting up xauth and xhost, etc.). This launch script is in another helper repository so we need to pull that first:
+
+```
+git clone https://github.com/jgkawell/docker-scripts.git
+bash ./docker-scripts/tools/launch.sh {user} {repository} {tag} {host}
+```
+
+Make sure to use the user, repository, tag, and host that you would like. For example, using the image built with the Dockerfile in *this repository on a Linux computer running Intel graphics* would look like this:
+
+```
+bash ./docker-scripts/tools/launch.sh jgkawell feedback-cclfd simple intel
+```
+
+NOTE: If you're running a Linux host then check [the documentation](https://github.com/jgkawell/docker-scripts/wiki) for how to set up hardware acceleration which is needed for these images. It will work with either Nvidia or Intel graphics.
+
+Then, in another terminal, start a shell on the box:
+
+```
+docker exec -it {container_name} bash
+```
+
+Be sure to replace `{container_name}` with the name of the container you built which depends on the host you're using:
+
+- `windows` or `intel` = `feedback-cclfd-simple`
+- `nvidia` = `feedback-cclfd-simple-nvidia`
+
+You can relaunch the container using the launch script at any point in the future.
+
+### Local
+
+If you'd rather run things locally, check out [this repository](https://github.com/cairo-robotics/cairo_sawyer_utils/tree/master/install_scripts/kinetic) for scripts that will allow you to install everything you need on a clean Ubuntu 16.04 system (either running locally or within WSL). Then clone this repo into your catkin workspace and install the requirements:
+
+```
+# Clone repo
+cd {path_to_workspace}/src \
+        && git clone https://github.com/jgkawell/feedback_cclfd.git
+
+# Needed for NLP audio packages
+sudo apt -y update && apt -y install \
+        python-catkin-tools \
+        portaudio19-dev \
+        gcc \
+        g++
+
+# Clone and install KDL for MoveIt plan listener
+cd {path_to_workspace}/src \
+        && git clone https://github.com/gt-ros-pkg/hrl-kdl.git \
+        && cd hrl-kdl/pykdl_utils/ \
+        && python setup.py install \
+        && cd ../hrl_geom \
+        && python setup.py install
+
+# Clone NLP package
+cd {path_to_workspace}/src && git clone https://github.com/cairo-robotics/cairo-nlp.git
+
+# Install Python requirements
+cd {path_to_workspace}/src/feedback_cclfd && pip install -r requirements.txt
+cd {path_to_workspace}/src/cairo-nlp && pip install -r requirements.txt
+
+# Current workaround since Google Cloud installation is broken
+pip install --upgrade pip
+pip install --upgrade 'setuptools<45.0.0'
+pip install --upgrade 'cachetools<5.0'
+pip install --upgrade cryptography
+python -m easy_install --upgrade pyOpenSSL
+
+# Finally build the workspace
+cd {path_to_workspace} && catkin build
+```
 
 ## How to use
 
