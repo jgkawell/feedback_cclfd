@@ -53,8 +53,9 @@ If you'd rather run things locally, check out [this repository](https://github.c
 cd {path_to_workspace}/src \
         && git clone https://github.com/jgkawell/feedback_cclfd.git
 
-# Needed for NLP audio packages
+# Needed packages
 sudo apt -y update && apt -y install \
+        ros-kinetic-urdfdom-py \
         python-catkin-tools \
         portaudio19-dev \
         gcc \
@@ -72,8 +73,8 @@ cd {path_to_workspace}/src \
 cd {path_to_workspace}/src && git clone https://github.com/cairo-robotics/cairo-nlp.git
 
 # Install Python requirements
-cd {path_to_workspace}/src/feedback_cclfd && pip install -r requirements.txt
-cd {path_to_workspace}/src/cairo-nlp && pip install -r requirements.txt
+cd {path_to_workspace}/src/feedback_cclfd && pip install --user -r requirements.txt
+cd {path_to_workspace}/src/cairo-nlp && pip install --user -r requirements.txt
 
 # Current workaround since Google Cloud installation is broken
 pip install --upgrade pip
