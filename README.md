@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/jgkawell/cairo-feedback-cclfd.svg?branch=master)](https://travis-ci.com/jgkawell/cairo-feedback-cclfd)
+[![Build Status](https://travis-ci.com/jgkawell/feedback_cclfd.svg?branch=master)](https://travis-ci.com/jgkawell/feedback_cclfd)
 
 # Feedback CC-LfD
 
