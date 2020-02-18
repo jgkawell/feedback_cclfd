@@ -11,7 +11,8 @@ class Constraint():
         self.params = params
 
     def __str__(self):
-        return "Type: {} | Name: {} | Params: {}".format(self.constraint_type, self.name, str(self.parameters))
+        return "Type: {} | Name: {} | Params: {}".format(
+            self.constraint_type, self.name, str(self.parameters))
 
 
 class Node():
@@ -26,7 +27,8 @@ class Node():
         return str(self)
 
     def __str__(self):
-        return "{} | {} | {}".format(str(self.parents), str(self.params), str(self.children))
+        return "{} | {} | {}".format(
+            str(self.parents), str(self.params), str(self.children))
 
 
 class Tree():
@@ -86,7 +88,8 @@ class Tree():
         for cont in parameters['continuous']:
             self.add((cont), [('root')], [])
 
-        print("Size after initialization: {}".format(len(self.nodes.keys())))
+        print("Size after initialization: {}".format(
+            len(self.nodes.keys())))
 
         # Populate objects
         for obj in parameters['object']:
@@ -98,7 +101,8 @@ class Tree():
         for robot in parameters['robot']:
             self.add((robot), [('robot')], [])
 
-        print("Size after expanding sets: {}".format(len(self.nodes.keys())))
+        print("Size after expanding sets: {}".format(
+            len(self.nodes.keys())))
 
     # Add pairs and triples of parameters to tree
     def add_pairs_and_triples(self, constraints, parameters):
@@ -113,7 +117,8 @@ class Tree():
             parents = [(p[0]), (p[1])]
             self.add(params, parents, [])
 
-        print("Size after pairs of params: {}".format(len(self.nodes.keys())))
+        print("Size after pairs of params: {}".format(
+            len(self.nodes.keys())))
 
         # Triples of params
         triples = list(combinations(basic_params, 3))
@@ -124,7 +129,8 @@ class Tree():
                 parents[i] = tuple(sorted(parents[i]))
             self.add(params, parents, [])
 
-        print("Size after triples of params: {}".format(len(self.nodes.keys())))
+        print("Size after triples of params: {}".format(
+            len(self.nodes.keys())))
 
     # Add the leaves (constraints) to the tree
     def add_leaves(self, constraints, parameters):
@@ -140,7 +146,8 @@ class Tree():
                 # print("Couldn't find attach point for: {}".format(str(leaf)))
                 pass
 
-        print("Size after additions of leaves: {}".format(len(self.nodes.keys())))
+        print("Size after additions of leaves: {}".format(
+            len(self.nodes.keys())))
 
     # Create leaves from parameters
     def create_leaves(self, constraints, parameters):
