@@ -1,0 +1,35 @@
+# Discrete parameters
+# List of objects in the scene
+object:
+    - cup
+    - table
+    - paper
+    - block
+    # - computer
+    # - book
+    # - tree
+    # - plate
+    # - knife
+    # - gun
+    # - bowl
+# List of humans in the scene
+human:
+    - john
+    - jane
+    # - jack
+    # - janice
+    # - jim
+    # - joanna
+# List of robots in the scene
+robot:
+    - sawyer
+    - movo
+    # - walle
+    # - c3po
+# Continuous parameters
+continuous:
+    - angle
+    - speed
+    - distance
+    # - radius
+    # - area

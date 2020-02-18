@@ -1,0 +1,55 @@
+# Keep an item at a specific orientation
+orientation:
+    - object_orientation:
+          parameters:
+              - object
+              - angle
+# Keep an item a specific distance away from another item
+distance:
+    - object_human:
+          parameters:
+              - object
+              - human
+              - distance
+    - object_robot:
+          parameters:
+              - object
+              - robot
+              - distance
+    - object_object:
+          parameters:
+              - object
+              - object
+              - distance
+# Keep an item above or below a specific speed
+speed:
+    - robot_max:
+          parameters:
+              - robot
+              - speed
+    - object_max:
+          parameters:
+              - object
+              - speed
+    - robot_min:
+          parameters:
+              - robot
+              - speed
+    - object_min:
+          parameters:
+              - object
+              - speed
+# Keep an item above or below another item
+over_under:
+    - object_object:
+          parameters:
+              - object
+              - object
+    - object_robot:
+          parameters:
+              - object
+              - robot
+    - robot_object:
+          parameters:
+              - robot
+              - object

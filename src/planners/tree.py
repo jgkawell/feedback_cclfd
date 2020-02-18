@@ -254,4 +254,4 @@ class Tree():
 
 if __name__ == "__main__":
     tree = Tree()
-    tree.build('constraints.yaml', 'parameters.yaml')
+    tree.build('../../config/constraints.yml', '../../config/parameters.yml')
