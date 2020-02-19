@@ -140,7 +140,7 @@ class Tree():
                 # check attachment point (should only fail on doubles)
                 self.nodes[tuple(leaf.params)]
                 new_params = leaf.params + (leaf.name, )
-                self.add(new_params, leaf.params, [])
+                self.add(new_params, [leaf.params], [])
                 self.nodes[new_params].leaf = True
             except KeyError as e:
                 # print("Couldn't find attach point for: {}".format(str(leaf)))
@@ -192,16 +192,24 @@ class Tree():
 
     # Prune out extra nodes after original tree formation
     def prune(self):
-        to_delete = []
-        for key, value in self.nodes.items():
-            if len(value.children) == 0 and not value.leaf:
-                to_delete.append(key)
+        old_count = 1
+        new_count = -1
 
-        for key in to_delete:
-            del self.nodes[key]
+        # Keep pruning until no effect
+        while old_count != new_count:
+            old_count = len(self.nodes.keys())
+            to_delete = []
+            for key, value in self.nodes.items():
+                if len(value.children) == 0 and not value.leaf:
+                    to_delete.append(key)
 
-        for key, value in self.nodes.items():
-            value.children = [x for x in value.children if x not in to_delete]
+            for key in to_delete:
+                del self.nodes[key]
+
+            for key, value in self.nodes.items():
+                value.children = [x for x in value.children if x not in to_delete]
+
+            new_count = len(self.nodes.keys())
 
         print("Size after pruning: {}".format(len(self.nodes.keys())))
 
@@ -232,7 +240,7 @@ class Tree():
 
     # Display all nodes in tree
     def display(self, ):
-        for key, value in self.nodes.items():
+        for key, value in sorted(self.nodes.iteritems()):
             print(str(key) + " : " + str(value))
         print("\n")
 
