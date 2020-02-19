@@ -198,16 +198,16 @@ class Tree():
         # Keep pruning until no effect
         while old_count != new_count:
             old_count = len(self.nodes.keys())
-            to_delete = []
+            delete = []
             for key, value in self.nodes.items():
                 if len(value.children) == 0 and not value.leaf:
-                    to_delete.append(key)
+                    delete.append(key)
 
-            for key in to_delete:
+            for key in delete:
                 del self.nodes[key]
 
             for key, value in self.nodes.items():
-                value.children = [x for x in value.children if x not in to_delete]
+                value.children = [x for x in value.children if x not in delete]
 
             new_count = len(self.nodes.keys())
 
