@@ -1,5 +1,6 @@
 
 import yaml
+import random
 
 from itertools import combinations
 
@@ -228,6 +229,7 @@ class Tree():
 
     # Remove references to a node by key
     def remove(self, key):
+        # NOTE: This method is incomplete!!!
         try:
             # Remove references to node so it creates it's own tree
             for parent in self.nodes[key].parents:
@@ -246,7 +248,7 @@ class Tree():
 
     # Count current number of accessible nodes
     def count(self, current_node):
-        # NOTE: This doesn't work since each node can have multiple parents
+        # NOTE: This doesn't work since each node can have multiple parents!!!
         if len(current_node.children) > 0:
             counter = 0
             for child in current_node.children:
@@ -259,7 +261,32 @@ class Tree():
         else:
             return 1
 
+    # Recursive search for a node
+    def search(self, find_key, start_key=('root')):
+        cur_node = self.nodes[start_key]
+
+        if cur_node.params == find_key:
+            print(cur_node.params)
+            return cur_node.params
+        else:
+            random.shuffle(cur_node.children)
+            for child in cur_node.children:
+                result = self.search(find_key, child)
+                if result:
+                    print(cur_node.params)
+                    return result
+
+        return False
+
+
+
 
 if __name__ == "__main__":
+    # Create tree for testing
     tree = Tree()
     tree.build('../../config/constraints.yml', '../../config/parameters.yml')
+
+    # Example search
+    query = ('order', 'paper', 'table', 'above/object_object')
+    print("Searching for: {}".format(query))
+    tree.search(query)

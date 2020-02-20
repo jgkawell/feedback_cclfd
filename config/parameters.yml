@@ -31,5 +31,6 @@ continuous:
     - angle
     - speed
     - distance
+    - order
     # - radius
     # - area
