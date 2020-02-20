@@ -32,8 +32,10 @@ class Node():
         return str(self)
 
     def __str__(self):
-        return "{} | {} | {} | {}".format(
-            str(self.parents), str(self.params), str(self.children), self.score)
+        # return "{} | {} | {} | {}".format(
+        #     str(self.parents), str(self.params), str(self.children), self.score)
+        return "{} | {}".format(
+            str(self.params), self.score)
 
 
 class Tree():
