@@ -1,4 +1,4 @@
-from planners.tree import Tree
+from planners.tree import Node, Tree
 from planners.process_user_input import ProcessInput
 
 
@@ -27,17 +27,19 @@ for sentence in sentences:
 
     # Get the word similarity scores for working dictionary
     word_similarity_scores = processor.processUserInput(sentence)
-    # print("Word scores: {}".format(word_similarity_scores))
 
     # Score each node in the tree based of word similarity score
     tree.score_the_tree(0.75, word_similarity_scores)
 
     # Get best question to ask from scored tree
-    question = tree.get_question()
+    question_nodes = tree.get_questions()
 
     # Display question that will be asked
-    print("Question: {}".format(question))
+    # print("Question: {}".format(question_nodes))
+    for node in question_nodes[0:3]:
+        query = tree.generate_query(node)
+        print("Question: {}".format(query))
+        if len(query) == 0:
+            print(node)
 
     # tree.display()
-
-    # break
