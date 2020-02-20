@@ -32,8 +32,8 @@ class Node():
         return str(self)
 
     def __str__(self):
-        return "{} | {} | {}".format(
-            str(self.parents), str(self.params), str(self.children))
+        return "{} | {} | {} | {}".format(
+            str(self.parents), str(self.params), str(self.children), self.score)
 
 
 class Tree():
@@ -54,10 +54,6 @@ class Tree():
         self.add_leaves(constraints, parameters)
 
         self.prune()
-
-        # self.display()
-
-        # self.score_the_tree(0.3, {})
 
     # Read in constraint and parameter data from files
     def setup(self, constraints_file, parameters_file):
@@ -314,6 +310,7 @@ class Tree():
             if(self.nodes[parent].score > 0.0):
                 parents_scores.append(self.nodes[parent].score)
             else:
+                print("ERROR: {}".format(self.nodes[parent]))
                 return False
 
         node.score = np.prod(parents_scores) / np.sum(parents_scores)
@@ -359,7 +356,6 @@ class Tree():
             else:
                 node_scores.append(node.score)
 
-        # print(node_scores)
         # Normalize the scores
         sum_scores = np.sum(node_scores)
         for node in nodes_to_be_modified:
@@ -368,11 +364,20 @@ class Tree():
         return nodes_to_be_modified
 
     def score_the_tree(self, threshold, prob_dict, start_key=('root')):
-        self.assign_initial_scores(prob_dict)
+        self.assign_initial_scores(prob_dict, start_key)
 
         depth = 4
         for i in range(2, depth+1):
-            self.generate_scores(i)
+            self.generate_scores(i, start_key)
+
+    def get_question(self):
+        best_score = self.nodes[('root')]
+
+        for node in self.nodes.values():
+            if node.score > best_score.score:
+                best_score = node
+
+        return node
 
 
 if __name__ == "__main__":
