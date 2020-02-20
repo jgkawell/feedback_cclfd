@@ -192,6 +192,8 @@ class Tree():
                         temp_node.leaf = True
                         temp_node.name = "{}/{}".format(
                             constraint.constraint_type, constraint.name)
+                        temp_node.type = constraint.constraint_type
+                        temp_node.question = constraint.question
                         temp_node.params = tuple(sorted(temp_node.params))
                         leaves.append(temp_node)
 
