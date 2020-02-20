@@ -26,7 +26,7 @@ class Node():
         self.children = children  # list
         self.leaf = False
         self.name = ""
-        self.score = -1*maxint
+        self.score = 0.0
 
     def __repr__(self):
         return str(self)
@@ -45,10 +45,10 @@ class Tree():
     # Build the tree
     def build(self, constraints_file, parameters_file):
 
-        print("Reading constraints...")
+        # print("Reading constraints...")
         constraints, parameters = self.setup(constraints_file, parameters_file)
 
-        print("Building tree...")
+        # print("Building tree...")
         self.initialize(parameters)
 
         self.add_pairs_and_triples(constraints, parameters)
@@ -74,7 +74,7 @@ class Tree():
                         constraint_type, name, parameters))
 
         # read in parameters from file
-        print("Reading parameters...")
+        # print("Reading parameters...")
         parameters = {}
         with open(parameters_file) as file:
             parameters = yaml.load(file, Loader=yaml.FullLoader)
@@ -93,8 +93,8 @@ class Tree():
         for cont in parameters['continuous']:
             self.add((cont), [('root')], [])
 
-        print("Size after initialization: {}".format(
-            len(self.nodes.keys())))
+        # print("Size after initialization: {}".format(
+        #     len(self.nodes.keys())))
 
         # Populate objects
         for obj in parameters['object']:
@@ -106,8 +106,8 @@ class Tree():
         for robot in parameters['robot']:
             self.add((robot), [('robot')], [])
 
-        print("Size after expanding sets: {}".format(
-            len(self.nodes.keys())))
+        # print("Size after expanding sets: {}".format(
+        #     len(self.nodes.keys())))
 
     # Add pairs and triples of parameters to tree
     def add_pairs_and_triples(self, constraints, parameters):
@@ -122,8 +122,8 @@ class Tree():
             parents = [(p[0]), (p[1])]
             self.add(params, parents, [])
 
-        print("Size after pairs of params: {}".format(
-            len(self.nodes.keys())))
+        # print("Size after pairs of params: {}".format(
+        #     len(self.nodes.keys())))
 
         # Triples of params
         triples = list(combinations(basic_params, 3))
@@ -134,8 +134,8 @@ class Tree():
                 parents[i] = tuple(sorted(parents[i]))
             self.add(params, parents, [])
 
-        print("Size after triples of params: {}".format(
-            len(self.nodes.keys())))
+        # print("Size after triples of params: {}".format(
+        #     len(self.nodes.keys())))
 
     # Add the leaves (constraints) to the tree
     def add_leaves(self, constraints, parameters):
@@ -151,8 +151,8 @@ class Tree():
                 # print("Couldn't find attach point for: {}".format(str(leaf)))
                 pass
 
-        print("Size after additions of leaves: {}".format(
-            len(self.nodes.keys())))
+        # print("Size after additions of leaves: {}".format(
+        #     len(self.nodes.keys())))
 
     # Create leaves from parameters
     def create_leaves(self, constraints, parameters):
@@ -216,7 +216,7 @@ class Tree():
 
             new_count = len(self.nodes.keys())
 
-        print("Size after pruning: {}".format(len(self.nodes.keys())))
+        # print("Size after pruning: {}".format(len(self.nodes.keys())))
 
     # Add a node to the tree
     def add(self, params, parents=[], children=[]):
@@ -247,7 +247,7 @@ class Tree():
     # Display all nodes in tree
     def display(self, ):
         for key, value in sorted(self.nodes.iteritems()):
-            print(str(key) + " : " + str(value))
+            print(str(value))
         print("\n")
 
     # Count current number of accessible nodes
@@ -309,14 +309,19 @@ class Tree():
         parents = node.parents
         parents_scores = []
         for parent in parents:
-            if(self.nodes[parent].score > 0.0):
+            if(self.nodes[parent].score >= 0.0):
                 parents_scores.append(self.nodes[parent].score)
             else:
                 print("ERROR: {}".format(self.nodes[parent]))
                 return False
 
-        node.score = np.prod(parents_scores) / np.sum(parents_scores)
-        # node.score = np.sum(parents_scores) / np.prod(parents_scores)
+        parent_total = np.sum(parents_scores)
+        if parent_total > 0.0:
+            node.score = np.prod(parents_scores) / np.sum(parents_scores)
+            # node.score = np.sum(parents_scores) / np.prod(parents_scores)
+        else:
+            node.score = 0.0
+
         return True
 
     def generate_scores(self, num_nodes, start_key=('root')):
@@ -342,7 +347,7 @@ class Tree():
             if(type(node.params) == tuple):
                 if(len(node.params) == num_nodes and node
                         not in nodes_to_be_modified
-                        and node.score < 0.0):
+                        and node.score <= 0.0):
                     nodes_to_be_modified.append(node)
                 for child in children_nodes:
                     if(type(child) == str):
@@ -361,7 +366,10 @@ class Tree():
         # Normalize the scores
         sum_scores = np.sum(node_scores)
         for node in nodes_to_be_modified:
-            node.score = node.score / sum_scores
+            if sum_scores > 0.0:
+                node.score = node.score / sum_scores
+            else:
+                node.score = 0.0
 
         return nodes_to_be_modified
 
@@ -373,13 +381,12 @@ class Tree():
             self.generate_scores(i, start_key)
 
     def get_question(self):
-        best_score = self.nodes[('root')]
-
+        best_scores = []
         for node in self.nodes.values():
-            if node.score > best_score.score:
-                best_score = node
+            if node.score > 0.0:
+                best_scores.append(node)
 
-        return node
+        return sorted(best_scores, key=lambda x: x.score, reverse=True)
 
 
 if __name__ == "__main__":

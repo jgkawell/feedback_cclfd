@@ -7,7 +7,10 @@ sentences = [
     'You should have kept the cup upright',
     'You should have moved more slowly when holding the mug',
     'You should have kept the cup over the table',
-    'You should have kept the knife further away from the person'
+    'You should have kept the mug farther away from john',
+    'You should not have pushed the block so quickly',
+    'You should not have flipped the glass upside down',
+    'Do not upend the cup'
 ]
 
 # Iterate through sentences
@@ -24,7 +27,7 @@ for sentence in sentences:
 
     # Get the word similarity scores for working dictionary
     word_similarity_scores = processor.processUserInput(sentence)
-    print("Word scores: {}".format(word_similarity_scores))
+    # print("Word scores: {}".format(word_similarity_scores))
 
     # Score each node in the tree based of word similarity score
     tree.score_the_tree(0.75, word_similarity_scores)
@@ -35,6 +38,6 @@ for sentence in sentences:
     # Display question that will be asked
     print("Question: {}".format(question))
 
-    tree.display()
+    # tree.display()
 
-    break
+    # break
