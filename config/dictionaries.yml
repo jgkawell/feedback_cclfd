@@ -8,7 +8,7 @@ table:
     - table
   match:
     - table.n.02
-paper: 
+paper:
   exact:
     - paper
   match:
