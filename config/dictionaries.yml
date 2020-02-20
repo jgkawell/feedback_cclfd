@@ -46,12 +46,15 @@ speed:
     - speed
   match:
     - speed.n.01
+    - quickly.r.01
 distance:
   exact:
     - distance
   match:
     - near.r.01
     - distance.n.01
+    - farther.s.01
+    - close.a.01
 above:
   exact:
     - above
