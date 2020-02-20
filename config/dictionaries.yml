@@ -42,6 +42,7 @@ speed:
   match:
     - speed.n.01
     - quickly.r.01
+    - fast.r.01
 distance:
   exact:
     - distance
@@ -108,11 +109,11 @@ plate:
     - plate
   match:
     - plate.n.04
-# knife:
-#   exact:
-#     - knife
-#   match:
-#     - knife.n.01
+knife:
+  exact:
+    - knife
+  match:
+    - knife.n.01
 # gun:
 #   exact:
 #     - gun

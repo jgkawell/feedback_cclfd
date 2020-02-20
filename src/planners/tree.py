@@ -424,7 +424,7 @@ class Tree():
             if node.score >= 0.0:
                 best_scores.append(node)
 
-        return sorted(best_scores, key=lambda x: x.score, reverse=True)
+        return sorted(best_scores, key=lambda x: (x.score, x.leaf), reverse=True)
 
     def get_best_children(self, key):
         node = self.nodes[key]
@@ -460,6 +460,37 @@ class Tree():
                     query = query.replace('robot', param, 1)
 
         return query
+
+    def new_scoring(self, prob_dict):
+        # Score each param (that isn't a constraint name/type)
+        max_score = 0
+        for node in self.nodes.values():
+            param_scores = []
+
+            if type(node.params) == str:
+                param_scores.append(prob_dict[node.params])
+            else:
+                for param in node.params:
+                    if param in prob_dict.keys():
+                        param_scores.append(prob_dict[param])
+
+            if len(param_scores) == 0:
+                print(node)
+
+            cur_score = np.sum(param_scores) + np.prod(param_scores) / len(param_scores)
+            # print(cur_score)
+            node.score = cur_score
+
+            if cur_score > max_score:
+                max_score = cur_score
+
+        print(max_score)
+
+        # Normalize all scores
+        for node in self.nodes.values():
+            node.score = node.score / max_score
+
+
 
 
 if __name__ == "__main__":

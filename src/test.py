@@ -1,14 +1,12 @@
 import nltk
-import rospy
 
-from std_msgs.msg import String
 from planners.tree import Node, Tree
 from planners.process_user_input import ProcessInput
 
 # Make sure wordnet is downloaded
 nltk.download('wordnet', quiet=True)
 
-# Sentences to test
+# Easy sentences
 sentences = [
     'You should have kept the cup upright',
     'You should have moved more slowly when holding the mug',
@@ -17,6 +15,14 @@ sentences = [
     'You should not have pushed the block so quickly',
     'You should not have flipped the glass upside down',
     'Do not upend the cup'
+]
+
+# Hard sentences
+sentences = [
+    'You were too close',
+    'You moved to fast',
+    'The cup',
+    'Knife'
 ]
 
 # Threshold for scoring
@@ -88,10 +94,6 @@ def tree():
 
 
 def tree_nlp():
-    # Setup ROS publisher for constraint update
-    publisher = rospy.Publisher('add_constraint', String,
-                                queue_size=10)
-
     # Iterate through sentences
     for sentence in sentences:
         print('-' * 50)
@@ -109,7 +111,8 @@ def tree_nlp():
         word_similarity_scores = processor.processUserInput(sentence)
 
         # Score each node in the tree based of word similarity score
-        tree.score_the_tree(threshold, word_similarity_scores)
+        # tree.score_the_tree(threshold, word_similarity_scores)
+        tree.new_scoring(word_similarity_scores)
 
         # Get best question to ask from scored tree
         question_nodes = tree.get_questions()

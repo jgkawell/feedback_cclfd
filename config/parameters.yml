@@ -7,7 +7,7 @@ object:
     - computer
     - book
     - plate
-    # - knife
+    - knife
     # - gun
     # - bowl
 # List of humans in the scene
@@ -29,6 +29,6 @@ continuous:
     - angle
     - speed
     - distance
-    - order
-    - radius
-    - area
+    # - order
+    # - radius
+    # - area
