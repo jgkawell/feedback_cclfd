@@ -279,8 +279,6 @@ class Tree():
         return False
 
 
-
-
 if __name__ == "__main__":
     # Create tree for testing
     tree = Tree()
