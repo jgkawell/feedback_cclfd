@@ -18,9 +18,9 @@ block:
     - block
   match:
     - block.n.01
-jack:
+john:
   exact:
-    - jack
+    - john
   match:
 jane:
   exact:
@@ -34,11 +34,13 @@ movo:
   exact:
     - movo
   match:
-orientation:
+angle:
   exact:
     - angle
   match:
     - angle.n.01
+    - upright.s.01
+    - vertical.n.01
 speed:
   exact:
     - speed
@@ -46,52 +48,76 @@ speed:
     - speed.n.01
 distance:
   exact:
-    - near
+    - distance
   match:
     - near.r.01
+    - distance.n.01
 above:
   exact:
-    - over
     - above
   match:
     - above.r.02
-    - over.r.01
+human:
+  exact:
+    - human
+  match:
+    - human.a.02
+object:
+  exact:
+    - object
+  match:
+    - object.n.01
 order:
   exact:
+    - order
   match:
-radius:
+    - ordering.n.01
+robot:
   exact:
+    - robot
   match:
-area:
+    - automaton.n.02
+root:
   exact:
+    - root
   match:
-computer:
-  exact:
-    - computer
-    - laptop
-  match:
-    - computer.n.01
-    - laptop.n.01
-book:
-  exact:
-    - book
-  match:
-    - book.n.01
-plate:
-  exact:
-    - plate
-  match:
-    - plate.n.04
-knife:
-  exact:
-    - knife
-  match:
-    - knife.n.01
-gun:
-  exact:
-    - gun
-  match:
-    - gun.n.01
+    - beginning.n.04
+# order:
+#   exact:
+#   match:
+# radius:
+#   exact:
+#   match:
+# area:
+#   exact:
+#   match:
+# computer:
+#   exact:
+#     - computer
+#     - laptop
+#   match:
+#     - computer.n.01
+#     - laptop.n.01
+# book:
+#   exact:
+#     - book
+#   match:
+#     - book.n.01
+# plate:
+#   exact:
+#     - plate
+#   match:
+#     - plate.n.04
+# knife:
+#   exact:
+#     - knife
+#   match:
+#     - knife.n.01
+# gun:
+#   exact:
+#     - gun
+#   match:
+#     - gun.n.01
 # bowl:
 #   exact:
 #     - bowl
