@@ -51,8 +51,3 @@ above:
               - object
               - robot
               - order
-    - robot_object:
-          parameters:
-              - robot
-              - object
-              - order
