@@ -1,0 +1,36 @@
+exact:
+  - cup
+  - sawyer
+  - block
+  - table
+  - paper
+  - angle
+  - speed
+  - distance
+  - order
+  - above
+  - over
+  - near
+match:
+  - cup.n.01
+  - above.r.02
+  - near.r.01
+  - over.r.01
+correlation:
+  cup:
+    - cup.n.01
+  table:
+    - 
+  paper: 
+    - 
+  block:
+    - 
+  jack:
+  jane:
+  sawyer:
+  movo:
+  angle:
+  speed:
+  distance:
+    - near.r.01
+
