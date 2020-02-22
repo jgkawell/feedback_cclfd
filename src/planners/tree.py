@@ -56,9 +56,10 @@ class Tree():
 
         self.display()
 
-        pdb.set_trace()
-        for node in self.nodes:
-            print(node)
+        self.score_the_tree(0.3,{})
+        # pdb.set_trace()
+        # for node in self.nodes:
+        #     print(node)
 
     # Read in constraint and parameter data from files
     def setup(self, constraints_file, parameters_file):
