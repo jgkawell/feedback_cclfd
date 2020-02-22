@@ -1,9 +1,11 @@
 
 import yaml
 import random
-
+import pdb
+import Queue 
+import numpy as np
 from itertools import combinations
-
+from sys import maxint
 
 class Constraint():
     def __init__(self, constraint_type, name, params):
@@ -23,6 +25,7 @@ class Node():
         self.children = children  # list
         self.leaf = False
         self.name = ""
+        self.score = -1*maxint
 
     def __repr__(self):
         return str(self)
@@ -51,7 +54,11 @@ class Tree():
 
         self.prune()
 
-        # self.display()
+        self.display()
+
+        pdb.set_trace()
+        for node in self.nodes:
+            print(node)
 
     # Read in constraint and parameter data from files
     def setup(self, constraints_file, parameters_file):
@@ -277,6 +284,106 @@ class Tree():
                     return result
 
         return False
+
+    def assign_initial_scores(self,probability_dict,start_key=('root')):
+        
+        cur_node = self.nodes[start_key]
+        Q = Queue.Queue()
+        Q.put(cur_node) 
+
+        while(not Q.empty()):
+            node = Q.get()
+            children_nodes = node.children 
+            if(type(node.params) == str):
+                if node.params in probability_dict:
+                    node.score = float(probability_dict[node.params])
+            for child in children_nodes:
+                if(type(child) == str):
+                    Q.put(self.nodes[child])
+
+        return True
+
+    def harmonic_mean(self,data):
+        result = 0.0
+        for i in range(len(data)):
+            result += 1.0/data[i]
+
+        return len(data)/result
+
+    def calculate_score(self,node):
+        
+        parents = node.parents
+        parents_scores = []
+        for parent in parents:
+            if(self.nodes[parent].score>0.0):
+                parents_scores.append(self.nodes[parent].score)
+            else:
+                return False
+
+        node.score = np.prod(parents_scores)/np.sum(parents_scores)
+        #node.score = np.sum(parents_scores)/np.prod(parents_scores)        
+        return True
+
+    def generate_scores(self,num_nodes,start_key=('root')):
+
+        cur_node = self.nodes[start_key]
+        #This list scores all the nodes with num_nodes elements in it.
+        nodes_to_be_modified = []
+        node_scores = []
+        Q = Queue.Queue()
+        Q.put(cur_node) 
+
+        while(not Q.empty()):
+            node = Q.get()
+            children_nodes = node.children 
+            if(type(node.params) == str):
+                for child in children_nodes:
+                    if(type(child) == str):
+                        Q.put(self.nodes[child])
+                    elif(type(child) == tuple):
+                        if(len(child) <= num_nodes):
+                            Q.put(self.nodes[child])
+                                   
+            if(type(node.params) == tuple):
+                if(len(node.params) == num_nodes and node not in nodes_to_be_modified and node.score<0.0):                    
+                    nodes_to_be_modified.append(node)
+                for child in children_nodes:
+                    if(type(child) == str):
+                        Q.put(self.nodes[child])
+                    elif(type(child) == tuple):
+                        if(len(child) <= num_nodes):
+                            Q.put(self.nodes[child])
+        
+        for node in nodes_to_be_modified:
+            if(not self.calculate_score(node)):
+                print("Error in calculating score")
+                break
+            else:
+                node_scores.append(node.score)
+
+        #pdb.set_trace()
+        print(node_scores)
+        #Normalize the scores
+        sum_scores = np.sum(node_scores)
+        #print("SUM =" + str(sum_scores))
+        for node in nodes_to_be_modified:
+            #print("NODE IS" + str(node.params))
+            #print("SUM IS" + str(sum_scores))
+            #print("Original Score" + str(node.score))
+            node.score = node.score/sum_scores
+            #print("New Score" + str(node.score))
+            #print("*********************************************")
+
+        return nodes_to_be_modified
+
+    def score_the_tree(self,threshold,probability_dict,start_key=('root')):
+        
+        prob_dict = {"object" : 0.025, "cup": 0.075, "table": 0.125, "human": 0.025, "john": 0.175, "jane": 0.025, "robot": 0.1, "sawyer": 0.175, "angle": 0.025, "speed": 0.075, "distance": 0.125, "order": 0.05} 
+        print(self.assign_initial_scores(prob_dict))
+
+        depth = 4
+        for i in range(2,depth+1):
+            self.generate_scores(i)
 
 
 if __name__ == "__main__":

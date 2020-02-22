@@ -3,8 +3,8 @@
 object:
     - cup
     - table
-    - paper
-    - block
+    # - paper
+    # - block
     # - computer
     # - book
     # - tree
@@ -23,7 +23,8 @@ human:
 # List of robots in the scene
 robot:
     - sawyer
-    - movo
+    # - movowe
+    
     # - walle
     # - c3po
 # Continuous parameters
@@ -34,3 +35,5 @@ continuous:
     - order
     # - radius
     # - area
+
+
