@@ -1,6 +1,10 @@
+import nltk
+
 from planners.tree import Node, Tree
 from planners.process_user_input import ProcessInput
 
+# Make sure wordnet is downloaded
+nltk.download('wordnet', quiet=True)
 
 # Sentences to test
 sentences = [
