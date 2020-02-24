@@ -9,11 +9,12 @@ from itertools import combinations
 
 
 class Constraint():
-    def __init__(self, constraint_type, name, params, question):
+    def __init__(self, constraint_type, name, params, question, followup):
         self.constraint_type = constraint_type
         self.name = name
         self.params = params
         self.question = question
+        self.followup = followup
 
     def __str__(self):
         return "Type: {} | Name: {} | Params: {}".format(
@@ -21,14 +22,15 @@ class Constraint():
 
 
 class Node():
-    def __init__(self, params, parents=[], children=[], leaf=False, name="", type="", question=""):
-        self.params = params # tuple
-        self.parents = parents # list
-        self.children = children # list
+    def __init__(self, params, parents=[], children=[], leaf=False, name="", type="", question="", followup=""):
+        self.params = params  # tuple
+        self.parents = parents  # list
+        self.children = children  # list
         self.leaf = leaf
         self.name = name
         self.type = type
         self.question = question
+        self.followup = followup
         self.score = 0.0
 
     def __repr__(self):
@@ -37,8 +39,8 @@ class Node():
     def __str__(self):
         # return "{} | {} | {} | {}".format(
         #     str(self.parents), str(self.params), str(self.children), self.score)
-        return "{} | {} | {}".format(
-            str(self.params), self.score, self.question)
+        return "{} | {}".format(
+            str(self.params), self.score)
 
 
 class Tree():
@@ -50,7 +52,8 @@ class Tree():
     # Build the tree
     def build(self, constraints_file, parameters_file):
 
-        self.constraints, self.parameters = self.setup(constraints_file, parameters_file)
+        self.constraints, self.parameters = self.setup(
+            constraints_file, parameters_file)
 
         self.initialize()
 
@@ -74,8 +77,12 @@ class Tree():
                     name = list(file_data.keys())[0]
                     parameters = file_data[name]['parameters']
                     question = file_data[name]['question']
+                    if 'followup' in file_data[name]:
+                        followup = file_data[name]['followup']
+                    else:
+                        followup = ""
                     constraints.append(Constraint(
-                        constraint_type, name, parameters, question))
+                        constraint_type, name, parameters, question, followup))
 
         # read in parameters from file
         # print("Reading parameters...")
@@ -149,7 +156,8 @@ class Tree():
                 # check attachment point (should only fail on doubles)
                 self.nodes[tuple(leaf.params)]
                 new_params = leaf.params + (leaf.name, )
-                self.add(new_params, [leaf.params], [], leaf=True, name=leaf.name, type=leaf.type, question=leaf.question)
+                self.add(new_params, [leaf.params], [
+                ], leaf=True, name=leaf.name, type=leaf.type, question=leaf.question, followup=leaf.followup)
                 self.nodes[new_params].leaf = True
             except KeyError as e:
                 # print("Couldn't find attach point for: {}".format(str(leaf)))
@@ -184,6 +192,7 @@ class Tree():
                                 constraint.constraint_type, constraint.name)
                             temp_node.type = constraint.constraint_type
                             temp_node.question = constraint.question
+                            temp_node.followup = constraint.followup
                             temp_node.params = tuple(sorted(temp_node.params))
                             leaves.append(temp_node)
                     else:  # No parameter expansion needed
@@ -194,6 +203,7 @@ class Tree():
                             constraint.constraint_type, constraint.name)
                         temp_node.type = constraint.constraint_type
                         temp_node.question = constraint.question
+                        temp_node.followup = constraint.followup
                         temp_node.params = tuple(sorted(temp_node.params))
                         leaves.append(temp_node)
 
@@ -227,9 +237,10 @@ class Tree():
         # print("Size after pruning: {}".format(len(self.nodes.keys())))
 
     # Add a node to the tree
-    def add(self, params, parents=[], children=[], leaf=False, name="", type="", question=""):
+    def add(self, params, parents=[], children=[], leaf=False, name="", type="", question="", followup=""):
         # Create and add new node
-        self.nodes[params] = Node(params, parents, children, leaf, name, type, question)
+        self.nodes[params] = Node(
+            params, parents, children, leaf, name, type, question, followup)
 
         # Update parents
         for parent in parents:
@@ -396,6 +407,15 @@ class Tree():
 
         return sorted(best_scores, key=lambda x: x.score, reverse=True)
 
+    def get_best_children(self, key):
+        node = self.nodes[key]
+
+        children = []
+        for child in node.children:
+            children.append(self.nodes[child])
+
+        return sorted(children, key=lambda x: x.score, reverse=True)
+
     def generate_query(self, node):
         base_query = "Did the problem have to do with "
 
@@ -408,7 +428,8 @@ class Tree():
                 query = query.format(node.params[0], node.params[1])
             elif len(node.params) == 3:
                 query = base_query + "{} and {} and {}?"
-                query = query.format(node.params[0], node.params[1], node.params[2])
+                query = query.format(
+                    node.params[0], node.params[1], node.params[2])
         else:
             query = node.question
             for param in node.params:
@@ -418,7 +439,6 @@ class Tree():
                     query = query.replace('human', param, 1)
 
         return query
-
 
 
 if __name__ == "__main__":
