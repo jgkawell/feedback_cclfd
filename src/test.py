@@ -24,7 +24,29 @@ threshold = 0.75
 
 
 def nlp():
-    print("Not implemented.")
+    # Iterate through sentences
+    for sentence in sentences:
+        print('-' * 50)
+        print("Sentence: {}".format(sentence))
+
+        # Create tree
+        tree = Tree()
+        tree.build('../config/constraints.yml', '../config/parameters.yml')
+
+        # Create question nodes from all leaves
+        question_nodes = []
+        for node in tree.nodes.values():
+            if node.leaf:
+                question_nodes.append(node)
+
+        # Iterate over all questions to ask
+        corrected = iterate_over_nodes(tree, question_nodes)
+
+        # If the user responds no to everything
+        if not corrected:
+            print("Couldn't find a correction. Was your feedback correct?")
+
+        break
 
 
 def tree():
