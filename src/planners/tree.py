@@ -421,7 +421,7 @@ class Tree():
     def get_questions(self):
         best_scores = []
         for node in self.nodes.values():
-            if node.score > 0.0:
+            if node.score >= 0.0:
                 best_scores.append(node)
 
         return sorted(best_scores, key=lambda x: x.score, reverse=True)
