@@ -417,7 +417,7 @@ class Tree():
             self.generate_scores(i, start_key)
 
 
-    def get_question(self):
+    def get_questions(self):
         best_scores = []
         for node in self.nodes.values():
             if node.score > 0.0:
