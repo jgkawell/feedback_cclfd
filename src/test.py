@@ -57,7 +57,7 @@ def main():
 
         # If the user responds no to everything
         if not corrected:
-            print("Couldn't find a valid correction. Try rephrasing your feedback?")
+            print("Couldn't find a correction. Try rephrasing your feedback?")
 
 
 def node_handle(tree, node):

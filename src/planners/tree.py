@@ -22,7 +22,8 @@ class Constraint():
 
 
 class Node():
-    def __init__(self, params, parents=[], children=[], leaf=False, name="", type="", question="", followup=""):
+    def __init__(self, params, parents=[], children=[], leaf=False,
+                 name="", type="", question="", followup=""):
         self.params = params  # tuple
         self.parents = parents  # list
         self.children = children  # list
@@ -37,10 +38,9 @@ class Node():
         return str(self)
 
     def __str__(self):
-        # return "{} | {} | {} | {}".format(
-        #     str(self.parents), str(self.params), str(self.children), self.score)
-        return "{} | {}".format(
-            str(self.params), self.score)
+        return "{} | {} | {} | {}".format(
+            str(self.parents), str(self.params),
+            str(self.children), self.score)
 
 
 class Tree():
@@ -156,13 +156,15 @@ class Tree():
                 # check attachment point (should only fail on doubles)
                 self.nodes[tuple(leaf.params)]
                 new_params = leaf.params + (leaf.name, )
-                # Check to see if this is a duplicate leaf (two objects as params)
+                # Check to see if this is a duplicate
+                # leaf (two objects as params)
                 try:
                     self.nodes[new_params]
                     # print("Leaf has already been added!")
                 except KeyError as e:
                     self.add(new_params, [leaf.params], [], leaf=True,
-                             name=leaf.name, type=leaf.type, question=leaf.question, followup=leaf.followup)
+                             name=leaf.name, type=leaf.type,
+                             question=leaf.question, followup=leaf.followup)
                     self.nodes[new_params].leaf = True
             except KeyError as e:
                 # print("Couldn't find attach point for: {}".format(str(leaf)))
@@ -242,7 +244,8 @@ class Tree():
         # print("Size after pruning: {}".format(len(self.nodes.keys())))
 
     # Add a node to the tree
-    def add(self, params, parents=[], children=[], leaf=False, name="", type="", question="", followup=""):
+    def add(self, params, parents=[], children=[], leaf=False,
+            name="", type="", question="", followup=""):
         # Create and add new node
         self.nodes[params] = Node(
             params, parents, children, leaf, name, type, question, followup)
