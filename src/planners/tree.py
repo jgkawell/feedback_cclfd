@@ -376,9 +376,22 @@ class Tree():
     def score_the_tree(self, threshold, prob_dict, start_key=('root')):
         self.assign_initial_scores(prob_dict, start_key)
 
-        depth = 4
+        initial_score_list = []
+        for key,value in prob_dict.iteritems():
+            initial_score_list.append(value)
+        initial_score_list.sort(reverse=True)
+        
+        depth = 0
+        for i in range(1,len(initial_score_list)):
+            if(np.sum(initial_score_list[0:i])>threshold):
+                depth = i+1
+                break
+            else:
+                continue
+        
         for i in range(2, depth+1):
             self.generate_scores(i, start_key)
+
 
     def get_question(self):
         best_scores = []
