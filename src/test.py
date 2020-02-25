@@ -1,5 +1,7 @@
 import nltk
+import rospy
 
+from std_msgs.msg import String
 from planners.tree import Node, Tree
 from planners.process_user_input import ProcessInput
 
@@ -21,7 +23,41 @@ sentences = [
 threshold = 0.75
 
 
-def main():
+def nlp():
+    print("Not implemented.")
+
+
+def tree():
+    # Iterate through sentences
+    for sentence in sentences:
+        print('-' * 50)
+        print("Sentence: {}".format(sentence))
+
+        # Create tree
+        tree = Tree()
+        tree.build('../config/constraints.yml', '../config/parameters.yml')
+
+        # Get root of tree
+        root = tree.nodes[('root')]
+
+        # Get best question to ask from scored tree
+        question_nodes = []
+        for child in root.children:
+            question_nodes.append(tree.nodes[child])
+
+        # Iterate over all questions to ask
+        corrected = iterate_over_nodes(tree, question_nodes)
+
+        # If the user responds no to everything
+        if not corrected:
+            print("Couldn't find a correction. Was your feedback correct?")
+
+
+def tree_nlp():
+    # Setup ROS publisher for constraint update
+    publisher = rospy.Publisher('add_constraint', String,
+                                queue_size=10)
+
     # Iterate through sentences
     for sentence in sentences:
         print('-' * 50)
@@ -44,20 +80,27 @@ def main():
         # Get best question to ask from scored tree
         question_nodes = tree.get_questions()
 
-        # Display question that will be asked
-        corrected = False
-        for node in question_nodes:
-            # Recursively traverse questions in tree
-            result = node_handle(tree, node)
-            # Alert user and finish if solution is found
-            if result:
-                print("Correcting skill with given feedback!\n")
-                corrected = True
-                break
+        # Iterate over all questions to ask
+        corrected = iterate_over_nodes(tree, question_nodes)
 
         # If the user responds no to everything
         if not corrected:
             print("Couldn't find a correction. Try rephrasing your feedback?")
+
+
+def iterate_over_nodes(tree, question_nodes):
+    # Display question that will be asked
+    corrected = False
+    for node in question_nodes:
+        # Recursively traverse questions in tree
+        result = node_handle(tree, node)
+        # Alert user and finish if solution is found
+        if result:
+            print("Correcting skill with given feedback!\n")
+            corrected = True
+            break
+
+    return corrected
 
 
 def node_handle(tree, node):
@@ -101,4 +144,15 @@ def node_handle(tree, node):
 
 
 if __name__ == "__main__":
-    main()
+    # Get type of trial
+    trial_type = int(input("What kind of trial? (1=nlp, 2=tree, 3=tree nlp)\n"))
+
+    # Run selected trial type
+    if trial_type == 1:
+        nlp()
+    elif trial_type == 2:
+        tree()
+    elif trial_type == 3:
+        tree_nlp()
+    else:
+        print("Not valid option: {}".format(trial_type))
