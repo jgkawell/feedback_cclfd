@@ -156,9 +156,14 @@ class Tree():
                 # check attachment point (should only fail on doubles)
                 self.nodes[tuple(leaf.params)]
                 new_params = leaf.params + (leaf.name, )
-                self.add(new_params, [leaf.params], [
-                ], leaf=True, name=leaf.name, type=leaf.type, question=leaf.question, followup=leaf.followup)
-                self.nodes[new_params].leaf = True
+                # Check to see if this is a duplicate leaf (two objects as params)
+                try:
+                    self.nodes[new_params]
+                    # print("Leaf has already been added!")
+                except KeyError as e:
+                    self.add(new_params, [leaf.params], [], leaf=True,
+                             name=leaf.name, type=leaf.type, question=leaf.question, followup=leaf.followup)
+                    self.nodes[new_params].leaf = True
             except KeyError as e:
                 # print("Couldn't find attach point for: {}".format(str(leaf)))
                 pass
@@ -396,7 +401,7 @@ class Tree():
         self.assign_initial_scores(prob_dict, start_key)
 
         depth = 4
-        for i in range(2, depth+1):
+        for i in range(2, depth + 1):
             self.generate_scores(i, start_key)
 
     def get_questions(self):
@@ -437,6 +442,8 @@ class Tree():
                     query = query.replace('object', param, 1)
                 if param in self.parameters['human']:
                     query = query.replace('human', param, 1)
+                if param in self.parameters['robot']:
+                    query = query.replace('robot', param, 1)
 
         return query
 
