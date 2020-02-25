@@ -63,6 +63,8 @@ def node_handle(tree, node):
                         query = query.replace('object', param, 1)
                     if param in tree.parameters['human']:
                         query = query.replace('human', param, 1)
+                    if param in tree.parameters['robot']:
+                        query = query.replace('robot', param, 1)
                 print("Followup: {}".format(query))
                 response = str(raw_input("Give your response:\n"))
                 return True
