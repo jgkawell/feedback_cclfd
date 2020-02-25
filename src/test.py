@@ -33,11 +33,25 @@ def nlp():
         tree = Tree()
         tree.build('../config/constraints.yml', '../config/parameters.yml')
 
+        # Create word processor
+        processor = ProcessInput('../config/dictionaries.yml')
+        processor.buildDicts()
+
+        # Get the word similarity scores for working dictionary
+        word_similarity_scores = processor.processUserInput(sentence)
+
         # Create question nodes from all leaves
         question_nodes = []
         for node in tree.nodes.values():
             if node.leaf:
                 question_nodes.append(node)
+
+        # Score nodes
+        for node in question_nodes:
+            node = score_node(node, word_similarity_scores)
+
+        # Sort nodes
+        question_nodes = sorted(question_nodes, key=lambda x: x.score, reverse=True)
 
         # Iterate over all questions to ask
         corrected = iterate_over_nodes(tree, question_nodes)
@@ -45,8 +59,6 @@ def nlp():
         # If the user responds no to everything
         if not corrected:
             print("Couldn't find a correction. Was your feedback correct?")
-
-        break
 
 
 def tree():
@@ -163,6 +175,19 @@ def node_handle(tree, node):
     else:
         # If user responds no
         return False
+
+
+def score_node(node, prob_dict):
+    score = 0
+    for param in node.params:
+        try:
+            score += prob_dict[param]
+        except KeyError as e:
+            # print("Bad key: {}".format(param))
+            pass
+
+    node.score = score
+    return node
 
 
 if __name__ == "__main__":
