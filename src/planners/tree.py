@@ -369,9 +369,8 @@ class Tree():
                             Q.put(self.nodes[child])
 
             if(type(node.params) == tuple):
-                if(len(node.params) == num_nodes and node
-                        not in nodes_to_be_modified
-                        and node.score <= 0.0):
+                if(len(node.params) == num_nodes and node not in
+                        nodes_to_be_modified and node.score <= 0.0):
                     nodes_to_be_modified.append(node)
                 for child in children_nodes:
                     if(type(child) == str):
@@ -401,21 +400,20 @@ class Tree():
         self.assign_initial_scores(prob_dict, start_key)
 
         initial_score_list = []
-        for key,value in prob_dict.iteritems():
+        for key, value in prob_dict.iteritems():
             initial_score_list.append(value)
         initial_score_list.sort(reverse=True)
-        
+
         depth = 0
-        for i in range(1,len(initial_score_list)):
-            if(np.sum(initial_score_list[0:i])>threshold):
-                depth = i+1
+        for i in range(1, len(initial_score_list)):
+            if(np.sum(initial_score_list[0:i]) > threshold):
+                depth = i + 1
                 break
             else:
                 continue
-        
-        for i in range(2, depth+1):
-            self.generate_scores(i, start_key)
 
+        for i in range(2, depth + 1):
+            self.generate_scores(i, start_key)
 
     def get_questions(self):
         best_scores = []
