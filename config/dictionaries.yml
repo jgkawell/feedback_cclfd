@@ -8,11 +8,6 @@ table:
     - table
   match:
     - table.n.02
-paper:
-  exact:
-    - paper
-  match:
-    - paper.n.01
 block:
   exact:
     - block
