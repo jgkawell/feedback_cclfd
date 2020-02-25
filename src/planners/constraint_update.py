@@ -20,12 +20,6 @@ class ConstraintUpdate():
                                                  String,
                                                  self.user_trigger_callback)
 
-        # subscriber to listen to which constraint needs
-        # to be updated based on user feedback
-        self.constraint_sub = rospy.Subscriber('add_constraint',
-                                               String,
-                                               self.add_constraint_callback)
-
         # publisher to publish to constraint update topic in
         # cairo-cclfd/controllers/study_controller.FeedbackLfDStudyController
         self.update_pub = rospy.Publisher('/cairo_lfd/model_update',
@@ -38,8 +32,9 @@ class ConstraintUpdate():
         # var to hold trigger status
         self.trigger = False
 
-        # constraint to add to keyframes recieved through constraint subscriber
+        # constraint to add to keyframes recieved through update_constraint Service
         self.constraint = None
+
 
     # callback to add constraint to update
     def add_constraint_callback(self, data):
@@ -56,10 +51,20 @@ class ConstraintUpdate():
         self.trigger = data.data == 'True'
 
     # function to publish to constraint update
-    def update(self):
-        while self.trigger:
-            pass
+    def update_constraints(self):
+        #need to wait for all keyframes to be collected and for constraint to update
+        #service call to ask for constraint before updating skill
+        # TODO set up the add_constraint Service
+        rospy.wait_for_service('add_constraint')
+        try:
+            self.constraint = rospy.ServiceProxy(
+                "add_constraint", Constraint)#this Constraint object could just be a string, but should just be the constraint ID
+        except rospy.ServiceException:
+            rospy.logwarn("Service setup failed (add_constraint)")
         update_dict = {}
         for keyframe in self.keyframesUpdate:
-            update_dict[keyframe] = {"applied_constraints": self.constraint}
-        self.update_pub.publish()
+            update_dict[keyframe] = {"applied_constraints": [self.constraint]}
+        self.update_pub.publish(json.dumps(update_dict))
+        #clear stored keyframes and constraint
+        self.keyframesUpdate = []
+        self.constraint = None
