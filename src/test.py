@@ -17,7 +17,9 @@ sentences = [
     'Do not upend the cup'
 ]
 
+# Threshold for scoring
 threshold = 0.75
+
 
 def main():
     # Iterate through sentences
@@ -43,20 +45,35 @@ def main():
         question_nodes = tree.get_questions()
 
         # Display question that will be asked
+        corrected = False
         for node in question_nodes:
+            # Recursively traverse questions in tree
             result = node_handle(tree, node)
+            # Alert user and finish if solution is found
             if result:
                 print("Correcting skill with given feedback!\n")
+                corrected = True
                 break
+
+        # If the user responds no to everything
+        if not corrected:
+            print("Couldn't find a valid correction. Try rephrasing your feedback?")
 
 
 def node_handle(tree, node):
+    # Generate and print question and ask for response
     query = tree.generate_query(node)
     print("Question: {}".format(query))
     print("Confidence: {}".format(node.score))
-    response = str(raw_input("Yes or no? (y/n)\n"))
+    response = str(raw_input("Yes or no? (Y/n)\n"))
+    if response == "":
+        response = "y"
+
+    # If question was correct, ask constraint question if leaf or
+    # recursively ask children if not leaf
     if response.lower() == 'y':
         if node.leaf:
+            # Ask followup question (if exists)
             if node.followup != "":
                 query = node.followup
                 for param in node.params:
@@ -72,12 +89,14 @@ def node_handle(tree, node):
             else:
                 return True
         else:
+            # Iterate through children recursively if needed
             children = tree.get_best_children(node.params)
             for child in children:
                 result = node_handle(tree, child)
                 if result:
                     return True
     else:
+        # If user responds no
         return False
 
 
