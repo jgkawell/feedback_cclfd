@@ -1,53 +1,102 @@
 # Keep an item at a specific orientation
 orientation:
     - object_orientation:
-          parameters:
-              - object
-              - angle
+        parameters:
+            - object
+            - angle
+        question:
+            Should I have kept the object at a specific angle?
+        followup:
+            What angle (degrees) should I keep the object at?
+
 # Keep an item a specific distance away from another item
 distance:
     - object_human:
-          parameters:
-              - object
-              - human
-              - distance
+        parameters:
+            - object
+            - human
+            - distance
+        question:
+            Should I have kept the object a minimum distance away from human?
+        followup:
+            How far (cm) should I keep the object from human?
     - object_robot:
-          parameters:
-              - object
-              - robot
-              - distance
+        parameters:
+            - object
+            - robot
+            - distance
+        question:
+            Should I have kept the object a minimum distance away from robot?
+        followup:
+            How far (cm) should I keep the object from robot?
     - object_object:
-          parameters:
-              - object
-              - object
-              - distance
+        parameters:
+            - object
+            - object
+            - distance
+        question:
+            Should I have kept the object a minimum distance away from the object?
+        followup:
+            How far (cm) should I keep the object from the object?
 # Keep an item above or below a specific speed
 speed:
     - robot_max:
-          parameters:
-              - robot
-              - speed
+        parameters:
+            - robot
+            - speed
+        question:
+            Should I have kept robot below a certain speed?
+        followup:
+            What is the maximum speed (m/s) I should keep robot under?
     - object_max:
-          parameters:
-              - object
-              - speed
+        parameters:
+            - object
+            - speed
+        question:
+            Should I have kept the object below a certain speed?
+        followup:
+            What is the maximum speed (m/s) I should keep object under?
     - robot_min:
-          parameters:
-              - robot
-              - speed
+        parameters:
+            - robot
+            - speed
+        question:
+            Should I have kept robot above a certain speed?
+        followup:
+            What is the minimum speed (m/s) I should keep robot above?
     - object_min:
-          parameters:
-              - object
-              - speed
+        parameters:
+            - object
+            - speed
+        question:
+            Should I have kept the object above a certain speed?
+        followup:
+            What is the minimum speed (m/s) I should keep the object above?
 # Keep an item above another item
 above:
     - object_object:
-          parameters:
-              - object
-              - object
-              - order
+        parameters:
+            - object
+            - object
+        question:
+            Should I have kept the object above the object?
     - object_robot:
-          parameters:
-              - object
-              - robot
-              - order
+        parameters:
+            - object
+            - robot
+        question:
+            Should I have kept the object above robot?
+# Keep an item below another item
+below:
+    - object_object:
+        parameters:
+            - object
+            - object
+        question:
+            Should I have kept the object below the object?
+    - object_robot:
+        parameters:
+            - object
+            - robot
+        question:
+            Should I have kept the object below robot?

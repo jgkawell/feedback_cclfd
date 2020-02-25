@@ -5,10 +5,9 @@ object:
     - table
     - paper
     - block
-    # - computer
-    # - book
-    # - tree
-    # - plate
+    - computer
+    - book
+    - plate
     # - knife
     # - gun
     # - bowl
@@ -32,5 +31,5 @@ continuous:
     - speed
     - distance
     - order
-    # - radius
-    # - area
+    - radius
+    - area
