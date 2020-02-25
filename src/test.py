@@ -166,15 +166,15 @@ def node_handle(tree, node):
 
 
 if __name__ == "__main__":
-    # Get type of trial
-    trial_type = int(input("What kind of trial? (1=nlp, 2=tree, 3=tree nlp)\n"))
+    # Get case for testing
+    case = int(input("Which case to run? (1=nlp, 2=tree, 3=tree nlp)\n"))
 
-    # Run selected trial type
-    if trial_type == 1:
+    # Run selected case option
+    if case == 1:
         nlp()
-    elif trial_type == 2:
+    elif case == 2:
         tree()
-    elif trial_type == 3:
+    elif case == 3:
         tree_nlp()
     else:
-        print("Not valid option: {}".format(trial_type))
+        print("Not valid option: {}".format(case))
