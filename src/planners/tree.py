@@ -26,7 +26,7 @@ class Node():
         self.children = children  # list
         self.leaf = False
         self.name = ""
-        self.score = 0.0
+        self.score = -1.0
 
     def __repr__(self):
         return str(self)

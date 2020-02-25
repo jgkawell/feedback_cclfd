@@ -13,6 +13,7 @@ sentences = [
     'Do not upend the cup'
 ]
 
+threshold = 0.75
 # Iterate through sentences
 for sentence in sentences:
     print("Sentence: {}".format(sentence))
@@ -22,7 +23,7 @@ for sentence in sentences:
     tree.build('../config/constraints.yml', '../config/parameters.yml')
 
     # Create word processor
-    processor = ProcessInput('/root/feedback_cclfd/config/dictionaries.yml')
+    processor = ProcessInput('../config/dictionaries.yml')
     processor.buildDicts()
 
     # Get the word similarity scores for working dictionary
@@ -30,7 +31,8 @@ for sentence in sentences:
     # print("Word scores: {}".format(word_similarity_scores))
 
     # Score each node in the tree based of word similarity score
-    tree.score_the_tree(0.75, word_similarity_scores)
+    print(word_similarity_scores)
+    tree.score_the_tree(threshold, word_similarity_scores)
 
     # Get best question to ask from scored tree
     question = tree.get_question()
