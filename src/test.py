@@ -7,32 +7,40 @@ from planners.process_user_input import ProcessInput
 nltk.download('wordnet', quiet=True)
 
 # Easy sentences
-sentences = [
-    'You should have kept the cup upright',
-    'You should have moved more slowly when holding the mug',
-    'You should have kept the cup over the table',
-    'You should have kept the mug farther away from john',
-    'You should not have pushed the block so quickly',
-    'You should not have flipped the glass upside down',
-    'Do not upend the cup'
-]
+sentences = {
+    'The robot spilled water by flipping the cup upside down': 'You should have kept the cup upright',
+    'The robot moved the mug too quickly': 'You should have moved more slowly when holding the mug',
+    'The robot almost spilled water on the ground by moving away from the table': 'You should have kept the cup over the table',
+    'The robot almost spilled water on John by moving too close to him': 'You should have kept the mug farther away from john',
+    'The robot pushed the block to fast and so it fell off the table': 'You should not have pushed the block so quickly',
+    'The robot spilled water by flipping the cup upside down': 'You should not have flipped the glass upside down',
+    'The robot spilled water by flipping the cup upside down': 'Do not upend the cup',
+    'Sawyer moved dangerously close to the computer': 'You were too close to the computer'
+}
 
 # Hard sentences
-sentences = [
-    'You were too close',
-    'You moved to fast',
-    'The cup',
-    'Knife'
-]
+# sentences = {
+#     'The robot moved the knife too close to Jane': 'You were too close',
+#     'The robot moved too quickly while holding the computer': 'You moved to fast',
+#     'The robot should not have turned the cup upside down': 'The cup',
+#     'The robot moved the knife too close to John': 'Knife'
+# }
 
 # Threshold for scoring
 threshold = 0.75
 
+# Question counter
+num_questions_asked = 0
+total_questions_asked = 0
+
 
 def nlp():
+    global num_questions_asked
     # Iterate through sentences
-    for sentence in sentences:
+    for fault, sentence in sentences.items():
+        num_questions_asked = 0
         print('-' * 50)
+        print("Fault: {}".format(fault))
         print("Sentence: {}".format(sentence))
 
         # Create tree
@@ -46,15 +54,14 @@ def nlp():
         # Get the word similarity scores for working dictionary
         word_similarity_scores = processor.processUserInput(sentence)
 
+        # Score each node in the tree based of word similarity score
+        tree.new_scoring(word_similarity_scores)
+
         # Create question nodes from all leaves
         question_nodes = []
         for node in tree.nodes.values():
             if node.leaf:
                 question_nodes.append(node)
-
-        # Score nodes
-        for node in question_nodes:
-            node = score_node(node, word_similarity_scores)
 
         # Sort nodes
         question_nodes = sorted(question_nodes, key=lambda x: x.score, reverse=True)
@@ -66,11 +73,16 @@ def nlp():
         if not corrected:
             print("Couldn't find a correction. Was your feedback correct?")
 
+    print("Total questions asked: {}".format(total_questions_asked))
+
 
 def tree():
+    global num_questions_asked
     # Iterate through sentences
-    for sentence in sentences:
+    for fault, sentence in sentences.items():
+        num_questions_asked = 0
         print('-' * 50)
+        print("Fault: {}".format(fault))
         print("Sentence: {}".format(sentence))
 
         # Create tree
@@ -92,11 +104,16 @@ def tree():
         if not corrected:
             print("Couldn't find a correction. Was your feedback correct?")
 
+    print("Total questions asked: {}".format(total_questions_asked))
+
 
 def tree_nlp():
+    global num_questions_asked
     # Iterate through sentences
-    for sentence in sentences:
+    for fault, sentence in sentences.items():
+        num_questions_asked = 0
         print('-' * 50)
+        print("Fault: {}".format(fault))
         print("Sentence: {}".format(sentence))
 
         # Create tree
@@ -111,7 +128,6 @@ def tree_nlp():
         word_similarity_scores = processor.processUserInput(sentence)
 
         # Score each node in the tree based of word similarity score
-        # tree.score_the_tree(threshold, word_similarity_scores)
         tree.new_scoring(word_similarity_scores)
 
         # Get best question to ask from scored tree
@@ -124,8 +140,11 @@ def tree_nlp():
         if not corrected:
             print("Couldn't find a correction. Try rephrasing your feedback?")
 
+    print("Total questions asked: {}".format(total_questions_asked))
+
 
 def iterate_over_nodes(tree, question_nodes):
+    global total_questions_asked
     # Display question that will be asked
     corrected = False
     for node in question_nodes:
@@ -134,6 +153,8 @@ def iterate_over_nodes(tree, question_nodes):
         # Alert user and finish if solution is found
         if result:
             print("Correcting skill with given feedback!\n")
+            print("Number of questions asked: {}".format(num_questions_asked))
+            total_questions_asked += num_questions_asked
             corrected = True
             break
 
@@ -141,8 +162,10 @@ def iterate_over_nodes(tree, question_nodes):
 
 
 def node_handle(tree, node):
+    global num_questions_asked
     # Generate and print question and ask for response
     query = tree.generate_query(node)
+    num_questions_asked += 1
     print("Question: {}".format(query))
     print("Confidence: {}".format(node.score))
     response = str(raw_input("Yes or no? (Y/n)\n"))

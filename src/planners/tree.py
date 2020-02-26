@@ -464,33 +464,31 @@ class Tree():
     def new_scoring(self, prob_dict):
         # Score each param (that isn't a constraint name/type)
         max_score = 0
+        num_params = 0
         for node in self.nodes.values():
+            num_params = 0
             param_scores = []
 
             if type(node.params) == str:
                 param_scores.append(prob_dict[node.params])
+                num_params = 1
             else:
                 for param in node.params:
                     if param in prob_dict.keys():
                         param_scores.append(prob_dict[param])
+                        num_params += 1
 
-            if len(param_scores) == 0:
-                print(node)
-
-            cur_score = np.sum(param_scores) + np.prod(param_scores) / len(param_scores)
-            # print(cur_score)
+            cur_score = np.sum(param_scores) + np.prod(param_scores) / num_params
             node.score = cur_score
 
             if cur_score > max_score:
                 max_score = cur_score
 
-        print(max_score)
+        print("Maximum score: {}".format(max_score))
 
         # Normalize all scores
         for node in self.nodes.values():
             node.score = node.score / max_score
-
-
 
 
 if __name__ == "__main__":
