@@ -55,7 +55,7 @@ def nlp():
         word_similarity_scores = processor.processUserInput(sentence)
 
         # Score each node in the tree based of word similarity score
-        tree.new_scoring(word_similarity_scores)
+        tree.score_tree(word_similarity_scores)
 
         # Create question nodes from all leaves
         question_nodes = []
@@ -128,7 +128,7 @@ def tree_nlp():
         word_similarity_scores = processor.processUserInput(sentence)
 
         # Score each node in the tree based of word similarity score
-        tree.new_scoring(word_similarity_scores)
+        tree.score_tree(word_similarity_scores)
 
         # Get best question to ask from scored tree
         question_nodes = tree.get_questions()

@@ -309,115 +309,6 @@ class Tree():
 
         return False
 
-    def assign_initial_scores(self, probability_dict, start_key=('root')):
-        cur_node = self.nodes[start_key]
-        Q = Queue.Queue()
-        Q.put(cur_node)
-
-        while(not Q.empty()):
-            node = Q.get()
-            children_nodes = node.children
-            if(type(node.params) == str):
-                if node.params in probability_dict:
-                    node.score = float(probability_dict[node.params])
-            for child in children_nodes:
-                if(type(child) == str):
-                    Q.put(self.nodes[child])
-
-        return True
-
-    def harmonic_mean(self, data):
-        result = 0.0
-        for i in range(len(data)):
-            result += 1.0 / data[i]
-        return len(data) / result
-
-    def calculate_score(self, node):
-        parents = node.parents
-        parents_scores = []
-        for parent in parents:
-            if(self.nodes[parent].score >= 0.0):
-                parents_scores.append(self.nodes[parent].score)
-            else:
-                print("ERROR: {}".format(self.nodes[parent]))
-                return False
-
-        parent_total = np.sum(parents_scores)
-        if parent_total > 0.0:
-            node.score = np.prod(parents_scores) / np.sum(parents_scores)
-            # node.score = np.sum(parents_scores) / np.prod(parents_scores)
-        else:
-            node.score = 0.0
-
-        return True
-
-    def generate_scores(self, num_nodes, start_key=('root')):
-
-        cur_node = self.nodes[start_key]
-        # This list scores all the nodes with num_nodes elements in it.
-        nodes_to_be_modified = []
-        node_scores = []
-        Q = Queue.Queue()
-        Q.put(cur_node)
-
-        while(not Q.empty()):
-            node = Q.get()
-            children_nodes = node.children
-            if(type(node.params) == str):
-                for child in children_nodes:
-                    if(type(child) == str):
-                        Q.put(self.nodes[child])
-                    elif(type(child) == tuple):
-                        if(len(child) <= num_nodes):
-                            Q.put(self.nodes[child])
-
-            if(type(node.params) == tuple):
-                if(len(node.params) == num_nodes and node not in
-                        nodes_to_be_modified and node.score <= 0.0):
-                    nodes_to_be_modified.append(node)
-                for child in children_nodes:
-                    if(type(child) == str):
-                        Q.put(self.nodes[child])
-                    elif(type(child) == tuple):
-                        if(len(child) <= num_nodes):
-                            Q.put(self.nodes[child])
-
-        for node in nodes_to_be_modified:
-            if(not self.calculate_score(node)):
-                print("Error in calculating score")
-                break
-            else:
-                node_scores.append(node.score)
-
-        # Normalize the scores
-        sum_scores = np.sum(node_scores)
-        for node in nodes_to_be_modified:
-            if sum_scores > 0.0:
-                node.score = node.score / sum_scores
-            else:
-                node.score = 0.0
-
-        return nodes_to_be_modified
-
-    def score_the_tree(self, threshold, prob_dict, start_key=('root')):
-        self.assign_initial_scores(prob_dict, start_key)
-
-        initial_score_list = []
-        for key, value in prob_dict.iteritems():
-            initial_score_list.append(value)
-        initial_score_list.sort(reverse=True)
-
-        depth = 0
-        for i in range(1, len(initial_score_list)):
-            if(np.sum(initial_score_list[0:i]) > threshold):
-                depth = i + 1
-                break
-            else:
-                continue
-
-        for i in range(2, depth + 1):
-            self.generate_scores(i, start_key)
-
     def get_questions(self):
         best_scores = []
         for node in self.nodes.values():
@@ -433,7 +324,7 @@ class Tree():
         for child in node.children:
             children.append(self.nodes[child])
 
-        return sorted(children, key=lambda x: x.score, reverse=True)
+        return sorted(children, key=lambda x: (x.score, x.leaf), reverse=True)
 
     def generate_query(self, node):
         base_query = "Did the problem have to do with "
@@ -461,7 +352,7 @@ class Tree():
 
         return query
 
-    def new_scoring(self, prob_dict):
+    def score_tree(self, prob_dict):
         # Score each param (that isn't a constraint name/type)
         max_score = 0
         num_params = 0
