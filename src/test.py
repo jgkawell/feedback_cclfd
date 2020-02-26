@@ -203,19 +203,6 @@ def node_handle(tree, node):
         return False
 
 
-def score_node(node, prob_dict):
-    score = 0
-    for param in node.params:
-        try:
-            score += prob_dict[param]
-        except KeyError as e:
-            # print("Bad key: {}".format(param))
-            pass
-
-    node.score = score
-    return node
-
-
 if __name__ == "__main__":
     # Get case for testing
     case = int(input("Which case to run? (1=nlp, 2=tree, 3=tree nlp)\n"))
