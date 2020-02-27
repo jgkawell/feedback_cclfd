@@ -1,3 +1,4 @@
+import argparse
 import nltk
 import random
 
@@ -6,6 +7,11 @@ from planners.process_user_input import ProcessInput
 
 # Make sure wordnet is downloaded
 nltk.download('wordnet', quiet=True)
+
+# Setup argparse
+parser = argparse.ArgumentParser(description='Run feedback tests')
+parser.add_argument('num_tests', type=int, default=10, help='Number of tests to run')
+parser.add_argument('mode', type=str, default='auto', help='Mode for tests (manual/auto)')
 
 # Easy faults
 faults = {
@@ -30,8 +36,8 @@ threshold = 0.75
 num_questions_asked = 0
 total_questions_asked = 0
 
-# Display output
-display = True
+# Config variables
+mode = "auto"
 
 
 def nlp(results_file):
@@ -46,7 +52,7 @@ def nlp(results_file):
         sentence = data[1]
         num_questions_asked = 0
 
-        if display:
+        if mode == "manual":
             print('-' * 50)
             print("Fault: {}".format(fault))
             print("Sentence: {}".format(sentence))
@@ -85,10 +91,10 @@ def nlp(results_file):
             print("Couldn't find a correction. Was your feedback correct?")
             print(data)
 
-    if display:
+    if mode == "manual":
         print("Total questions asked: {}".format(total_questions_asked))
 
-    results_file.write("NLP,{0},{1}\n".format(total_questions_asked, len(faults.keys())))
+    results_file.write("{},".format(total_questions_asked))
 
 
 def tree(results_file):
@@ -103,7 +109,7 @@ def tree(results_file):
         sentence = data[1]
         num_questions_asked = 0
 
-        if display:
+        if mode == "manual":
             print('-' * 50)
             print("Fault: {}".format(fault))
             print("Sentence: {}".format(sentence))
@@ -131,10 +137,10 @@ def tree(results_file):
             print("Couldn't find a correction. Was your feedback correct?")
             print(data)
 
-    if display:
+    if mode == "manual":
         print("Total questions asked: {}".format(total_questions_asked))
 
-    results_file.write("Tree,{0},{1}\n".format(total_questions_asked, len(faults.keys())))
+    results_file.write("{},".format(total_questions_asked))
 
 
 def tree_nlp(results_file):
@@ -148,7 +154,7 @@ def tree_nlp(results_file):
         sentence = data[1]
         num_questions_asked = 0
 
-        if display:
+        if mode == "manual":
             print('-' * 50)
             print("Fault: {}".format(fault))
             print("Sentence: {}".format(sentence))
@@ -178,10 +184,10 @@ def tree_nlp(results_file):
             print("Couldn't find a correction. Try rephrasing your feedback?")
             print(data)
 
-    if display:
+    if mode == "manual":
         print("Total questions asked: {}".format(total_questions_asked))
 
-    results_file.write("Tree NLP,{0},{1}\n".format(total_questions_asked, len(faults.keys())))
+    results_file.write("{}\n".format(total_questions_asked))
 
 
 def iterate_over_nodes(tree, question_nodes, correct_params):
@@ -193,7 +199,7 @@ def iterate_over_nodes(tree, question_nodes, correct_params):
         result = node_handle(tree, node, correct_params)
         # Alert user and finish if solution is found
         if result:
-            if display:
+            if mode == "manual":
                 print("Correcting skill with given feedback!\n")
                 print("Number of questions asked: {}".format(num_questions_asked))
 
@@ -210,7 +216,7 @@ def node_handle(tree, node, correct_params):
     query = tree.generate_query(node)
     num_questions_asked += 1
 
-    if display:
+    if mode == "manual":
         print("Question: {}".format(query))
         print("Confidence: {}".format(node.score))
 
@@ -220,34 +226,40 @@ def node_handle(tree, node, correct_params):
         cur_params = node.params
 
     # Check if question is correct
-    # Automatidc mode
-    response = set(cur_params).issubset(correct_params)
 
     # Manual mode
-    # response = str(raw_input("Yes or no? (Y/n)\n"))
-    # if response.lower() == 'y' or response == "":
-    #     response = True
+    if mode == "manual":
+        response = str(raw_input("Yes or no? (Y/n)\n"))
+        if response.lower() == 'y' or response == "":
+            response = True
+        else:
+            response = False
+    else:
+        # Automatic mode
+        response = set(cur_params).issubset(correct_params)
 
     # If question was correct, ask constraint question if leaf or
     # recursively ask children if not leaf
     if response:
-        if display:
+        if mode == "manual":
             print("Response: Yes")
 
         if node.leaf:
             # Ask followup question (if exists)
             if node.followup != "":
-                # Ask followup question
-                # query = node.followup
-                # for param in node.params:
-                #     if param in tree.parameters['object']:
-                #         query = query.replace('object', param, 1)
-                #     if param in tree.parameters['human']:
-                #         query = query.replace('human', param, 1)
-                #     if param in tree.parameters['robot']:
-                #         query = query.replace('robot', param, 1)
-                # print("Followup: {}".format(query))
-                # response = str(raw_input("Give your response:\n"))
+                if mode == "manual":
+                    # Ask followup question
+                    query = node.followup
+                    for param in node.params:
+                        if param in tree.parameters['object']:
+                            query = query.replace('object', param, 1)
+                        if param in tree.parameters['human']:
+                            query = query.replace('human', param, 1)
+                        if param in tree.parameters['robot']:
+                            query = query.replace('robot', param, 1)
+                    print("Followup: {}".format(query))
+                    response = str(raw_input("Give your response:\n"))
+
                 return True
             else:
                 return True
@@ -260,46 +272,36 @@ def node_handle(tree, node, correct_params):
                     return True
     else:
         # If user responds no
-        if display:
+        if mode == "manual":
             print("Response: No")
         return False
 
 
-def tester(num_sets):
-    global display
-    display = False
+def tester(num_tests, run_mode):
+    global mode
+    mode = run_mode
     print("---- STARTING ----")
 
     results_file = open("../data/feedback_results.csv", "w")
-    results_file.write("Case,Total Questions,Number Explanations\n")
+    results_file.write("Test Results,Number of explanations:,{}\n".format(len(faults.keys())))
+    results_file.write("NLP,Tree,Tree-NLP\n")
 
     # Run loop of testing trials
-    print("Running NLP tests...")
-    for i in range(0, num_sets):
+    for i in range(0, num_tests):
         nlp(results_file)
-    print("Running Tree tests...")
-    for i in range(0, num_sets):
         tree(results_file)
-    print("Running Tree NLP tests...")
-    for i in range(0, num_sets):
         tree_nlp(results_file)
+
+        if (i + 1) % 10 == 0:
+            print("Completed: {}/{}".format(i + 1, num_tests))
 
     results_file.close()
     print("---- FINISHED ----")
 
 
 if __name__ == "__main__":
-    # Run all cases in a loop
-    num_tests = int(input("How many tests to run?\n"))
-    tester(num_tests)
+    # Read arguments
+    args = parser.parse_args()
 
-    # Run selected case option
-    # case = int(input("Which case to run? (1=nlp, 2=tree, 3=tree nlp)\n"))
-    # if case == 1:
-    #     nlp()
-    # elif case == 2:
-    #     tree()
-    # elif case == 3:
-    #     tree_nlp()
-    # else:
-    #     print("Not valid option: {}".format(case))
+    # Run all cases in a loop
+    tester(args.num_tests, args.mode)

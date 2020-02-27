@@ -59,7 +59,7 @@ class ProcessInput:
         words = [word for word in string.split()
                  if word not in self.stop_words]
         keys = self.corrDict.keys()
-        scores = dict(zip(keys, [0]*len(keys)))
+        scores = dict(zip(keys, [0] * len(keys)))
         # itterate through words and generate similarities
         for word in words:
             # generate similarity max score
