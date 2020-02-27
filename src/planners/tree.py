@@ -315,6 +315,9 @@ class Tree():
             if node.score >= 0.0:
                 best_scores.append(node)
 
+        # Randomize before sorting by score
+        random.shuffle(best_scores)
+
         return sorted(best_scores, key=lambda x: (x.score, x.leaf), reverse=True)
 
     def get_best_children(self, key):
@@ -323,6 +326,9 @@ class Tree():
         children = []
         for child in node.children:
             children.append(self.nodes[child])
+
+        # Randomize before sorting by score
+        random.shuffle(children)
 
         return sorted(children, key=lambda x: (x.score, x.leaf), reverse=True)
 
@@ -374,8 +380,6 @@ class Tree():
 
             if cur_score > max_score:
                 max_score = cur_score
-
-        print("Maximum score: {}".format(max_score))
 
         # Normalize all scores
         for node in self.nodes.values():

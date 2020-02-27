@@ -1,6 +1,6 @@
 # Keep an item at a specific orientation
 orientation:
-    - object_orientation:
+    - object:
         parameters:
             - object
             - angle
