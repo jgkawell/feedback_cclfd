@@ -38,6 +38,15 @@ distance:
             Should I have kept the object a minimum distance away from the object?
         followup:
             How far (cm) should I keep the object from the object?
+    - robot_human:
+        parameters:
+            - robot
+            - human
+            - distance
+        question:
+            Should I have kept robot a minimum distance away from human?
+        followup:
+            How far (cm) should I keep robot from human?
 # Keep an item above or below a specific speed
 speed:
     - robot_max:

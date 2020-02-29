@@ -66,6 +66,11 @@ human:
     - human
   match:
     - human.a.02
+person:
+  exact:
+    - person
+  match:
+    - person.n.01
 object:
   exact:
     - object
@@ -114,6 +119,19 @@ knife:
     - knife
   match:
     - knife.n.01
+container:
+  exact:
+    - container
+    - tupperware
+    - bowl
+  match:
+    - container.n.01
+tv:
+  exact:
+    - tv
+    - television
+  match:
+    - television_receiver.n.01
 # gun:
 #   exact:
 #     - gun
