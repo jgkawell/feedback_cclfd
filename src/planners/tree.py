@@ -385,6 +385,15 @@ class Tree():
         for node in self.nodes.values():
             node.score = node.score / max_score
 
+    def rescore(self, bad_params):
+        for key, value in self.nodes.items():
+            if type(key) == str:
+                cur_params = (key, )
+            else:
+                cur_params = key
+
+            if set(bad_params).issubset(cur_params):
+                value.score = -1
 
 if __name__ == "__main__":
     # Create tree for testing
