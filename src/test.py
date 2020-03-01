@@ -1,6 +1,7 @@
 import argparse
 import nltk
 import random
+import numpy as np
 
 from data import Data
 from multiprocessing import Pool
@@ -22,7 +23,7 @@ faults = {}
 
 
 def nlp_test(num):
-    total_questions_asked = 0
+    questions_asked = {}
 
     # Create tree
     tree = Tree()
@@ -34,6 +35,7 @@ def nlp_test(num):
 
     # Iterate through sentences
     for fault, data in faults.items():
+        current_count = 0
 
         # Reset tree scores
         for key, node in tree.nodes.items():
@@ -68,21 +70,23 @@ def nlp_test(num):
         question_nodes = sorted(question_nodes, key=lambda x: x.score, reverse=True)
 
         # Iterate over all questions to ask
-        corrected, total_questions_asked = iterate_over_nodes(tree, question_nodes, correct_params, total_questions_asked)
+        corrected, current_count = iterate_over_nodes(tree, question_nodes, correct_params, current_count)
 
         # If the user responds no to everything
         if not corrected:
             print("Couldn't find a correction. Was your feedback correct?")
             print(data)
 
-    if mode == "manual":
-        print("Total questions asked: {}".format(total_questions_asked))
+        if mode == "manual":
+            print("Total questions asked: {}".format(current_count))
 
-    return total_questions_asked
+        questions_asked[fault] = current_count
+
+    return questions_asked
 
 
 def tree_test(num):
-    total_questions_asked = 0
+    questions_asked = {}
 
     # Create tree
     tree = Tree()
@@ -94,6 +98,7 @@ def tree_test(num):
 
     # Iterate through sentences
     for fault, data in faults.items():
+        current_count = 0
 
         # Reset tree scores
         for key, node in tree.nodes.items():
@@ -120,21 +125,23 @@ def tree_test(num):
         random.shuffle(question_nodes)
 
         # Iterate over all questions to ask
-        corrected, total_questions_asked = iterate_over_nodes(tree, question_nodes, correct_params, total_questions_asked)
+        corrected, current_count = iterate_over_nodes(tree, question_nodes, correct_params, current_count)
 
         # If the user responds no to everything
         if not corrected:
             print("Couldn't find a correction. Was your feedback correct?")
             print(data)
 
-    if mode == "manual":
-        print("Total questions asked: {}".format(total_questions_asked))
+        if mode == "manual":
+            print("Total questions asked: {}".format(current_count))
 
-    return total_questions_asked
+        questions_asked[fault] = current_count
+
+    return questions_asked
 
 
 def tree_nlp_test(num):
-    total_questions_asked = 0
+    questions_asked = {}
 
     # Create tree
     tree = Tree()
@@ -146,6 +153,7 @@ def tree_nlp_test(num):
 
     # Iterate through sentences
     for fault, data in faults.items():
+        current_count = 0
 
         # Reset tree scores
         for key, node in tree.nodes.items():
@@ -170,17 +178,19 @@ def tree_nlp_test(num):
         question_nodes = tree.get_questions()
 
         # Iterate over all questions to ask
-        corrected, total_questions_asked = iterate_over_nodes(tree, question_nodes, correct_params, total_questions_asked)
+        corrected, current_count = iterate_over_nodes(tree, question_nodes, correct_params, current_count)
 
         # If the user responds no to everything
         if not corrected:
             print("Couldn't find a correction. Try rephrasing your feedback?")
             print(data)
 
-    if mode == "manual":
-        print("Total questions asked: {}".format(total_questions_asked))
+        if mode == "manual":
+            print("Total questions asked: {}".format(current_count))
 
-    return total_questions_asked
+        questions_asked[fault] = current_count
+
+    return questions_asked
 
 
 def iterate_over_nodes(tree, question_nodes, correct_params, total_questions_asked):
@@ -274,48 +284,56 @@ def tester(num_tests, run_mode, data):
     global faults
     mode = run_mode
     faults = Data(data).faults
+    num_explanations = len(faults.keys())
     print("---- STARTING ----")
 
     results_file = open("../data/feedback_results.csv", "w")
-    results_file.write("Test Results,Number of explanations:,{}\n".format(len(faults.keys())))
+    results_file.write("Test Results,Number of explanations:,{}\n".format(num_explanations))
     results_file.write("NLP,Tree,Tree-NLP\n")
 
     if mode == "auto":
         print("Running NLP tests...")
-        nlp_data = []
-        for i in range(0, num_tests):
-            p = Pool(processes=10)
-            data = p.map(nlp_test, [j for j in range(10)])
-            nlp_data.extend(data)
-            p.close()
-            print("Finished: {}/{}".format((i+1)*10, num_tests*10))
-
+        averages_nlp = test_helper("nlp", num_tests, num_explanations)
         print("Running Tree tests...")
-        tree_data = []
-        for i in range(0, num_tests):
-            p = Pool(processes=10)
-            data = p.map(tree_test, [j for j in range(10)])
-            tree_data.extend(data)
-            p.close()
-            print("Finished: {}/{}".format((i+1)*10, num_tests*10))
-
-        print("Running Tree NLP tests...")
-        tree_nlp_data = []
-        for i in range(0, num_tests):
-            p = Pool(processes=10)
-            data = p.map(tree_nlp_test, [j for j in range(10)])
-            tree_nlp_data.extend(data)
-            p.close()
-            print("Finished: {}/{}".format((i+1)*10, num_tests*10))
+        averages_tree = test_helper("tree", num_tests, num_explanations)
+        print("Running Tree-NLP tests...")
+        averages_tree_nlp = test_helper("tree-nlp", num_tests, num_explanations)
 
         # Write results to file
-        for nlp, tree, tree_nlp in zip(nlp_data, tree_data, tree_nlp_data):
+        for nlp, tree, tree_nlp in zip(averages_nlp, averages_tree, averages_tree_nlp):
             results_file.write("{},{},{}\n".format(nlp, tree, tree_nlp))
     else:
         print("Not implemented")
 
     results_file.close()
     print("---- FINISHED ----")
+
+
+def test_helper(case, num_tests, num_explanations):
+    data = []
+    num_proc = 10
+    for i in range(0, num_tests):
+        p = Pool(processes=num_proc)
+        if case == "nlp":
+            data = p.map(nlp_test, [j for j in range(num_proc)])
+        elif case == "tree":
+            data = p.map(tree_test, [j for j in range(num_proc)])
+        elif case == "tree-nlp":
+            data = p.map(tree_nlp_test, [j for j in range(num_proc)])
+        else:
+            print("Bad case: {}".format(case))
+        data.extend(data)
+        p.close()
+        print("Finished: {}/{}".format((i+1)*num_proc, num_tests*num_proc))
+
+    results = [[] for i in range(0, num_explanations)]
+    for entry in data:
+        for key, value in entry.items():
+            results[key-1].append(value)
+
+    averages = [np.average(results[i]) for i in range(0, num_explanations)]
+
+    return averages
 
 
 if __name__ == "__main__":
