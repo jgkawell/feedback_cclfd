@@ -21,6 +21,14 @@ jane:
   exact:
     - jane
   match:
+jack:
+  exact:
+    - jack
+  match:
+janice:
+  exact:
+    - janice
+  match:
 sawyer:
   exact:
     - sawyer
@@ -28,6 +36,14 @@ sawyer:
 movo:
   exact:
     - movo
+  match:
+drone:
+  exact:
+    - drone
+  match:
+roomba:
+  exact:
+    - roomba
   match:
 angle:
   exact:
@@ -132,13 +148,13 @@ tv:
     - television
   match:
     - television_receiver.n.01
-# gun:
-#   exact:
-#     - gun
-#   match:
-#     - gun.n.01
-# bowl:
-#   exact:
-#     - bowl
-#   match:
-#     - bowl.n.01
+gun:
+  exact:
+    - gun
+  match:
+    - gun.n.01
+bowl:
+  exact:
+    - bowl
+  match:
+    - bowl.n.01

@@ -3,30 +3,30 @@
 object:
     - cup
     - table
-    # - block
-    # - computer
-    # - book
-    # - plate
+    - block
+    - computer
+    - book
+    - plate
     - tv
-    # - knife
+    - knife
     - container
-    # - gun
-    # - bowl
+    - gun
+    - bowl
 # List of humans in the scene
 human:
-    # - john
-    # - jane
+    - john
+    - jane
     - person
-    # - jack
-    # - janice
+    - jack
+    - janice
     # - jim
     # - joanna
 # List of robots in the scene
 robot:
     - sawyer
-    # - movo
-    # - walle
-    # - c3po
+    - movo
+    - drone
+    - roomba
 # Continuous parameters
 continuous:
     - angle

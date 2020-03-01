@@ -22,16 +22,12 @@ mode = "auto"
 faults = {}
 
 
-def nlp_test(num):
+def nlp_test(processor):
     questions_asked = {}
 
     # Create tree
     tree = Tree()
     tree.build('../config/constraints.yml', '../config/parameters.yml')
-
-    # Create word processor
-    processor = ProcessInput('../config/dictionaries.yml')
-    processor.buildDicts()
 
     # Iterate through sentences
     for fault, data in faults.items():
@@ -85,16 +81,12 @@ def nlp_test(num):
     return questions_asked
 
 
-def tree_test(num):
+def tree_test(processor):
     questions_asked = {}
 
     # Create tree
     tree = Tree()
     tree.build('../config/constraints.yml', '../config/parameters.yml')
-
-    # Create word processor
-    processor = ProcessInput('../config/dictionaries.yml')
-    processor.buildDicts()
 
     # Iterate through sentences
     for fault, data in faults.items():
@@ -140,16 +132,12 @@ def tree_test(num):
     return questions_asked
 
 
-def tree_nlp_test(num):
+def tree_nlp_test(processor):
     questions_asked = {}
 
     # Create tree
     tree = Tree()
     tree.build('../config/constraints.yml', '../config/parameters.yml')
-
-    # Create word processor
-    processor = ProcessInput('../config/dictionaries.yml')
-    processor.buildDicts()
 
     # Iterate through sentences
     for fault, data in faults.items():
@@ -287,42 +275,56 @@ def tester(num_tests, run_mode, data):
     num_explanations = len(faults.keys())
     print("---- STARTING ----")
 
-    results_file = open("../data/feedback_results.csv", "w")
-    results_file.write("Test Results,Number of explanations:,{}\n".format(num_explanations))
-    results_file.write("NLP,Tree,Tree-NLP\n")
+    nlp_results_file = open("../data/nlp_feedback_results.csv", "w")
+    tree_results_file = open("../data/tree_feedback_results.csv", "w")
+    tree_nlp_results_file = open("../data/tree_nlp_feedback_results.csv", "w")
 
     if mode == "auto":
         print("Running NLP tests...")
-        averages_nlp = test_helper("nlp", num_tests, num_explanations)
+        results_nlp = test_helper("nlp", num_tests, num_explanations)
         print("Running Tree tests...")
-        averages_tree = test_helper("tree", num_tests, num_explanations)
+        results_tree = test_helper("tree", num_tests, num_explanations)
         print("Running Tree-NLP tests...")
-        averages_tree_nlp = test_helper("tree-nlp", num_tests, num_explanations)
+        results_tree_nlp = test_helper("tree-nlp", num_tests, num_explanations)
 
-        # Write results to file
-        for nlp, tree, tree_nlp in zip(averages_nlp, averages_tree, averages_tree_nlp):
-            results_file.write("{},{},{}\n".format(nlp, tree, tree_nlp))
+        # Write results to files
+        for row in results_nlp:
+            line = str(row)[1:-1]
+            nlp_results_file.write(line + "\n")
+        for row in results_tree:
+            line = str(row)[1:-1]
+            tree_results_file.write(line + "\n")
+        for row in results_tree_nlp:
+            line = str(row)[1:-1]
+            tree_nlp_results_file.write(line + "\n")
     else:
         print("Not implemented")
 
-    results_file.close()
+    nlp_results_file.close()
+    tree_results_file.close()
+    tree_nlp_results_file.close()
     print("---- FINISHED ----")
 
 
 def test_helper(case, num_tests, num_explanations):
+
+    # Create word processor
+    processor = ProcessInput('../config/dictionaries.yml')
+    processor.buildDicts()
+
     data = []
     num_proc = 10
     for i in range(0, num_tests):
         p = Pool(processes=num_proc)
         if case == "nlp":
-            data = p.map(nlp_test, [j for j in range(num_proc)])
+            new_data = p.map(nlp_test, [processor for j in range(num_proc)])
         elif case == "tree":
-            data = p.map(tree_test, [j for j in range(num_proc)])
+            new_data = p.map(tree_test, [processor for j in range(num_proc)])
         elif case == "tree-nlp":
-            data = p.map(tree_nlp_test, [j for j in range(num_proc)])
+            new_data = p.map(tree_nlp_test, [processor for j in range(num_proc)])
         else:
             print("Bad case: {}".format(case))
-        data.extend(data)
+        data.extend(new_data)
         p.close()
         print("Finished: {}/{}".format((i+1)*num_proc, num_tests*num_proc))
 
@@ -331,9 +333,9 @@ def test_helper(case, num_tests, num_explanations):
         for key, value in entry.items():
             results[key-1].append(value)
 
-    averages = [np.average(results[i]) for i in range(0, num_explanations)]
+    results = np.array(results).T.tolist()
 
-    return averages
+    return results
 
 
 if __name__ == "__main__":

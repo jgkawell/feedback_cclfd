@@ -366,7 +366,9 @@ class Tree():
             num_params = 0
             param_scores = []
 
-            if type(node.params) == str:
+            is_param_type = type(node.params) == str
+
+            if is_param_type:
                 param_scores.append(prob_dict[node.params])
                 num_params = 1
             else:
@@ -377,6 +379,13 @@ class Tree():
 
             cur_score = np.sum(param_scores) + np.prod(param_scores) / num_params
             node.score = cur_score
+
+            if is_param_type:
+                if node.params == 'root':
+                    node.score = 0
+                else:
+                    if node.score == 0:
+                        node.score = 0.001
 
             if cur_score > max_score:
                 max_score = cur_score
