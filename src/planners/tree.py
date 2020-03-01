@@ -404,6 +404,7 @@ class Tree():
             if set(bad_params).issubset(cur_params):
                 value.score = -1
 
+
 if __name__ == "__main__":
     # Create tree for testing
     tree = Tree()

@@ -46,7 +46,6 @@ def nlp_test(processor):
             print("Fault: {}".format(fault))
             print("Sentence: {}".format(sentence))
 
-
         # Get the word similarity scores for working dictionary
         word_similarity_scores = processor.processUserInput(sentence)
 
