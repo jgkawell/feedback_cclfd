@@ -1,5 +1,5 @@
 import rospy
-
+from feedback_cclfd.srv import Constraint
 from cairo_lfd_msgs.msg import NodeTime
 from std_msgs.msg import String
 import json
@@ -34,11 +34,6 @@ class ConstraintUpdate():
 
         # constraint to add to keyframes recieved through update_constraint Service
         self.constraint = None
-
-
-    # callback to add constraint to update
-    def add_constraint_callback(self, data):
-        self.constraint = data.data
 
     # callback to listen for keyframes while trigger is true
     def node_time_callback(self, data):
