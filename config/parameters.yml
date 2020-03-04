@@ -19,8 +19,6 @@ human:
     - person
     - jack
     - janice
-    # - jim
-    # - joanna
 # List of robots in the scene
 robot:
     - sawyer
@@ -32,6 +30,3 @@ continuous:
     - angle
     - speed
     - distance
-    # - order
-    # - radius
-    # - area

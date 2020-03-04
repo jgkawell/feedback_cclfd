@@ -5,8 +5,8 @@ import numpy as np
 
 from data import Data
 from multiprocessing import Pool
-from planners.tree import Node, Tree
-from planners.process_user_input import ProcessInput
+from tree import Node, Tree
+from process_user_input import ProcessInput
 
 # Make sure wordnet is downloaded
 nltk.download('wordnet', quiet=True)
@@ -27,7 +27,7 @@ def nlp_test(processor):
 
     # Create tree
     tree = Tree()
-    tree.build('../config/constraints.yml', '../config/parameters.yml')
+    tree.build('../../config/constraints.yml', '../../config/parameters.yml')
 
     # Iterate through sentences
     for fault, data in faults.items():
@@ -85,7 +85,7 @@ def tree_test(processor):
 
     # Create tree
     tree = Tree()
-    tree.build('../config/constraints.yml', '../config/parameters.yml')
+    tree.build('../../config/constraints.yml', '../../config/parameters.yml')
 
     # Iterate through sentences
     for fault, data in faults.items():
@@ -136,7 +136,7 @@ def tree_nlp_test(processor):
 
     # Create tree
     tree = Tree()
-    tree.build('../config/constraints.yml', '../config/parameters.yml')
+    tree.build('../../config/constraints.yml', '../../config/parameters.yml')
 
     # Iterate through sentences
     for fault, data in faults.items():
@@ -274,9 +274,9 @@ def tester(num_tests, run_mode, data):
     num_explanations = len(faults.keys())
     print("---- STARTING ----")
 
-    nlp_results_file = open("../data/nlp_feedback_results.csv", "w")
-    tree_results_file = open("../data/tree_feedback_results.csv", "w")
-    tree_nlp_results_file = open("../data/tree_nlp_feedback_results.csv", "w")
+    nlp_results_file = open("../../data/nlp_feedback_results.csv", "w")
+    tree_results_file = open("../../data/tree_feedback_results.csv", "w")
+    tree_nlp_results_file = open("../../data/tree_nlp_feedback_results.csv", "w")
 
     if mode == "auto":
         print("Running NLP tests...")
@@ -308,7 +308,7 @@ def tester(num_tests, run_mode, data):
 def test_helper(case, num_tests, num_explanations):
 
     # Create word processor
-    processor = ProcessInput('../config/dictionaries.yml')
+    processor = ProcessInput('../../config/dictionaries.yml')
     processor.buildDicts()
 
     data = []
@@ -325,12 +325,12 @@ def test_helper(case, num_tests, num_explanations):
             print("Bad case: {}".format(case))
         data.extend(new_data)
         p.close()
-        print("Finished: {}/{}".format((i+1)*num_proc, num_tests*num_proc))
+        print("Finished: {}/{}".format((i + 1) * num_proc, num_tests * num_proc))
 
     results = [[] for i in range(0, num_explanations)]
     for entry in data:
         for key, value in entry.items():
-            results[key-1].append(value)
+            results[key - 1].append(value)
 
     results = np.array(results).T.tolist()
 
