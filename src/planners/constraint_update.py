@@ -47,19 +47,19 @@ class ConstraintUpdate():
 
     # function to publish to constraint update
     def update_constraints(self):
-        #need to wait for all keyframes to be collected and for constraint to update
-        #service call to ask for constraint before updating skill
+        # need to wait for all keyframes to be collected and for constraint to update
+        # service call to ask for constraint before updating skill
         # TODO set up the add_constraint Service
         rospy.wait_for_service('add_constraint')
         try:
             self.constraint = rospy.ServiceProxy(
-                "add_constraint", Constraint)#this Constraint object could just be a string, but should just be the constraint ID
+                "add_constraint", Constraint)  # this Constraint object could just be a string, but should just be the constraint ID
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (add_constraint)")
         update_dict = {}
         for keyframe in self.keyframesUpdate:
             update_dict[keyframe] = {"applied_constraints": [self.constraint]}
         self.update_pub.publish(json.dumps(update_dict))
-        #clear stored keyframes and constraint
+        # clear stored keyframes and constraint
         self.keyframesUpdate = []
         self.constraint = None
