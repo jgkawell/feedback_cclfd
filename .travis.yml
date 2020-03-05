@@ -12,7 +12,7 @@ before_install:
     - pip install pycodestyle
 
 script:
-    - pycodestyle .
+    - pycodestyle --ignore=E121,E123,E126,E226,E24,E704,W503,W504,E501 .
     - docker build --target base -t jgkawell/feedback-cclfd:simple .
     - docker build --target nvidia -t jgkawell/feedback-cclfd:simple-nvidia .
 

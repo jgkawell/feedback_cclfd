@@ -1,0 +1,160 @@
+cup:
+  exact:
+    - cup
+  match:
+    - cup.n.01
+table:
+  exact:
+    - table
+  match:
+    - table.n.02
+block:
+  exact:
+    - block
+  match:
+    - block.n.01
+john:
+  exact:
+    - john
+  match:
+jane:
+  exact:
+    - jane
+  match:
+jack:
+  exact:
+    - jack
+  match:
+janice:
+  exact:
+    - janice
+  match:
+sawyer:
+  exact:
+    - sawyer
+  match:
+movo:
+  exact:
+    - movo
+  match:
+drone:
+  exact:
+    - drone
+  match:
+roomba:
+  exact:
+    - roomba
+  match:
+angle:
+  exact:
+    - angle
+  match:
+    - angle.n.01
+    - upright.s.01
+    - vertical.n.01
+speed:
+  exact:
+    - speed
+  match:
+    - speed.n.01
+    - quickly.r.01
+    - fast.r.01
+distance:
+  exact:
+    - distance
+  match:
+    - near.r.01
+    - distance.n.01
+    - farther.s.01
+    - close.a.01
+above:
+  exact:
+    - above
+  match:
+    - above.r.02
+below:
+  exact:
+    - below
+  match:
+    - below.r.01
+human:
+  exact:
+    - human
+  match:
+    - human.a.02
+person:
+  exact:
+    - person
+  match:
+    - person.n.01
+object:
+  exact:
+    - object
+  match:
+    - object.n.01
+robot:
+  exact:
+    - robot
+  match:
+    - automaton.n.02
+root:
+  exact:
+    - root
+  match:
+    - beginning.n.04
+radius:
+  exact:
+    - radius
+  match:
+    - radius.n.01
+    - radius.n.02
+area:
+  exact:
+    - area
+  match:
+    - area.n.06
+computer:
+  exact:
+    - computer
+    - laptop
+  match:
+    - computer.n.01
+    - laptop.n.01
+book:
+  exact:
+    - book
+  match:
+    - book.n.01
+plate:
+  exact:
+    - plate
+  match:
+    - plate.n.04
+knife:
+  exact:
+    - knife
+  match:
+    - knife.n.01
+container:
+  exact:
+    - container
+    - tupperware
+    - bowl
+  match:
+    - container.n.01
+tv:
+  exact:
+    - tv
+    - television
+  match:
+    - television_receiver.n.01
+gun:
+  exact:
+    - gun
+  match:
+    - gun.n.01
+bowl:
+  exact:
+    - bowl
+  match:
+    - bowl.n.01

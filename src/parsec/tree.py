@@ -1,15 +1,20 @@
-
 import yaml
 import random
+import pdb
+import Queue
+import numpy as np
 
+from sys import maxint
 from itertools import combinations
 
 
 class Constraint():
-    def __init__(self, constraint_type, name, params):
+    def __init__(self, constraint_type, name, params, question, followup):
         self.constraint_type = constraint_type
         self.name = name
         self.params = params
+        self.question = question
+        self.followup = followup
 
     def __str__(self):
         return "Type: {} | Name: {} | Params: {}".format(
@@ -17,41 +22,46 @@ class Constraint():
 
 
 class Node():
-    def __init__(self, params, parents=[], children=[]):
+    def __init__(self, params, parents=[], children=[], leaf=False,
+                 name="", type="", question="", followup=""):
         self.params = params  # tuple
         self.parents = parents  # list
         self.children = children  # list
-        self.leaf = False
-        self.name = ""
+        self.leaf = leaf
+        self.name = name
+        self.type = type
+        self.question = question
+        self.followup = followup
+        self.score = 0.0
 
     def __repr__(self):
         return str(self)
 
     def __str__(self):
-        return "{} | {} | {}".format(
-            str(self.parents), str(self.params), str(self.children))
+        return "{} | {} | {} | {}".format(
+            str(self.parents), str(self.params),
+            str(self.children), self.score)
 
 
 class Tree():
     def __init__(self):
         self.nodes = {}
+        self.constraints = []
+        self.parameters = []
 
     # Build the tree
     def build(self, constraints_file, parameters_file):
 
-        print("Reading constraints...")
-        constraints, parameters = self.setup(constraints_file, parameters_file)
+        self.constraints, self.parameters = self.setup(
+            constraints_file, parameters_file)
 
-        print("Building tree...")
-        self.initialize(parameters)
+        self.initialize()
 
-        self.add_pairs_and_triples(constraints, parameters)
+        self.add_pairs_and_triples(self.constraints, self.parameters)
 
-        self.add_leaves(constraints, parameters)
+        self.add_leaves(self.constraints, self.parameters)
 
         self.prune()
-
-        # self.display()
 
     # Read in constraint and parameter data from files
     def setup(self, constraints_file, parameters_file):
@@ -66,11 +76,16 @@ class Tree():
                 for file_data in value:
                     name = list(file_data.keys())[0]
                     parameters = file_data[name]['parameters']
+                    question = file_data[name]['question']
+                    if 'followup' in file_data[name]:
+                        followup = file_data[name]['followup']
+                    else:
+                        followup = ""
                     constraints.append(Constraint(
-                        constraint_type, name, parameters))
+                        constraint_type, name, parameters, question, followup))
 
         # read in parameters from file
-        print("Reading parameters...")
+        # print("Reading parameters...")
         parameters = {}
         with open(parameters_file) as file:
             parameters = yaml.load(file, Loader=yaml.FullLoader)
@@ -78,7 +93,7 @@ class Tree():
         return constraints, parameters
 
     # Initialize tree with root and basic parameters
-    def initialize(self, parameters):
+    def initialize(self):
         # Initialize root
         self.add(('root'), [], [])
 
@@ -86,24 +101,24 @@ class Tree():
         self.add(('object'), [('root')], [])
         self.add(('human'), [('root')], [])
         self.add(('robot'), [('root')], [])
-        for cont in parameters['continuous']:
+        for cont in self.parameters['continuous']:
             self.add((cont), [('root')], [])
 
-        print("Size after initialization: {}".format(
-            len(self.nodes.keys())))
+        # print("Size after initialization: {}".format(
+        #     len(self.nodes.keys())))
 
         # Populate objects
-        for obj in parameters['object']:
+        for obj in self.parameters['object']:
             self.add((obj), [('object')], [])
         # Populate humans
-        for human in parameters['human']:
+        for human in self.parameters['human']:
             self.add((human), [('human')], [])
         # Populate robots
-        for robot in parameters['robot']:
+        for robot in self.parameters['robot']:
             self.add((robot), [('robot')], [])
 
-        print("Size after expanding sets: {}".format(
-            len(self.nodes.keys())))
+        # print("Size after expanding sets: {}".format(
+        #     len(self.nodes.keys())))
 
     # Add pairs and triples of parameters to tree
     def add_pairs_and_triples(self, constraints, parameters):
@@ -118,8 +133,8 @@ class Tree():
             parents = [(p[0]), (p[1])]
             self.add(params, parents, [])
 
-        print("Size after pairs of params: {}".format(
-            len(self.nodes.keys())))
+        # print("Size after pairs of params: {}".format(
+        #     len(self.nodes.keys())))
 
         # Triples of params
         triples = list(combinations(basic_params, 3))
@@ -130,8 +145,8 @@ class Tree():
                 parents[i] = tuple(sorted(parents[i]))
             self.add(params, parents, [])
 
-        print("Size after triples of params: {}".format(
-            len(self.nodes.keys())))
+        # print("Size after triples of params: {}".format(
+        #     len(self.nodes.keys())))
 
     # Add the leaves (constraints) to the tree
     def add_leaves(self, constraints, parameters):
@@ -141,14 +156,22 @@ class Tree():
                 # check attachment point (should only fail on doubles)
                 self.nodes[tuple(leaf.params)]
                 new_params = leaf.params + (leaf.name, )
-                self.add(new_params, [leaf.params], [])
-                self.nodes[new_params].leaf = True
+                # Check to see if this is a duplicate
+                # leaf (two objects as params)
+                try:
+                    self.nodes[new_params]
+                    # print("Leaf has already been added!")
+                except KeyError as e:
+                    self.add(new_params, [leaf.params], [], leaf=True,
+                             name=leaf.name, type=leaf.type,
+                             question=leaf.question, followup=leaf.followup)
+                    self.nodes[new_params].leaf = True
             except KeyError as e:
                 # print("Couldn't find attach point for: {}".format(str(leaf)))
                 pass
 
-        print("Size after additions of leaves: {}".format(
-            len(self.nodes.keys())))
+        # print("Size after additions of leaves: {}".format(
+        #     len(self.nodes.keys())))
 
     # Create leaves from parameters
     def create_leaves(self, constraints, parameters):
@@ -174,6 +197,9 @@ class Tree():
                             temp_node.leaf = True
                             temp_node.name = "{}/{}".format(
                                 constraint.constraint_type, constraint.name)
+                            temp_node.type = constraint.constraint_type
+                            temp_node.question = constraint.question
+                            temp_node.followup = constraint.followup
                             temp_node.params = tuple(sorted(temp_node.params))
                             leaves.append(temp_node)
                     else:  # No parameter expansion needed
@@ -182,6 +208,9 @@ class Tree():
                         temp_node.leaf = True
                         temp_node.name = "{}/{}".format(
                             constraint.constraint_type, constraint.name)
+                        temp_node.type = constraint.constraint_type
+                        temp_node.question = constraint.question
+                        temp_node.followup = constraint.followup
                         temp_node.params = tuple(sorted(temp_node.params))
                         leaves.append(temp_node)
 
@@ -212,12 +241,14 @@ class Tree():
 
             new_count = len(self.nodes.keys())
 
-        print("Size after pruning: {}".format(len(self.nodes.keys())))
+        # print("Size after pruning: {}".format(len(self.nodes.keys())))
 
     # Add a node to the tree
-    def add(self, params, parents=[], children=[]):
+    def add(self, params, parents=[], children=[], leaf=False,
+            name="", type="", question="", followup=""):
         # Create and add new node
-        self.nodes[params] = Node(params, parents, children)
+        self.nodes[params] = Node(
+            params, parents, children, leaf, name, type, question, followup)
 
         # Update parents
         for parent in parents:
@@ -243,7 +274,7 @@ class Tree():
     # Display all nodes in tree
     def display(self, ):
         for key, value in sorted(self.nodes.iteritems()):
-            print(str(key) + " : " + str(value))
+            print(str(value))
         print("\n")
 
     # Count current number of accessible nodes
@@ -277,6 +308,101 @@ class Tree():
                     return result
 
         return False
+
+    def get_questions(self):
+        best_scores = []
+        for node in self.nodes.values():
+            if node.score >= 0.0:
+                best_scores.append(node)
+
+        # Randomize before sorting by score
+        random.shuffle(best_scores)
+
+        return sorted(best_scores, key=lambda x: (x.score, x.leaf), reverse=True)
+
+    def get_best_children(self, key):
+        node = self.nodes[key]
+
+        children = []
+        for child in node.children:
+            children.append(self.nodes[child])
+
+        # Randomize before sorting by score
+        random.shuffle(children)
+
+        return sorted(children, key=lambda x: (x.score, x.leaf), reverse=True)
+
+    def generate_query(self, node):
+        base_query = "Did the problem have to do with "
+
+        if not node.leaf:
+            if type(node.params) == str:
+                query = base_query + "{}?"
+                query = query.format(node.params)
+            elif len(node.params) == 2:
+                query = base_query + "{} and {}?"
+                query = query.format(node.params[0], node.params[1])
+            elif len(node.params) == 3:
+                query = base_query + "{} and {} and {}?"
+                query = query.format(
+                    node.params[0], node.params[1], node.params[2])
+        else:
+            query = node.question
+            for param in node.params:
+                if param in self.parameters['object']:
+                    query = query.replace('object', param, 1)
+                if param in self.parameters['human']:
+                    query = query.replace('human', param, 1)
+                if param in self.parameters['robot']:
+                    query = query.replace('robot', param, 1)
+
+        return query
+
+    def score_tree(self, prob_dict):
+        # Score each param (that isn't a constraint name/type)
+        max_score = 0
+        num_params = 0
+        for node in self.nodes.values():
+            num_params = 0
+            param_scores = []
+
+            is_param_type = type(node.params) == str
+
+            if is_param_type:
+                param_scores.append(prob_dict[node.params])
+                num_params = 1
+            else:
+                for param in node.params:
+                    if param in prob_dict.keys():
+                        param_scores.append(prob_dict[param])
+                        num_params += 1
+
+            cur_score = np.sum(param_scores) + np.prod(param_scores) / num_params
+            node.score = cur_score
+
+            if is_param_type:
+                if node.params == 'root':
+                    node.score = 0
+                else:
+                    if node.score == 0:
+                        node.score = 0.001
+
+            if cur_score > max_score:
+                max_score = cur_score
+
+        # Normalize all scores
+        for node in self.nodes.values():
+            node.score = node.score / max_score
+
+    def rescore(self, bad_params):
+        for key, value in self.nodes.items():
+            if type(key) == str:
+                cur_params = (key, )
+            else:
+                cur_params = key
+
+            if set(bad_params).issubset(cur_params):
+                value.score = -1
 
 
 if __name__ == "__main__":
