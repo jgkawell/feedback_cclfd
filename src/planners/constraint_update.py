@@ -30,7 +30,7 @@ class ConstraintUpdate():
         self.keyframesUpdate = []  # NOTE: needs to be reset inbetween updates
 
         # var to hold trigger status
-        self.trigger = False
+        self.trigger = True
 
         # constraint to add to keyframes recieved through update_constraint Service
         self.constraint = None
@@ -53,7 +53,7 @@ class ConstraintUpdate():
         rospy.wait_for_service('add_constraint')
         try:
             self.constraint = rospy.ServiceProxy(
-                "add_constraint", Constraint)  # this Constraint object could just be a string, but should just be the constraint ID
+                "add_constraint", Constraint)  # constraint ID to be updated
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (add_constraint)")
         update_dict = {}
