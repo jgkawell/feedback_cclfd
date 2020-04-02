@@ -32,9 +32,6 @@ class ConstraintUpdate():
         # var to hold trigger status
         self.trigger = True
 
-        # constraint to add to keyframes recieved through update_constraint Service
-        self.constraint = None
-
     # callback to listen for keyframes while trigger is true
     def node_time_callback(self, data):
         if self.trigger:
@@ -52,14 +49,14 @@ class ConstraintUpdate():
         # TODO set up the add_constraint Service
         rospy.wait_for_service('add_constraint')
         try:
-            self.constraint = rospy.ServiceProxy(
+            self.add_constraint = rospy.ServiceProxy(
                 "add_constraint", Constraint)  # constraint ID to be updated
+            resp = self.add_constraint(True)
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (add_constraint)")
         update_dict = {}
         for keyframe in self.keyframesUpdate:
-            update_dict[keyframe] = {"applied_constraints": [self.constraint]}
+            update_dict[keyframe] = {"applied_constraints": [resp.constraint]}
         self.update_pub.publish(json.dumps(update_dict))
         # clear stored keyframes and constraint
         self.keyframesUpdate = []
-        self.constraint = None

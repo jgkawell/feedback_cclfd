@@ -5,6 +5,7 @@ import numpy as np
 from tree import Node, Tree
 from process_user_input import ProcessInput
 from std_msgs.msg import String
+from feedback_cclfd.srv import Constraint
 
 class ParsecCCLfD:
     def __init__(self):
@@ -14,9 +15,17 @@ class ParsecCCLfD:
         self.feedback_sub = rospy.Subscriber("user_feedback",
                                               String,
                                               self.feedback_callback)
+        self.add_constraint_srv = rospy.Service('add_constraint', Constraint, self.handle_add_constraint)
         self.config_dir = '../../config'
         self.output_dir = '../../output'
+        self.constraint_id = None
     
+    def handle_add_constraint(self, req):
+        #TODO: add functionality to wait until tree is traversed
+        id = self.constraint_id
+        self.constraint_id = None
+        return id
+
     def feedback_callback(self, data):
         self.sentence = data.data
 
@@ -28,7 +37,9 @@ class ParsecCCLfD:
         # Create tree
         tree = Tree()
         tree.build(self.config_dir + '/constraints.yml', self.config_dir + '/parameters.yml')
-
+        for node in tree.get_questions():
+            if node.leaf:
+                print(node.params)
         # Get the word similarity scores for working dictionary
         word_similarity_scores = processor.processUserInput(self.sentence)
         print(word_similarity_scores)
@@ -97,12 +108,14 @@ class ParsecCCLfD:
                 print("Response: Yes")
 
                 if node.leaf:
+                    #TODO: extract constraint and update self.constraint_id
                     # Ask followup question (if exists)
                     if node.followup != "":
                         # Ask followup question
                         #TODO: convert to get mic input
                         query = node.followup
                         for param in node.params:
+                            print('###params = {}'.format(node.params))
                             if param in tree.parameters['object']:
                                 query = query.replace('object', param, 1)
                             if param in tree.parameters['human']:
