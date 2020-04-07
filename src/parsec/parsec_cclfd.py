@@ -1,6 +1,7 @@
 import rospy
 import nltk
 import random
+import yaml
 import numpy as np
 from tree import Node, Tree
 from process_user_input import ProcessInput
@@ -13,15 +14,22 @@ class ParsecCCLfD:
 
         # subscriber to listen to user feedback
         self.feedback_sub = rospy.Subscriber("user_feedback",
-                                              String,
-                                              self.feedback_callback)
-        self.add_constraint_srv = rospy.Service('add_constraint', Constraint, self.handle_add_constraint)
+                                             String,
+                                             self.feedback_callback)
+        self.add_constraint_srv = rospy.Service('add_constraint',
+                                                Constraint,
+                                                self.handle_add_constraint)
+        with open('../../config/constraint_ids.yml') as file:
+            self.constraint_ids = yaml.load(file)
+        print(self.constraint_ids)
         self.config_dir = '../../config'
         self.output_dir = '../../output'
         self.constraint_id = None
-    
+   
     def handle_add_constraint(self, req):
-        #TODO: add functionality to wait until tree is traversed
+        # TODO: add functionality to wait until tree is traversed
+        while self.constraint_id is None:
+            continue
         id = self.constraint_id
         self.constraint_id = None
         return id
@@ -36,7 +44,8 @@ class ParsecCCLfD:
         current_count = 0
         # Create tree
         tree = Tree()
-        tree.build(self.config_dir + '/constraints.yml', self.config_dir + '/parameters.yml')
+        tree.build(self.config_dir + '/constraints.yml',
+                   self.config_dir + '/parameters.yml')
         for node in tree.get_questions():
             if node.leaf:
                 print(node.params)
@@ -62,7 +71,7 @@ class ParsecCCLfD:
 
         return questions_asked
 
-    def iterate_over_nodes(self,tree, question_nodes, total_questions_asked):
+    def iterate_over_nodes(self, tree, question_nodes, total_questions_asked):
         # Display question that will be asked
         corrected = False
         for node in question_nodes:
@@ -95,7 +104,7 @@ class ParsecCCLfD:
             # Check if question is correct
 
             # Keyboard input
-            #TODO: convert to get mic input
+            # TODO: convert to get mic input
             response = str(raw_input("Yes or no? (Y/n)\n"))
             if response.lower() == 'y' or response == "":
                 response = True
@@ -108,14 +117,26 @@ class ParsecCCLfD:
                 print("Response: Yes")
 
                 if node.leaf:
-                    #TODO: extract constraint and update self.constraint_id
+                    # TODO: extract constraint and update self.constraint_id
                     # Ask followup question (if exists)
+                    participants = []
+                    for param in node.params:
+                        if param not in tree.parameters['continuous']:
+                            participants.append(param)
+                    constraint = node.params[-1].split('/')[0]+'/'
+                    if constraint+participants[0]+'_'+participants[1] in self.constraint_ids:
+                        self.constraint_id = self.constraint_ids[constraint
+                                                                 + participants[0]
+                                                                 + '_'
+                                                                 + participants[1]]
+                    else:
+                        self.constraint_id = self.constraint_ids.get(
+                            constraint+participants[1]+'_'+participants[0], -1)
                     if node.followup != "":
                         # Ask followup question
-                        #TODO: convert to get mic input
+                        # TODO: convert to get mic input
                         query = node.followup
                         for param in node.params:
-                            print('###params = {}'.format(node.params))
                             if param in tree.parameters['object']:
                                 query = query.replace('object', param, 1)
                             if param in tree.parameters['human']:
@@ -142,7 +163,7 @@ class ParsecCCLfD:
         else:
             return False, total_questions_asked
 
-if __name__=='__main__':
+if __name__ == '__main__':
     test = ParsecCCLfD()
     test.sentence = 'You should not tip the cup over when it is bringing it over to the person'
     print(test.tree_nlp())

@@ -60,3 +60,4 @@ class ConstraintUpdate():
         self.update_pub.publish(json.dumps(update_dict))
         # clear stored keyframes and constraint
         self.keyframesUpdate = []
+        
