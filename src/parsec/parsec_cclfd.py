@@ -6,7 +6,8 @@ import numpy as np
 from tree import Node, Tree
 from process_user_input import ProcessInput
 from std_msgs.msg import String
-from feedback_cclfd.srv import Constraint
+from feedback_cclfd.planners import AddConstraintServer
+
 
 class ParsecCCLfD:
     def __init__(self):
@@ -16,23 +17,14 @@ class ParsecCCLfD:
         self.feedback_sub = rospy.Subscriber("user_feedback",
                                              String,
                                              self.feedback_callback)
-        self.add_constraint_srv = rospy.Service('add_constraint',
-                                                Constraint,
-                                                self.handle_add_constraint)
+        self.constraint_server = AddConstraintServer()
+        self.constraint_server.run()
+        # TODO: update to recieve dirs from commandline args
         with open('../../config/constraint_ids.yml') as file:
             self.constraint_ids = yaml.load(file)
         print(self.constraint_ids)
         self.config_dir = '../../config'
         self.output_dir = '../../output'
-        self.constraint_id = None
-   
-    def handle_add_constraint(self, req):
-        # TODO: add functionality to wait until tree is traversed
-        while self.constraint_id is None:
-            continue
-        id = self.constraint_id
-        self.constraint_id = None
-        return id
 
     def feedback_callback(self, data):
         self.sentence = data.data
@@ -67,7 +59,7 @@ class ParsecCCLfD:
             print(data)
 
         print("Total questions asked: {}".format(current_count))
-        #questions_asked[self.sentence] = current_count
+        # questions_asked[self.sentence] = current_count
 
         return questions_asked
 
@@ -84,7 +76,7 @@ class ParsecCCLfD:
                 break
 
         return corrected, total_questions_asked
-    
+
     def node_handle(self, tree, node, total_questions_asked):
 
         if node.score != -1:
@@ -117,8 +109,7 @@ class ParsecCCLfD:
                 print("Response: Yes")
 
                 if node.leaf:
-                    # TODO: extract constraint and update self.constraint_id
-                    # Ask followup question (if exists)
+                    # extract constraint and update self.constraint_id
                     participants = []
                     for param in node.params:
                         if param not in tree.parameters['continuous']:
@@ -132,6 +123,8 @@ class ParsecCCLfD:
                     else:
                         self.constraint_id = self.constraint_ids.get(
                             constraint+participants[1]+'_'+participants[0], -1)
+
+                    # Ask followup question (if exists)
                     if node.followup != "":
                         # Ask followup question
                         # TODO: convert to get mic input
