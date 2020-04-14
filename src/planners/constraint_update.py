@@ -1,7 +1,7 @@
 import rospy
 from feedback_cclfd.srv import Constraint
 from cairo_lfd_msgs.msg import NodeTime
-from std_msgs.msg import String
+from std_msgs.msg import Bool,String
 import json
 
 
@@ -17,7 +17,7 @@ class ConstraintUpdate():
         # subscriber to listen for user trigger for bad skill
         # assumes trigger is String('True') until false
         self.user_trigger_sub = rospy.Subscriber("user_trigger",
-                                                 String,
+                                                 Bool,
                                                  self.user_trigger_callback)
 
         # publisher to publish to constraint update topic in
@@ -40,23 +40,32 @@ class ConstraintUpdate():
 
     # callback to listen for trigger
     def user_trigger_callback(self, data):
-        self.trigger = data.data == 'True'
+        self.trigger = data.data
 
     # function to publish to constraint update
     def update_constraints(self):
         # need to wait for all keyframes to be collected and for constraint to update
         # service call to ask for constraint before updating skill
-        # TODO set up the add_constraint Service
+        print("############################################Waiting for constraint")
+
         rospy.wait_for_service('add_constraint')
         try:
             self.add_constraint = rospy.ServiceProxy(
                 "add_constraint", Constraint)  # constraint ID to be updated
             resp = self.add_constraint(True)
+            print("############################################Constraint recieved: {}".format(resp.constraint))
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (add_constraint)")
         update_dict = {}
+        
         for keyframe in self.keyframesUpdate:
             update_dict[keyframe] = {"applied_constraints": [resp.constraint]}
+
         self.update_pub.publish(json.dumps(update_dict))
         # clear stored keyframes and constraint
         self.keyframesUpdate = []
+
+
+if __name__ == '__main__':
+    test = ConstraintUpdate()
+    test.update_constraints()

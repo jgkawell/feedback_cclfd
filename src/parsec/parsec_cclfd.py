@@ -1,4 +1,3 @@
-import rospy
 import nltk
 import random
 import yaml
@@ -6,28 +5,20 @@ import numpy as np
 from tree import Node, Tree
 from process_user_input import ProcessInput
 from std_msgs.msg import String
-from feedback_cclfd.planners import AddConstraintServer
+
 
 
 class ParsecCCLfD:
     def __init__(self):
-        rospy.init_node("parsec_cclfd")
-
-        # subscriber to listen to user feedback
-        self.feedback_sub = rospy.Subscriber("user_feedback",
-                                             String,
-                                             self.feedback_callback)
-        self.constraint_server = AddConstraintServer()
-        self.constraint_server.run()
+        # rospy.init_node("parsec_cclfd")
+        # self.constraint_server = AddConstraintServer()
+        # self.constraint_server.run()
         # TODO: update to recieve dirs from commandline args
         with open('../../config/constraint_ids.yml') as file:
             self.constraint_ids = yaml.load(file)
         print(self.constraint_ids)
         self.config_dir = '../../config'
         self.output_dir = '../../output'
-
-    def feedback_callback(self, data):
-        self.sentence = data.data
 
     def tree_nlp(self):
         processor = ProcessInput(self.config_dir + "/dictionaries.yml")
@@ -51,7 +42,9 @@ class ParsecCCLfD:
         question_nodes = tree.get_questions()
 
         # Iterate over all questions to ask
-        corrected, current_count = self.iterate_over_nodes(tree, question_nodes, current_count)
+        corrected, current_count = self.iterate_over_nodes(tree,
+                                                           question_nodes,
+                                                           current_count)
 
         # If the user responds no to everything
         if not corrected:
@@ -68,7 +61,8 @@ class ParsecCCLfD:
         corrected = False
         for node in question_nodes:
             # Recursively traverse questions in tree
-            result, total_questions_asked = self.node_handle(tree, node, total_questions_asked)
+            result, total_questions_asked = self.node_handle(tree, node,
+                                                             total_questions_asked)
             # Alert user and finish if solution is found
             if result:
                 print("Correcting skill with given feedback!\n")
@@ -114,6 +108,7 @@ class ParsecCCLfD:
                     for param in node.params:
                         if param not in tree.parameters['continuous']:
                             participants.append(param)
+                    print(node.params)
                     constraint = node.params[-1].split('/')[0]+'/'
                     if constraint+participants[0]+'_'+participants[1] in self.constraint_ids:
                         self.constraint_id = self.constraint_ids[constraint
