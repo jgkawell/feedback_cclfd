@@ -7,7 +7,6 @@ from process_user_input import ProcessInput
 from std_msgs.msg import String
 
 
-
 class ParsecCCLfD:
     def __init__(self):
         # rospy.init_node("parsec_cclfd")
@@ -16,7 +15,6 @@ class ParsecCCLfD:
         # TODO: update to recieve dirs from commandline args
         with open('../../config/constraint_ids.yml') as file:
             self.constraint_ids = yaml.load(file)
-        print(self.constraint_ids)
         self.config_dir = '../../config'
         self.output_dir = '../../output'
 
@@ -29,12 +27,9 @@ class ParsecCCLfD:
         tree = Tree()
         tree.build(self.config_dir + '/constraints.yml',
                    self.config_dir + '/parameters.yml')
-        for node in tree.get_questions():
-            if node.leaf:
-                print(node.params)
+    
         # Get the word similarity scores for working dictionary
         word_similarity_scores = processor.processUserInput(self.sentence)
-        print(word_similarity_scores)
         # Score each node in the tree based of word similarity score
         tree.score_tree(word_similarity_scores)
 
@@ -105,19 +100,24 @@ class ParsecCCLfD:
                 if node.leaf:
                     # extract constraint and update self.constraint_id
                     participants = []
+                    # itterate through node params
                     for param in node.params:
+                        # extract participants of constraint (ie object,person,robot)
                         if param not in tree.parameters['continuous']:
                             participants.append(param)
-                    print(node.params)
+                    # construct constraint base
                     constraint = node.params[-1].split('/')[0]+'/'
+                    # check first order of participants in dictionary
                     if constraint+participants[0]+'_'+participants[1] in self.constraint_ids:
                         self.constraint_id = self.constraint_ids[constraint
                                                                  + participants[0]
                                                                  + '_'
                                                                  + participants[1]]
+                    # check second order of participants in dictionary
+                    # if not found set constraint id to 0
                     else:
                         self.constraint_id = self.constraint_ids.get(
-                            constraint+participants[1]+'_'+participants[0], -1)
+                            constraint+participants[1]+'_'+participants[0], 0)
 
                     # Ask followup question (if exists)
                     if node.followup != "":
@@ -139,7 +139,9 @@ class ParsecCCLfD:
                     # Iterate through children recursively if needed
                     children = tree.get_best_children(node.params)
                     for child in children:
-                        result, total_questions_asked = self.node_handle(tree, child, total_questions_asked)
+                        result, total_questions_asked = self.node_handle(tree,
+                                                                         child,
+                                                                         total_questions_asked)
                         if result:
                             return True, total_questions_asked
             else:
@@ -150,6 +152,7 @@ class ParsecCCLfD:
 
         else:
             return False, total_questions_asked
+
 
 if __name__ == '__main__':
     test = ParsecCCLfD()
