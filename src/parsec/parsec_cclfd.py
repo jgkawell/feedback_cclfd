@@ -14,7 +14,7 @@ class ParsecCCLfD:
         # self.constraint_server.run()
         # TODO: update to recieve dirs from commandline args
         with open('../../config/constraint_ids.yml') as file:
-            self.constraint_ids = yaml.load(file)
+            self.constraint_ids = yaml.load(file, Loader=yaml.FullLoader)
         self.config_dir = '../../config'
         self.output_dir = '../../output'
 
@@ -27,7 +27,7 @@ class ParsecCCLfD:
         tree = Tree()
         tree.build(self.config_dir + '/constraints.yml',
                    self.config_dir + '/parameters.yml')
-    
+
         # Get the word similarity scores for working dictionary
         word_similarity_scores = processor.processUserInput(self.sentence)
         # Score each node in the tree based of word similarity score

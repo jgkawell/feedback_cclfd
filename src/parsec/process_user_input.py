@@ -14,7 +14,7 @@ class ProcessInput:
     # build dictionary of comparison words
     def buildDicts(self):
         with open(self.file) as file:
-            file_data = yaml.load(file)
+            file_data = yaml.load(file, Loader=yaml.FullLoader)
 
             for corr in file_data.items():
                 self.corrDict[corr[0]] = corr[1]

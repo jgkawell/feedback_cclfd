@@ -68,8 +68,7 @@ class Tree():
         # read in constraints from file
         constraints = []
         with open(constraints_file) as file:
-	    #NOTE: removed Loader = yaml.fullLoader due to error 
-            file_data = yaml.load(file)
+            file_data = yaml.load(file, Loader=yaml.FullLoader)
 
             for key, value in file_data.items():
                 constraint_type = key
@@ -89,8 +88,7 @@ class Tree():
         # print("Reading parameters...")
         parameters = {}
         with open(parameters_file) as file:
-	    #NOTE: removed Loader = yaml.fullLoader
-            parameters = yaml.load(file)
+            parameters = yaml.load(file, Loader=yaml.FullLoader)
 
         return constraints, parameters
 
