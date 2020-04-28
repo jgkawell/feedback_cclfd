@@ -1,3 +1,4 @@
+import os
 import nltk
 import random
 import yaml
@@ -7,13 +8,15 @@ from process_user_input import ProcessInput
 from std_msgs.msg import String
 
 
+
 class ParsecCCLfD:
     def __init__(self):
         # TODO: update to receive dirs from commandline args
-        with open('../../config/constraint_ids.yml') as file:
+        pwd = os.path.dirname(os.path.abspath(__file__)) + '/'
+        with open(pwd + '../../config/constraint_ids.yml') as file:
             self.constraint_ids = yaml.load(file, Loader=yaml.FullLoader)
-        self.config_dir = '../../config'
-        self.output_dir = '../../output'
+        self.config_dir = pwd + '../../config'
+        self.output_dir = pwd + '../../output'
 
     def tree_nlp(self):
         processor = ProcessInput(self.config_dir + "/dictionaries.yml")
