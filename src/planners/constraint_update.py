@@ -27,7 +27,9 @@ class ConstraintUpdate():
                                           queue_size=10)
 
         # list to hold keyframes that occured durring trigger
-        self.keyframesUpdate = list(range(20))  # NOTE: needs to be reset in between updates
+        # NOTE: needs to be reset in between updates
+        # self.keyframesUpdate = list(range(20)) # NOTE: for testing
+        self.keyframesUpdate = []
 
         # var to hold trigger status
         self.trigger = True
@@ -52,14 +54,12 @@ class ConstraintUpdate():
             self.add_constraint = rospy.ServiceProxy(
                 "add_constraint", Constraint)  # constraint ID to be updated
             resp = self.add_constraint(1)
-            print('########### Constraint recieved: {}'.format(resp.constraint))
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (add_constraint)")
         update_dict = {}
 
         for keyframe in self.keyframesUpdate:
             update_dict[keyframe] = {"applied_constraints": [resp.constraint]}
-        print(update_dict)
         self.update_pub.publish(json.dumps(update_dict))
         # clear stored keyframes and constraint
         self.keyframesUpdate = []

@@ -9,10 +9,7 @@ from std_msgs.msg import String
 
 class ParsecCCLfD:
     def __init__(self):
-        # rospy.init_node("parsec_cclfd")
-        # self.constraint_server = AddConstraintServer()
-        # self.constraint_server.run()
-        # TODO: update to recieve dirs from commandline args
+        # TODO: update to receive dirs from commandline args
         with open('../../config/constraint_ids.yml') as file:
             self.constraint_ids = yaml.load(file, Loader=yaml.FullLoader)
         self.config_dir = '../../config'
@@ -102,7 +99,8 @@ class ParsecCCLfD:
                     participants = []
                     # itterate through node params
                     for param in node.params:
-                        # extract participants of constraint (ie object,person,robot)
+                        # extract participants of constraint
+                        # (ie object,person,robot)
                         if param not in tree.parameters['continuous']:
                             participants.append(param)
                     # construct constraint base
