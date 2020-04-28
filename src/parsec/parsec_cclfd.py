@@ -8,7 +8,6 @@ from process_user_input import ProcessInput
 from std_msgs.msg import String
 
 
-
 class ParsecCCLfD:
     def __init__(self):
         # TODO: update to receive dirs from commandline args
