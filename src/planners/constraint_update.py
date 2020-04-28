@@ -1,13 +1,15 @@
+#!/usr/bin/env python2.7
+# license removed for brevity
 import rospy
 from feedback_cclfd.srv import Constraint
 from cairo_lfd_msgs.msg import NodeTime
-from std_msgs.msg import String
+from std_msgs.msg import UInt8, String
 import json
 
 
 class ConstraintUpdate():
     def __init__(self):
-        rospy.init_node("Constraint Updater")
+        rospy.init_node("constraint_updater")
 
         # subscriber to listen to keyframe transitions
         self.node_time_sub = rospy.Subscriber("/lfd/node_time",
@@ -17,7 +19,7 @@ class ConstraintUpdate():
         # subscriber to listen for user trigger for bad skill
         # assumes trigger is String('True') until false
         self.user_trigger_sub = rospy.Subscriber("user_trigger",
-                                                 String,
+                                                 UInt8,
                                                  self.user_trigger_callback)
 
         # publisher to publish to constraint update topic in
@@ -27,13 +29,12 @@ class ConstraintUpdate():
                                           queue_size=10)
 
         # list to hold keyframes that occured durring trigger
-        self.keyframesUpdate = []  # NOTE: needs to be reset inbetween updates
+        # NOTE: needs to be reset in between updates
+        # self.keyframesUpdate = list(range(20)) # NOTE: for testing
+        self.keyframesUpdate = []
 
         # var to hold trigger status
-        self.trigger = False
-
-        # constraint to add to keyframes recieved through update_constraint Service
-        self.constraint = None
+        self.trigger = True
 
     # callback to listen for keyframes while trigger is true
     def node_time_callback(self, data):
@@ -43,23 +44,29 @@ class ConstraintUpdate():
 
     # callback to listen for trigger
     def user_trigger_callback(self, data):
-        self.trigger = data.data == 'True'
+        self.trigger = data.data
 
     # function to publish to constraint update
     def update_constraints(self):
-        # need to wait for all keyframes to be collected and for constraint to update
-        # service call to ask for constraint before updating skill
-        # TODO set up the add_constraint Service
+        # need to wait for all keyframes to be collected and for constraint
+        # to update service call to ask for constraint before updating skill
+
         rospy.wait_for_service('add_constraint')
         try:
-            self.constraint = rospy.ServiceProxy(
-                "add_constraint", Constraint)  # this Constraint object could just be a string, but should just be the constraint ID
+            self.add_constraint = rospy.ServiceProxy(
+                "add_constraint", Constraint)  # constraint ID to be updated
+            resp = self.add_constraint(1)
         except rospy.ServiceException:
             rospy.logwarn("Service setup failed (add_constraint)")
         update_dict = {}
+
         for keyframe in self.keyframesUpdate:
-            update_dict[keyframe] = {"applied_constraints": [self.constraint]}
+            update_dict[keyframe] = {"applied_constraints": [resp.constraint]}
         self.update_pub.publish(json.dumps(update_dict))
         # clear stored keyframes and constraint
         self.keyframesUpdate = []
-        self.constraint = None
+
+
+if __name__ == '__main__':
+    test = ConstraintUpdate()
+    test.update_constraints()

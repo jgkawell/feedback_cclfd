@@ -36,6 +36,7 @@ add_service_files(
   FILES
   RequestFeedback.srv
   PerformDemonstration.srv
+  Constraint.srv
 )
 
 ## Generate actions in the 'action' folder

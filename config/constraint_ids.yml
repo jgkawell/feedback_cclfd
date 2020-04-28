@@ -1,0 +1,14 @@
+distance/object_robot:
+  1
+above/computer_cup:
+  1
+above/computer_gun:
+  2
+distance/jack_sawyer:
+  3
+distance/cup_jack:
+  4
+orientation/container:
+  5
+distance/cup_person:
+  6

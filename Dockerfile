@@ -35,6 +35,9 @@ RUN pip install --upgrade 'cachetools<5.0'
 RUN pip install --upgrade cryptography
 RUN python -m easy_install --upgrade pyOpenSSL
 
+# Run setup script
+RUN cd ~/catkin_ws/src/feedback_cclfd/scripts && python setup.py
+
 # Finally build the workspace
 RUN cd ~/catkin_ws && catkin build
 
