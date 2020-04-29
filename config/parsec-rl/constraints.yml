@@ -1,0 +1,42 @@
+location:
+    - area_only:
+        parameters:
+            - area
+        question:
+            Should I keep away from the [area] area of the maze?
+    - area_area:
+        parameters:
+            - area
+            - area
+        question:
+            Should I keep away from the [area]-[area] area of the maze?
+    - area_size:
+        parameters:
+            - area
+            - dimension
+        question:
+            Should I keep away from a [dimension] sized area in the [area] part of the maze?
+    - area_area_size:
+        parameters:
+            - area
+            - area
+            - dimension
+        question:
+            Should I keep away from a [dimension] sized area in the [area]-[area] part of the maze?
+cell:
+    - cell_only:
+        parameters:
+            - area
+            - cell
+        question:
+            Should I keep away from a particular cell in [area]?
+        followup:
+            Which cell should I stay away from in [area] (x,y)?
+    - cell_direction:
+        parameters:
+            - direction
+            - cell
+        question:
+            Should I not go through a cell moving [direction]ward?
+        followup:
+            Which cell should I not go through moving [direction]ward (x,y)?

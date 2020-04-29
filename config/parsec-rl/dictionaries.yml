@@ -1,0 +1,106 @@
+north:
+  exact:
+    - north
+  match:
+    - north.n.03
+    - north.n.05
+    - north.a.01
+    - north.r.01
+south:
+  exact:
+    - south
+  match:
+    - south.n.03
+    - south.n.05
+    - south.a.01
+    - south.r.01
+east:
+  exact:
+    - east
+  match:
+    - east.n.01
+    - east.n.04
+    - east.a.01
+    - east.r.01
+west:
+  exact:
+    - west
+  match:
+    - west.n.02
+    - west.n.04
+    - west.a.01
+    - west.r.01
+top:
+  exact:
+    - top
+  match:
+    - top.n.01
+    - top.a.01
+bottom:
+  exact:
+    - bottom
+  match:
+    - bottom.a.01
+    - bottom.n.02
+    - bottom.n.01
+middle:
+  exact:
+    - middle
+    - center
+  match:
+    - center.n.01
+    - center.s.01
+left:
+  exact:
+    - left
+  match:
+    - left.r.01
+    - left.n.05
+    - left.n.01
+right:
+  exact:
+    - right
+  match:
+    - right.r.04
+    - right.n.06
+big:
+  exact:
+    - big
+    - large
+  match:
+    - large.a.01
+medium:
+  exact:
+    - medium
+  match:
+    - medium.n.08
+    - average.s.04
+small:
+  exact:
+    - small
+    - tiny
+    - mini
+  match:
+    - small.r.01
+    - minor.s.10
+direction:
+  exact:
+    - direction
+  match:
+area:
+  exact:
+    - area
+  match:
+dimension:
+  exact:
+    - dimension
+  match:
+cell:
+  exact:
+    - cell
+  match:
+root:
+  exact:
+    - root
+  match:
+    - beginning.n.04

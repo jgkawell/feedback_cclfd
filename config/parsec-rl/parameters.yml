@@ -1,0 +1,18 @@
+# Discrete parameters
+direction:
+    - north
+    - south
+    - east
+    - west
+area:
+    - top
+    - bottom
+    - middle
+    - left
+    - right
+dimension:
+    - big
+    - medium
+    - small
+continuous:
+    - cell
