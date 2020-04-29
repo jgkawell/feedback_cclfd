@@ -18,14 +18,14 @@ Steps to install this project and subsequently run the demo are provided below.
 
 As long as your network is fast, I would suggest pulling this image from Docker Hub instead of building locally from the Dockerfile. I also suggest using the launch script I've written to automate this process (pulling image, setting up xauth and xhost, etc.). This launch script is in another helper repository so we need to pull that first:
 
-```
+```bash
 git clone https://github.com/jgkawell/docker-scripts.git
 bash ./docker-scripts/tools/launch.sh {user} {repository} {tag} {host}
 ```
 
 Make sure to use the user, repository, tag, and host that you would like. For example, using the image built with the Dockerfile in *this repository on a Linux computer running Intel graphics* would look like this:
 
-```
+```bash
 bash ./docker-scripts/tools/launch.sh jgkawell feedback-cclfd simple intel
 ```
 
@@ -33,7 +33,7 @@ NOTE: If you're running a Linux host then check [the documentation](https://gith
 
 Then, in another terminal, start a shell on the box:
 
-```
+```bash
 docker exec -it {container_name} bash
 ```
 
@@ -48,7 +48,7 @@ You can relaunch the container using the launch script at any point in the futur
 
 If you'd rather run things locally, check out [this repository](https://github.com/cairo-robotics/cairo_sawyer_utils/tree/master/install_scripts/kinetic) for scripts that will allow you to install everything you need on a clean Ubuntu 16.04 system (either running locally or within WSL). Then clone this repo into your catkin workspace and install the requirements:
 
-```
+```bash
 # Clone repo
 cd {path_to_workspace}/src \
         && git clone https://github.com/jgkawell/feedback_cclfd.git
@@ -85,6 +85,9 @@ python -m easy_install --upgrade pyOpenSSL
 
 # Finally build the workspace
 cd {path_to_workspace} && catkin build
+
+# Make sure to run the setup script
+cd {path_to_workspace}/src/feedback_cclfd && python scripts/setup.py
 ```
 
 ## How to use
