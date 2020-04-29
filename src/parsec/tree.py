@@ -98,24 +98,22 @@ class Tree():
         self.add(('root'), [], [])
 
         # Initialize bases
-        self.add(('object'), [('root')], [])
-        self.add(('human'), [('root')], [])
-        self.add(('robot'), [('root')], [])
-        for cont in self.parameters['continuous']:
-            self.add((cont), [('root')], [])
+        for key in self.parameters.keys():
+            if key == 'continuous':
+                for cont in self.parameters[key]:
+                    self.add((cont), [('root')], [])
+            else:
+                self.add((key), [('root')], [])
+        
 
         # print("Size after initialization: {}".format(
         #     len(self.nodes.keys())))
 
         # Populate objects
-        for obj in self.parameters['object']:
-            self.add((obj), [('object')], [])
-        # Populate humans
-        for human in self.parameters['human']:
-            self.add((human), [('human')], [])
-        # Populate robots
-        for robot in self.parameters['robot']:
-            self.add((robot), [('robot')], [])
+        for key, value in self.parameters.items():
+            if key != 'continuous':
+                for item in value:
+                    self.add((item), [(key)], [])
 
         # print("Size after expanding sets: {}".format(
         #     len(self.nodes.keys())))
@@ -348,13 +346,11 @@ class Tree():
                     node.params[0], node.params[1], node.params[2])
         else:
             query = node.question
-            for param in node.params:
-                if param in self.parameters['object']:
-                    query = query.replace('object', param, 1)
-                if param in self.parameters['human']:
-                    query = query.replace('human', param, 1)
-                if param in self.parameters['robot']:
-                    query = query.replace('robot', param, 1)
+            # Substitue instance of parameter type into query
+            for node_param in node.params:
+                for key, value in self.parameters.items():
+                    if node_param in value:
+                        query = query.replace("[{}]".format(key), node_param, 1)
 
         return query
 
@@ -411,6 +407,8 @@ if __name__ == "__main__":
     tree.build('../../config/constraints.yml', '../../config/parameters.yml')
 
     # Example search
-    query = ('order', 'paper', 'table', 'above/object_object')
+    query = ('roomba', 'table', 'above/object_robot')
     print("Searching for: {}".format(query))
-    tree.search(query)
+    
+    if not tree.search(query):
+        print("Couldn't find node")
