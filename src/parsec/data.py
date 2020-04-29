@@ -112,5 +112,11 @@ class Data():
                 "Cleaning Task gone wrong6": (('robot', 'sawyer', 'human', 'john', 'distance', 'distance/robot_human'), "You should do the task near you"),
                 "Cleaning Task gone wrong8": (('robot', 'sawyer', 'human', 'john', 'distance', 'distance/robot_human'), "You did not do the task safely")
             }
+        elif data_type == "rl":
+            self.faults = {
+                1: (('bottom', 'left', 'location/area_size'), "You shouldn't go into the bottom left area"),
+                2: (('bottom', 'right', 'location/area_size'), "You shouldn't go into the bottom right area"),
+                3: (('bottom', 'right', 'location/area_size'), "You shouldn't go into a small area in the bottom right area")
+            }
         else:
             print("Bad data_type: {}".format(data_type))
