@@ -9,12 +9,12 @@ from tree import Node, Tree
 from process_user_input import ProcessInput
 
 # Setup argparse
-parser = argparse.ArgumentParser(description='Run feedback tests')
-parser.add_argument('num_tests', type=int, default=10, help='Number of tests to run')
-parser.add_argument('mode', type=str, default='auto', help='Mode for tests (manual/auto)')
-parser.add_argument('data', type=str, default='basic', help='Data to run (basic/handover/pour/cleaning/generated/rl)')
-parser.add_argument('output', type=str, default='../../output', help='Output directory for results')
-parser.add_argument('config', type=str, default='../../config/parsec', help='Configuration directory')
+_parser = argparse.ArgumentParser(description='Run feedback tests')
+_parser.add_argument('num_tests', type=int, default=10, help='Number of tests to run')
+_parser.add_argument('mode', type=str, default='auto', help='Mode for tests (manual/auto)')
+_parser.add_argument('data', type=str, default='basic', help='Data to run (basic/handover/pour/cleaning/generated/rl)')
+_parser.add_argument('output', type=str, default='../../output', help='Output directory for results')
+_parser.add_argument('config', type=str, default='../../config/parsec', help='Configuration directory')
 
 
 def nlp_test(input):
@@ -175,7 +175,7 @@ def tree_nlp_test(input):
         question_nodes = tree.get_questions()
 
         # Iterate over all questions to ask
-        corrected, current_count = iterate_over_nodes(mode, tree, question_nodes, correct_params, current_count)
+        corrected, current_count, response, params = iterate_over_nodes(mode, tree, question_nodes, correct_params, current_count)
 
         # If the user responds no to everything
         if not corrected:
@@ -184,6 +184,8 @@ def tree_nlp_test(input):
 
         if mode == "manual":
             print("Total questions asked: {}".format(current_count))
+            print("Parameters: {}".format(params))
+            print("Followup response: {}".format(response))
 
         questions_asked[fault] = current_count
 
@@ -195,15 +197,15 @@ def iterate_over_nodes(mode, tree, question_nodes, correct_params, total_questio
     corrected = False
     for node in question_nodes:
         # Recursively traverse questions in tree
-        result, total_questions_asked = node_handle(mode, tree, node, correct_params, total_questions_asked)
+        result, total_questions_asked, response, params = node_handle(mode, tree, node, correct_params, total_questions_asked)
         # Alert user and finish if solution is found
         if result:
             if mode == "manual":
-                print("Correcting skill with given feedback!\n")
+                print("Correcting skill with given feedback!")
             corrected = True
             break
 
-    return corrected, total_questions_asked
+    return result, total_questions_asked, response, params
 
 
 def node_handle(mode, tree, node, correct_params, total_questions_asked):
@@ -244,35 +246,39 @@ def node_handle(mode, tree, node, correct_params, total_questions_asked):
 
             if node.leaf:
                 # Ask followup question (if exists)
+                response = ""
                 if node.followup != "":
                     if mode == "manual":
                         # Ask followup question
                         query = node.followup
                         # Substitue instance of parameter type into query
                         for node_param in node.params:
-                            for key, value in self.parameters.items():
+                            for key, value in tree.parameters.items():
                                 if node_param in value:
                                     query = query.replace("[{}]".format(key), node_param, 1)
                         print("Followup: {}".format(query))
-                        response = str(raw_input("Give your response:\n"))
+                        response = raw_input("Give your response:\n")
 
-                return True, total_questions_asked
+                return True, total_questions_asked, response, node.params
             else:
                 # Iterate through children recursively if needed
                 children = tree.get_best_children(node.params)
-                for child in children:
-                    result, total_questions_asked = node_handle(mode, tree, child, correct_params, total_questions_asked)
-                    if result:
-                        return True, total_questions_asked
+                if len(children) != 0:
+                    for child in children:
+                        result, total_questions_asked, response, params = node_handle(mode, tree, child, correct_params, total_questions_asked)
+                        if result:
+                            return True, total_questions_asked, response, params
+                else:
+                    print("Couldn't find any viable children nodes!")
         else:
             # If user responds no
             tree.rescore(cur_params)
             if mode == "manual":
                 print("Response: No")
-            return False, total_questions_asked
+            return False, total_questions_asked, "", tuple()
 
     else:
-        return False, total_questions_asked
+        return False, total_questions_asked, "", tuple()
 
 
 def tester(num_tests, run_mode, data, output_dir, config_dir):
@@ -360,7 +366,7 @@ def test_helper(case, num_tests, num_explanations, mode, output_dir, config_dir,
 
 if __name__ == "__main__":
     # Read arguments
-    args = parser.parse_args()
+    args = _parser.parse_args()
 
     # Run all cases in a loop
     tester(args.num_tests, args.mode, args.data, args.output, args.config)

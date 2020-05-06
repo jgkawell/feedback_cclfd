@@ -104,7 +104,6 @@ class Tree():
                     self.add((cont), [('root')], [])
             else:
                 self.add((key), [('root')], [])
-        
 
         # print("Size after initialization: {}".format(
         #     len(self.nodes.keys())))
@@ -409,6 +408,6 @@ if __name__ == "__main__":
     # Example search
     query = ('roomba', 'table', 'above/object_robot')
     print("Searching for: {}".format(query))
-    
+
     if not tree.search(query):
         print("Couldn't find node")
