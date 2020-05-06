@@ -114,9 +114,11 @@ class Data():
             }
         elif data_type == "rl":
             self.faults = {
-                1: (('bottom', 'left', 'location/area_size'), "You shouldn't go into the bottom left area"),
-                2: (('bottom', 'right', 'location/area_size'), "You shouldn't go into the bottom right area"),
-                3: (('bottom', 'right', 'location/area_size'), "You shouldn't go into a small area in the bottom right area")
+                1: (('area', 'bottom', 'left', 'location/area_area'), "You shouldn't go into the bottom left area"),
+                2: (('area', 'bottom', 'right', 'location/area_area'), "You shouldn't go into the bottom right area"),
+                3: (('area', 'bottom', 'dimension', 'small', 'location/area_size'), "You shouldn't go into a small area in the bottom right area"),
+                4: (('area', 'bottom', 'cell', 'cell/cell_area'), "You shouldn't go into a specific cell in the bottom of the maze"),
+                5: (('direction', 'east', 'cell', 'cell/cell_area'), "You shouldn't go into a specific cell from a certain direction")
             }
         else:
             print("Bad data_type: {}".format(data_type))
