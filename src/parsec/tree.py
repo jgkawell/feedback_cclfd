@@ -7,6 +7,8 @@ import numpy as np
 from sys import maxint
 from itertools import combinations
 
+__BASE_QUERY = "Did the problem have to do with "
+
 
 class Constraint():
     def __init__(self, constraint_type, name, params, question, followup):
@@ -44,10 +46,11 @@ class Node():
 
 
 class Tree():
-    def __init__(self):
+    def __init__(self, debug=False):
         self.nodes = {}
         self.constraints = []
         self.parameters = []
+        self.debug = debug
 
     # Build the tree
     def build(self, constraints_file, parameters_file):
@@ -85,7 +88,8 @@ class Tree():
                         constraint_type, name, parameters, question, followup))
 
         # read in parameters from file
-        # print("Reading parameters...")
+        if self.debug:
+            print("Reading parameters...")
         parameters = {}
         with open(parameters_file) as file:
             parameters = yaml.load(file, Loader=yaml.FullLoader)
@@ -105,17 +109,18 @@ class Tree():
             else:
                 self.add((key), [('root')], [])
 
-        # print("Size after initialization: {}".format(
-        #     len(self.nodes.keys())))
+        if self.debug:
+            print("Size after initialization: {}".format(
+                len(self.nodes.keys())))
 
         # Populate objects
         for key, value in self.parameters.items():
             if key != 'continuous':
                 for item in value:
                     self.add((item), [(key)], [])
-
-        # print("Size after expanding sets: {}".format(
-        #     len(self.nodes.keys())))
+        if self.debug:
+            print("Size after expanding sets: {}".format(
+                len(self.nodes.keys())))
 
     # Add pairs and triples of parameters to tree
     def add_pairs_and_triples(self, constraints, parameters):
@@ -130,8 +135,9 @@ class Tree():
             parents = [(p[0]), (p[1])]
             self.add(params, parents, [])
 
-        # print("Size after pairs of params: {}".format(
-        #     len(self.nodes.keys())))
+        if self.debug:
+            print("Size after pairs of params: {}".format(
+                len(self.nodes.keys())))
 
         # Triples of params
         triples = list(combinations(basic_params, 3))
@@ -142,8 +148,9 @@ class Tree():
                 parents[i] = tuple(sorted(parents[i]))
             self.add(params, parents, [])
 
-        # print("Size after triples of params: {}".format(
-        #     len(self.nodes.keys())))
+        if self.debug:
+            print("Size after triples of params: {}".format(
+                len(self.nodes.keys())))
 
     # Add the leaves (constraints) to the tree
     def add_leaves(self, constraints, parameters):
@@ -157,18 +164,21 @@ class Tree():
                 # leaf (two objects as params)
                 try:
                     self.nodes[new_params]
-                    # print("Leaf has already been added!")
+                    if self.debug:
+                        print("Leaf has already been added!")
                 except KeyError as e:
                     self.add(new_params, [leaf.params], [], leaf=True,
                              name=leaf.name, type=leaf.type,
                              question=leaf.question, followup=leaf.followup)
                     self.nodes[new_params].leaf = True
             except KeyError as e:
-                # print("Couldn't find attach point for: {}".format(str(leaf)))
+                if self.debug:
+                    print("Couldn't find attach point for: {}".format(str(leaf)))
                 pass
 
-        # print("Size after additions of leaves: {}".format(
-        #     len(self.nodes.keys())))
+        if self.debug:
+            print("Size after additions of leaves: {}".format(
+                len(self.nodes.keys())))
 
     # Create leaves from parameters
     def create_leaves(self, constraints, parameters):
@@ -238,7 +248,8 @@ class Tree():
 
             new_count = len(self.nodes.keys())
 
-        # print("Size after pruning: {}".format(len(self.nodes.keys())))
+        if self.debug:
+            print("Size after pruning: {}".format(len(self.nodes.keys())))
 
     # Add a node to the tree
     def add(self, params, parents=[], children=[], leaf=False,
@@ -262,7 +273,8 @@ class Tree():
             # Remove references to node so it creates it's own tree
             for parent in self.nodes[key].parents:
                 parent.children.remove(key)
-            print("Removing: {}".format(str(key)))
+            if self.debug:
+                print("Removing: {}".format(str(key)))
             del self.nodes[key]
         except KeyError as e:
             # Double delete
@@ -330,17 +342,17 @@ class Tree():
         return sorted(children, key=lambda x: (x.score, x.leaf), reverse=True)
 
     def generate_query(self, node):
-        base_query = "Did the problem have to do with "
+        _BASE_QUERY = "Did the problem have to do with "
 
         if not node.leaf:
             if type(node.params) == str:
-                query = base_query + "{}?"
+                query = _BASE_QUERY + "{}?"
                 query = query.format(node.params)
             elif len(node.params) == 2:
-                query = base_query + "{} and {}?"
+                query = _BASE_QUERY + "{} and {}?"
                 query = query.format(node.params[0], node.params[1])
             elif len(node.params) == 3:
-                query = base_query + "{} and {} and {}?"
+                query = _BASE_QUERY + "{} and {} and {}?"
                 query = query.format(
                     node.params[0], node.params[1], node.params[2])
         else:
