@@ -1,0 +1,50 @@
+location:
+    - area_only:
+        parameters:
+            - area
+        question:
+            Should I keep away from the [area] region of the maze?
+        followup:
+            What cell (x,y) should I center the region around in the [area] part of the maze?
+    - area_area:
+        parameters:
+            - area
+            - area
+        question:
+            Should I keep away from the [area]-[area] region of the maze?
+        followup:
+            What cell (x,y) should I center the region around in the [area]-[area] part of the maze?
+    - area_size:
+        parameters:
+            - area
+            - dimension
+        question:
+            Should I keep away from a [dimension] region in the [area] part of the maze?
+        followup:
+            What cell (x,y) should I center the [dimension] region around in the [area] part of the maze?
+    # - area_area_size:
+    #     parameters:
+    #         - area
+    #         - area
+    #         - dimension
+    #     question:
+    #         Should I keep away from a [dimension] sized area in the [area]-[area] part of the maze?
+    #     followup:
+    #         What cell (x,y) should I center the [dimension] region around in the [area]-[area] part of the maze?
+cell:
+    - cell_area:
+        parameters:
+            - area
+            - cell
+        question:
+            Should I keep away from a specific cell in the [area] part of the maze?
+        followup:
+            Which cell (x,y) should I stay away from in [area]?
+    - cell_direction:
+        parameters:
+            - direction
+            - cell
+        question:
+            Should I not enter a specific cell from the [direction]?
+        followup:
+            Which cell (x,y) should I not enter from the [direction]?
